@@ -18,7 +18,7 @@ Speaking practice uses a speech checker that runs on the phone. The first time y
 
 ## Building
 
-`index.html`, `sw.js` and `manifest.webmanifest` are generated. Edit the files in `src/` and run:
+`index.html`, `sw.js`, `manifest.webmanifest` and `asr-worker.js` are generated. Edit the files in `src/` and run:
 
 ```
 python3 src/build.py
