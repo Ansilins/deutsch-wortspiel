@@ -1,6 +1,6 @@
 # Deutsch Wortspiel
 
-A small game for learning German A1 and A2 vocabulary in bite-sized units: flashcards, quizzes, listening, matching pairs, a word list, and speaking practice with a pronunciation score.
+A small game for learning German A1 and A2 vocabulary in bite-sized units, plus a numbers-only track (Zahlen): flashcards, quizzes, listening, matching pairs, a word list, and speaking practice with a pronunciation score.
 
 **Play it:** https://ansilins.github.io/deutsch-wortspiel/
 
