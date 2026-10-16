@@ -91,6 +91,42 @@ nav.modes button[aria-selected="true"] span{color:inherit;opacity:.75}
 .word{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,8vw,3.2rem);line-height:1.05;overflow-wrap:anywhere}
 .word .art{font-weight:500;opacity:.85}
 .meaning{font-family:var(--f-hand);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.15}
+/* swipe cards: drag right if you knew it, left if you're still learning it */
+.swipe-area{position:relative;min-height:270px}
+.swipe-area .card,.swipe-area .card-inner{min-height:270px}
+.swipe{position:relative;z-index:1;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform}
+.swipe .face.front{background:var(--surface)}
+.under{position:absolute;inset:0;border-radius:14px;border:2px dashed var(--line);background:var(--bg);transform:translateY(10px) scale(.95);opacity:.8}
+.stamp{position:absolute;top:16px;z-index:2;font-family:var(--f-display);font-weight:800;font-size:1.25rem;letter-spacing:.02em;border:3px solid;border-radius:10px;padding:2px 10px;opacity:0;pointer-events:none;background:var(--surface)}
+.stamp.yes{left:16px;color:var(--good);transform:rotate(-12deg)}
+.stamp.no{right:16px;color:var(--bad);transform:rotate(12deg)}
+.swipe-hint{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}
+.swipe-hint .l{color:var(--bad);font-weight:700}.swipe-hint .r{color:var(--good);font-weight:700}
+.deckbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+.deckbar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+/* paare sets */
+.sets{display:flex;gap:6px;align-items:center}
+.sets i{width:26px;height:8px;border-radius:99px;background:var(--line)}
+.sets i.ok{background:var(--good)} .sets i.now{background:var(--accent)}
+.setmsg{min-height:1.6em;text-align:center;font-weight:700;color:var(--good)}
+/* my words: counts per category and confidence level */
+.wtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:560px){.wtiles{grid-template-columns:repeat(2,1fr)}}
+.wtile{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:10px 12px;background:var(--bg);text-align:left;display:grid;gap:0}
+.wtile b{font-family:var(--f-display);font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.wtile span{font-size:.8rem;color:var(--muted)}
+.wtile em{font-style:normal;font-size:.72rem;color:var(--muted)}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.cat{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 11px;font-size:.85rem}
+.cat i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.cat[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.lvlrow{display:grid;grid-template-columns:minmax(0,8.5rem) 1fr 3rem;gap:10px;align-items:center;font-size:.88rem;border:0;background:none;padding:3px 0;text-align:left}
+.lvlrow .track{height:12px;border-radius:4px;background:var(--line);overflow:hidden}
+.lvlrow .track i{display:block;height:100%}
+.lvlrow .n{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;font-size:.82rem}
+.lvlrow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (hover:hover){.lvlrow:hover .track{outline:1px solid var(--muted)}}
+.conf{font-size:.7rem;letter-spacing:1px;white-space:nowrap}
 
 /* quiz */
 .prompt{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center;padding:10px 0}
@@ -306,7 +342,7 @@ footer{font-size:.82rem;color:var(--muted)}
   <div id="voiceWarn" class="voice-warn" hidden>No German voice was found on this device, so words are read by your default voice. On a phone, add a German voice in your system's text-to-speech settings for proper pronunciation.</div>
 
   <nav class="modes" role="tablist" aria-label="Game mode">
-    <button role="tab" data-mode="cards"><b>Karten</b><span>Flashcards</span></button>
+    <button role="tab" data-mode="cards"><b>Karten</b><span>Swipe cards</span></button>
     <button role="tab" data-mode="quiz"><b>Quiz</b><span>Pick meaning</span></button>
     <button role="tab" data-mode="listen"><b>Hören</b><span>Listen</span></button>
     <button role="tab" data-mode="match"><b>Paare</b><span>Match pairs</span></button>
@@ -535,8 +571,43 @@ function dayStreak(){
   while(S.days[dkey(d)]?.answers){ n++; d.setDate(d.getDate()-1) }
   return n;
 }
-function status(w){ const s=S.score[w.id]; return s===undefined?"new": s>=5?"mastered": s>=3?"learned":"learning"; }
-const ST = [["mastered","Mastered","var(--ink)"],["learned","Learned","var(--good)"],["learning","Learning","var(--accent)"],["new","Not started","var(--line)"]];
+function status(w,sc=S.score){ const s=sc[w.id]; return s===undefined?"new": s>=5?"mastered": s>=3?"learned":"learning"; }
+// the word categories, as the stats and the word list name them. "mastered" (5 right) is shown as Confident, "learned" (3 or 4) as Known
+const CATS = [["mastered","Confident","var(--good)","5 right answers"],["learned","Known","color-mix(in srgb,var(--good) 45%,var(--bg))","3 or 4 right"],
+  ["learning","Still learning","var(--accent)","started, under 3"],["new","Not started","var(--line)","never seen yet"]];
+const catName = c => CATS.find(x=>x[0]===c)[1];
+const confStars = s => s===undefined ? "" : "★".repeat(s)+"☆".repeat(5-s);
+// counts for one level: total, each category, learned (known + confident), remaining (not learned yet), and each confidence step 0 to 5
+function wordStats(lv=G.lv){
+  const sc=G.levels[lv].score, ws=ALL[lv], c={new:0,learning:0,learned:0,mastered:0}, steps=[0,0,0,0,0,0];
+  for(const w of ws){ c[status(w,sc)]++; const s=sc[w.id]; if(s!==undefined) steps[Math.max(0,Math.min(5,s))]++; }
+  return {total:ws.length, ...c, done:c.learned+c.mastered, left:ws.length-c.learned-c.mastered, steps};
+}
+// filters for the word list: a category, learned, remaining, or one confidence step ("s0" to "s5")
+const FILTERS = {all:["All",()=>true], done:["Learned",w=>["learned","mastered"].includes(status(w))], left:["Remaining",w=>["new","learning"].includes(status(w))],
+  mastered:["Confident",w=>status(w)==="mastered"], learned:["Known",w=>status(w)==="learned"], learning:["Still learning",w=>status(w)==="learning"], new:["Not started",w=>status(w)==="new"]};
+const filterFor = f => /^s[0-5]$/.test(f) ? [`Level ${f[1]} ${confStars(+f[1])}`, w=>S.score[w.id]===+f[1]] : FILTERS[f]||FILTERS.all;
+// "your words" panel on the home screen: only this level's counts, never a total across levels
+function myWordsHTML(WN){
+  const st=wordStats(), name=LVL[G.lv].name, pc=n=>st.total?n/st.total*100:0;
+  const tile=(f,n,label,sub,c)=>`<button class="wtile" data-wf="${f}" style="--c:${c}"><b>${n}</b><span>${label}</span><em>${sub}</em></button>`;
+  const STEP=[[5,"Confident"],[4,"Known"],[3,"Known"],[2,"Learning"],[1,"Learning"],[0,"Learning"]];
+  const stepColor=s=>CATS.find(c=>c[0]===(s>=5?"mastered":s>=3?"learned":"learning"))[2];
+  return `<section class="panel" id="myWords">
+    <div class="row spread"><h3 class="h2">Your ${WN} in ${esc(name)}</h3><span class="muted">tap a number to see the ${WN}</span></div>
+    <div class="wtiles">
+      ${tile("all",st.total,`${WN} in ${esc(name)}`,"total","var(--ink)")}
+      ${tile("done",st.done,"learned","known + confident","var(--good)")}
+      ${tile("mastered",st.mastered,"confident","5 right answers","var(--good)")}
+      ${tile("left",st.left,"remaining","still to learn","var(--accent)")}
+    </div>
+    <div class="stack" role="img" aria-label="${CATS.map(c=>`${c[1]} ${st[c[0]]}`).join(", ")}">${CATS.map(c=>st[c[0]]?`<i style="width:${pc(st[c[0]])}%;background:${c[2]}"></i>`:"").join("")}</div>
+    <div class="cats">${CATS.map(c=>`<button class="cat" data-wf="${c[0]}"><i style="background:${c[2]}"></i>${c[1]} <b>${st[c[0]]}</b></button>`).join("")}</div>
+    <div class="row spread" style="margin-top:6px"><h3 class="h2">Confidence levels</h3><span class="muted">each right answer moves a word up one level, a wrong one moves it down</span></div>
+    <div class="tbars">${STEP.map(([s,lab])=>`<button class="lvlrow" data-wf="s${s}"><span class="nm"><span class="conf">${confStars(s)}</span> ${lab}</span><span class="track"><i style="width:${pc(st.steps[s])}%;background:${stepColor(s)}"></i></span><span class="n">${st.steps[s]}</span></button>`).join("")}
+      <button class="lvlrow" data-wf="new"><span class="nm">Not started</span><span class="track"><i style="width:${pc(st.new)}%;background:var(--muted)"></i></span><span class="n">${st.new}</span></button></div>
+  </section>`;
+}
 function Home(){
   keyHandler=null;
   if(!G.chosen || G.picking) return LevelPick();
@@ -552,8 +623,8 @@ function Home(){
   // the path shows only a small window: two finished units, this one, and the next three
   const from=Math.max(0,ci-2), to=Math.min(us.length,ci+4);
   const N=isNum(), WN=N?"numbers":"words", lvTitle=N?"Zahlen":`Niveau ${G.lv}`;
-  const MODES=N?[["cards","Karten","Flashcards","See the German, flip for the digits, hear it."],["quiz","Quiz","Words and digits","10 quick questions in both directions."],["listen","Hören","Listen","Hear a number and pick its digits."],["match","Paare","Match pairs","Match six numbers to their digits."],["speak","Sprechen","Speak","Say the number out loud and get a score."]]
-    : [["cards","Karten","Flashcards","Flip a card, see the English, hear the word."],["quiz","Quiz","Pick the meaning","10 quick questions in both directions."],["listen","Hören","Listen","Hear a word and find it among four."],["match","Paare","Match pairs","Race the clock to match six pairs."],["speak","Sprechen","Speak","Say the word out loud and get a pronunciation score."]];
+  const MODES=N?[["cards","Karten","Swipe cards","Flip for the digits, then swipe right if you knew it."],["quiz","Quiz","Words and digits","10 quick questions in both directions."],["listen","Hören","Listen","Hear a number and pick its digits."],["match","Paare","Match pairs","Match numbers to their digits, set after set."],["speak","Sprechen","Speak","Say the number out loud and get a score."]]
+    : [["cards","Karten","Swipe cards","Swipe right if you knew it, left if you're still learning."],["quiz","Quiz","Pick the meaning","10 quick questions in both directions."],["listen","Hören","Listen","Hear a word and find it among four."],["match","Paare","Match pairs","Race the clock through set after set of pairs."],["speak","Sprechen","Speak","Say the word out loud and get a pronunciation score."]];
   // the other track: numbers from a word level, or back to your words from the numbers
   const other=N ? (G.wordLv||"A1") : "Z", ous=UNITS[other], oci=curUnit(other), ou=ous[oci], osc=G.levels[other].score;
   const ogot=ou.words.filter(w=>(osc[w.id]||0)>=3).length, ostarted=Object.keys(osc).length>0;
@@ -588,6 +659,8 @@ function Home(){
       return `<button class="unit ${st}" data-u="${x.i}" ${st==="locked"?"disabled":""} title="${esc(x.name)}"><span class="un">${st==="done"?"✓":st==="locked"?"🔒":x.i+1}</span><span class="ut">${st==="locked"?`Unit ${x.i+1}`:esc(x.name)}</span><span class="us">${st==="done"?"Review":st==="now"?`${got}/${x.words.length}`:"Locked"}</span></button>` }).join("")}</div>
     <p class="muted" style="margin:0">Finish one unit at a time. Tap a finished unit to review it.</p>
   </section>
+
+  ${myWordsHTML(WN)}
 
   <section class="panel">
     <div class="row spread"><h3 class="h2">${N?"Numbers":"Words"} in this unit</h3><span class="muted">tap 🔊 to hear one</span></div>
@@ -627,14 +700,15 @@ function Home(){
     <h3 class="h2">How it works</h3>
     <div class="how">
       <div><b>Small units</b>Each unit has about ${UNIT_MAX} words. Learn 80% of them and the next unit opens.</div>
-      <div><b>Learned</b>A word counts as learned after 3 right answers. A wrong answer moves it back one step.</div>
-      <div><b>Mastered</b>After 5 right answers a word is mastered. Come back every day to keep your streak.</div>
+      <div><b>Known</b>A word counts as known (learned) after 3 right answers. A wrong answer moves it back one step.</div>
+      <div><b>Confident</b>After 5 right answers you're confident with a word. Come back every day to keep your streak.</div>
     </div>
   </section>`;
   const uw=$("#uw");
   u.words.forEach(w=>{ const st=status(w); const d=document.createElement("div"); d.className="uwi "+st;
     d.innerHTML=`<span></span><span class="uwd"><b>${deHTML(w)}</b><span class="muted">${esc(w.en)}</span></span><span class="uws">${{new:"new",learning:"learning",learned:"✓",mastered:"★"}[st]}</span>`;
     d.firstChild.appendChild(spkBtn(w,"small")); uw.appendChild(d) });
+  el.querySelectorAll("[data-wf]").forEach(b=>b.onclick=()=>{ listView={scope:"level",f:b.dataset.wf}; showPractice("list"); });
   el.querySelectorAll(".goal-pick button").forEach(b=>b.onclick=()=>{ S.goal=+b.dataset.g; save(); Home(); });
   el.querySelectorAll(".unit.done").forEach(b=>b.onclick=()=>showPractice("cards",+b.dataset.u));
   el.querySelectorAll(".unit.now").forEach(b=>b.onclick=()=>showPractice(S.lastMode||"cards","unit"));
@@ -642,7 +716,7 @@ function Home(){
   const rv=$("#rv"); if(rv) weak.forEach(w=>{ const d=document.createElement("div"); d.innerHTML=`<span></span><span><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span><span class="tag">${esc(w.topic)}</span>`; d.firstChild.appendChild(spkBtn(w,"small")); rv.appendChild(d) });
   $("#goPractice").onclick=()=>showPractice(S.lastMode||"cards","unit");
   $("#goOther").onclick=()=>{ G.chosen=true; setLevel(other); showHome(); };
-  $("#goList").onclick=()=>showPractice("list","unit");
+  $("#goList").onclick=()=>{ listView={scope:"unit",f:"all"}; showPractice("list","unit"); };
   $("#goRev") && ($("#goRev").onclick=()=>showPractice("cards","review"));
 }
 function LevelPick(){
@@ -680,29 +754,61 @@ function showPractice(mode,sel){
 }
 
 
-/* ---------- Karten: flashcards ---------- */
+/* ---------- Karten: swipe cards ---------- */
+// tap to flip, swipe right if you knew it, left if you're still learning it. Decks of 20 follow one after another
 function Cards(){
-  let deck = pickWords(Math.min(20,pool().length)), i=0, flipped=false;
+  let deck = pickWords(Math.min(20,pool().length)), i=0, knew=0, again=0;
   function draw(){
-    if(i>=deck.length){ stage.innerHTML=`<div class="result"><div class="score">✓</div><div class="note">Deck done. Gut gemacht!</div><button class="btn primary" id="again">New deck</button></div>`; $("#again").onclick=Cards; keyHandler=null; return; }
-    const w=deck[i]; flipped=false;
+    if(i>=deck.length){
+      stage.innerHTML=`<div class="result"><div class="score">✓</div><div class="note">Deck done. Gut gemacht!</div>
+        <p class="muted" style="margin:0">${knew} knew it · ${again} still learning</p>
+        <button class="btn primary" id="again">Next deck</button></div>`;
+      $("#again").onclick=Cards; keyHandler=e=>{ if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); Cards()} }; return;
+    }
+    const w=deck[i]; let flipped=false, gone=false;
     stage.innerHTML=`
       <div class="row spread"><span class="tag">${esc(w.topic)}</span><span class="muted">Card ${i+1} of ${deck.length}${known(w)?" · learned":""}</span></div>
-      <div class="card" id="card" tabindex="0" role="button" aria-label="Flip card">
-        <div class="card-inner">
-          <div class="face front"><div class="word">${deHTML(w)}</div><div class="muted">${isNum()?"Tap to see the number":"Tap to see the English"}</div></div>
-          <div class="face back"><div class="meaning">${esc(w.en)}</div><div class="muted">${esc(w.de)}</div></div>
+      <div class="deckbar" aria-hidden="true"><i style="width:${i/deck.length*100}%"></i></div>
+      <div class="swipe-area">
+        ${i+1<deck.length?`<div class="under" aria-hidden="true"></div>`:""}
+        <div class="swipe" id="sw">
+          <div class="card" id="card" tabindex="0" role="button" aria-label="Flip card">
+            <div class="card-inner">
+              <div class="face front"><div class="word">${deHTML(w)}</div><div class="muted">${isNum()?"Tap to see the number":"Tap to see the English"}</div></div>
+              <div class="face back"><div class="meaning">${esc(w.en)}</div><div class="muted">${esc(w.de)}</div></div>
+            </div>
+          </div>
+          <span class="stamp yes" id="stY">Weiß ich ✓</span><span class="stamp no" id="stN">Nochmal ↺</span>
         </div>
       </div>
+      <div class="swipe-hint"><span class="l">← still learning</span><span>tap to flip</span><span class="r">I knew it →</span></div>
       <div class="row spread"><div id="spk"></div>
         <div class="row"><button class="btn" id="again2">Still learning</button><button class="btn good" id="knew">I knew it</button></div></div>
-      <div class="muted kbdhint">Keys: Space flips, P plays sound, 1 still learning, 2 I knew it.</div>`;
+      <div class="muted kbdhint">Keys: Space flips, P plays sound, ← or 1 still learning, → or 2 I knew it.</div>`;
     const sb=spkBtn(w); $("#spk").appendChild(sb);
-    const card=$("#card"); const flip=()=>{ flipped=!flipped; card.classList.toggle("flipped",flipped) };
-    card.onclick=flip;
-    const next=ok=>{ bump(w,ok); if(ok) addXp(2); save(); renderStats(); if(!ok) deck.push(w); i++; draw(); };
-    $("#knew").onclick=()=>next(true); $("#again2").onclick=()=>next(false);
-    keyHandler=e=>{ if(e.key===" "){e.preventDefault();flip()} else if(e.key==="p")say(w.de,sb); else if(e.key==="1")next(false); else if(e.key==="2")next(true); };
+    const sw=$("#sw"), card=$("#card"), stY=$("#stY"), stN=$("#stN");
+    const flip=()=>{ flipped=!flipped; card.classList.toggle("flipped",flipped) };
+    const next=ok=>{ bump(w,ok); if(ok){ addXp(2); knew++; } else { again++; deck.push(w); } save(); renderStats(); i++; draw(); };
+    const pose=(dx,dy)=>{ sw.style.transform=`translate(${dx}px,${dy}px) rotate(${dx/18}deg)`;
+      stY.style.opacity=Math.max(0,Math.min(1,dx/90)); stN.style.opacity=Math.max(0,Math.min(1,-dx/90)); };
+    // the card flies off to the side it was swiped (or to the side of the button pressed), then the next one comes up
+    const fly=ok=>{ if(gone) return; gone=true;
+      sw.style.transition="transform .28s ease-in"; pose((ok?1:-1)*(innerWidth+200), 40);
+      setTimeout(()=>next(ok),220); };
+    let x0=0,y0=0,t0=0,dx=0,moved=false,down=false,pid=null;
+    sw.onpointerdown=e=>{ if(gone||(e.pointerType==="mouse"&&e.button!==0)) return; down=true; moved=false; pid=e.pointerId; x0=e.clientX; y0=e.clientY; t0=Date.now(); dx=0; sw.style.transition="none"; };
+    sw.onpointermove=e=>{ if(!down||e.pointerId!==pid) return; dx=e.clientX-x0; const dy=e.clientY-y0;
+      if(!moved){ if(Math.abs(dx)<8) return; if(Math.abs(dy)>Math.abs(dx)){ down=false; return; } moved=true; try{ sw.setPointerCapture(pid) }catch(_){} }
+      e.preventDefault(); pose(dx,dy*0.15); };
+    const up=e=>{ if(!down||e.pointerId!==pid) return; down=false;
+      if(!moved){ if(e.type==="pointerup") flip(); return; }
+      const v=Math.abs(dx)/Math.max(1,Date.now()-t0);                  // a quick flick counts even when it's short
+      if(e.type==="pointerup" && (Math.abs(dx)>90 || (Math.abs(dx)>35 && v>0.5))) return fly(dx>0);
+      sw.style.transition="transform .25s"; pose(0,0); };
+    sw.onpointerup=up; sw.onpointercancel=up;
+    card.onkeydown=e=>{ if(e.key==="Enter"){ e.preventDefault(); flip(); } };
+    $("#knew").onclick=()=>fly(true); $("#again2").onclick=()=>fly(false);
+    keyHandler=e=>{ if(e.key===" "){e.preventDefault();flip()} else if(e.key==="p")say(w.de,sb); else if(e.key==="1"||e.key==="ArrowLeft")fly(false); else if(e.key==="2"||e.key==="ArrowRight")fly(true); };
   }
   draw();
 }
@@ -761,26 +867,57 @@ function Quiz(kind){
   q();
 }
 
-/* ---------- Paare: match pairs ---------- */
+/* ---------- Paare: match pairs, several sets in a row ---------- */
+// splits the words into sets of up to 6, least-known first, so a round goes through different words instead of repeating one set.
+// two words that look the same on a tile (same English or same German) never share a set
+function pairSets(ws, maxSets=4){
+  const n=Math.min(ws.length, 6*maxSets), sets=Math.max(1,Math.ceil(n/6)), size=Math.ceil(n/sets);
+  const order=shuffle(ws).sort((a,b)=>(S.score[a.id]||0)-(S.score[b.id]||0));
+  const out=[...Array(sets)].map(()=>[]);
+  for(const w of order){
+    const s=out.find(x=>x.length<size && !x.some(o=>o.en===w.en||o.de===w.de));
+    if(s) s.push(w);
+    if(out.every(x=>x.length>=size)) break;
+  }
+  return out.filter(x=>x.length>=2 || out.length===1);
+}
 function Match(){
-  const n=Math.min(6,pool().length); const ws=pickWords(n);
-  const L=shuffle(ws), R=shuffle(ws); let sel=null, left=n, misses=0; const t0=Date.now();
-  stage.innerHTML=`<div class="row spread"><span class="muted">Match each German word with its meaning. Tapping a German word plays it.</span><span class="muted" id="mt">0 s</span></div>
-    <div class="pairs"><div class="col" id="cL"></div><div class="col" id="cR"></div></div>`;
-  const timer=setInterval(()=>{ const el=$("#mt"); if(!el){clearInterval(timer);return} el.textContent=Math.round((Date.now()-t0)/1000)+" s" },500);
-  const mk=(w,side)=>{ const b=document.createElement("button"); b.className="tile "+(side==="L"?"de":"en"); b.innerHTML= side==="L"?deHTML(w):esc(w.en); b.dataset.id=w.id; b.dataset.side=side;
-    b.onclick=()=>{ if(b.classList.contains("done")) return; if(side==="L") say(w.de);
-      if(!sel || sel.dataset.side===side){ if(sel) sel.classList.remove("sel"); sel=b; b.classList.add("sel"); return; }
-      if(sel.dataset.id===b.dataset.id){ [sel,b].forEach(x=>{x.classList.remove("sel");x.classList.add("done");x.disabled=true}); bump(w,true); addXp(5); save(); left--; sel=null; if(!left) finish(); }
-      else { const a=sel; [a,b].forEach(x=>{x.classList.add("shake"); setTimeout(()=>x.classList.remove("shake"),400)}); a.classList.remove("sel"); sel=null; misses++; }
-    }; return b; };
-  L.forEach(w=>$("#cL").appendChild(mk(w,"L"))); R.forEach(w=>$("#cR").appendChild(mk(w,"R")));
-  function finish(){ clearInterval(timer); const s=Math.round((Date.now()-t0)/1000); if(!misses) addXp(10); renderStats();
-    stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei! +10 bonus XP"}</div>
-      <div class="review">${ws.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div>
-      <button class="btn primary" id="again">Next round</button></div>`;
-    stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(ws[k],"small")));
+  const sets=pairSets(pool()), log=[], me=Match.run=(Match.run||0)+1, live=()=>Match.run===me && $("#setmsg");
+  let si=0, misses=0, cleanSets=0; const t0=Date.now();
+  stage.innerHTML=`<div class="row spread"><div class="sets" id="sets" aria-label="Sets"></div><span class="muted" id="mt">0 s</span></div>
+    <div class="muted" id="setlbl"></div>
+    <div class="pairs"><div class="col" id="cL"></div><div class="col" id="cR"></div></div>
+    <div class="setmsg" id="setmsg" role="status"></div>`;
+  const timer=setInterval(()=>{ const el=$("#mt"); if(!live()||!el){clearInterval(timer);return} el.textContent=Math.round((Date.now()-t0)/1000)+" s" },500);
+  function play(){
+    const ws=sets[si], L=shuffle(ws), R=shuffle(ws); let sel=null, left=ws.length, setMiss=0;
+    $("#sets").innerHTML=sets.map((_,k)=>`<i class="${k<si?"ok":k===si?"now":""}"></i>`).join("");
+    $("#setlbl").textContent=`Set ${si+1} of ${sets.length} · match each German word with its meaning. Tapping a German word plays it.`;
+    $("#setmsg").textContent=""; $("#cL").innerHTML=""; $("#cR").innerHTML="";
+    const mk=(w,side)=>{ const b=document.createElement("button"); b.className="tile "+(side==="L"?"de":"en"); b.innerHTML= side==="L"?deHTML(w):esc(w.en); b.dataset.id=w.id; b.dataset.side=side;
+      b.onclick=()=>{ if(b.classList.contains("done")||!left) return; if(side==="L") say(w.de);
+        if(!sel || sel.dataset.side===side){ if(sel) sel.classList.remove("sel"); sel=b; b.classList.add("sel"); return; }
+        if(sel.dataset.id===b.dataset.id){ [sel,b].forEach(x=>{x.classList.remove("sel");x.classList.add("done");x.disabled=true}); bump(w,true); addXp(5); save(); log.push(w); left--; sel=null; if(!left) setDone(); }
+        else { const a=sel; [a,b].forEach(x=>{x.classList.add("shake"); setTimeout(()=>x.classList.remove("shake"),400)}); a.classList.remove("sel"); sel=null; misses++; setMiss++; }
+      }; return b; };
+    L.forEach(w=>$("#cL").appendChild(mk(w,"L"))); R.forEach(w=>$("#cR").appendChild(mk(w,"R")));
+    function setDone(){
+      if(!setMiss){ cleanSets++; addXp(5); }
+      renderStats(); si++;
+      if(si>=sets.length) return setTimeout(finish,500);
+      $("#sets").innerHTML=sets.map((_,k)=>`<i class="${k<si?"ok":""}"></i>`).join("");
+      $("#setmsg").textContent=`Set ${si} done${setMiss?"":", no mistakes"}! Next set coming…`;
+      setTimeout(()=>{ if(live()) play(); },900);
+    }
+  }
+  function finish(){ clearInterval(timer); if(!live()) return; const s=Math.round((Date.now()-t0)/1000); renderStats();
+    stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei!"}</div>
+      ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus XP for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
+      <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div>
+      <button class="btn primary" id="again">Play new sets</button></div>`;
+    stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k],"small")));
     $("#again").onclick=Match; }
+  play();
 }
 
 /* ---------- Sprechen: say the word, get a score ---------- */
@@ -1053,26 +1190,41 @@ function Speak(){
   q();
 }
 
-/* ---------- Liste: browse all words ---------- */
+/* ---------- Liste: browse words by category ---------- */
+// this unit's words, or the whole level's sorted into categories (opened from the "your words" panel)
+let listView={scope:"unit",f:"all"};
 function List(){
+  const N=isNum(), WN=N?"numbers":"words";
   stage.innerHTML=`<div class="row spread"><input class="search" id="q" type="search" placeholder="Search German or English…" aria-label="Search words"></div>
-    <div class="row"><label class="muted"><input type="checkbox" id="onlyStar"> Only starred words</label></div>
+    <div class="cats" id="scope"></div>
+    <div class="cats" id="filt"></div>
+    <div class="row spread"><label class="muted"><input type="checkbox" id="onlyStar"> Only starred ${WN}</label><span class="muted" id="cnt"></span></div>
     <div class="list" id="lst"></div>`;
+  const chips=()=>{
+    $("#scope").innerHTML=[["unit","This unit"],["level",`All ${LVL[G.lv].name} ${WN}`]].map(([v,l])=>`<button class="cat" data-s="${v}" aria-pressed="${listView.scope===v}">${l}</button>`).join("");
+    const fs=["all","done","left",...CATS.map(c=>c[0])]; if(!fs.includes(listView.f)) fs.push(listView.f);
+    const base=listView.scope==="level"?WORDS:pool();
+    $("#filt").innerHTML=fs.map(f=>{ const [l,fn]=filterFor(f), c=CATS.find(x=>x[0]===f);
+      return `<button class="cat" data-f="${f}" aria-pressed="${listView.f===f}">${c?`<i style="background:${c[2]}"></i>`:""}${l} <b>${base.filter(fn).length}</b></button>` }).join("");
+    $("#scope").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.scope=b.dataset.s; chips(); draw(); });
+    $("#filt").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.f=b.dataset.f; chips(); draw(); });
+  };
   const draw=()=>{
-    const q=$("#q").value.trim().toLowerCase(), only=$("#onlyStar").checked;
-    const items=pool().filter(w=>(!q||w.de.toLowerCase().includes(q)||w.en.toLowerCase().includes(q)) && (!only||S.stars[w.id]));
+    const q=$("#q").value.trim().toLowerCase(), only=$("#onlyStar").checked, fn=filterFor(listView.f)[1];
+    const items=(listView.scope==="level"?WORDS:pool()).filter(w=>fn(w) && (!q||w.de.toLowerCase().includes(q)||w.en.toLowerCase().includes(q)) && (!only||S.stars[w.id]));
+    $("#cnt").textContent=`${items.length} ${items.length===1?WN.slice(0,-1):WN}`;
     const box=$("#lst"); box.innerHTML="";
-    if(!items.length){ box.innerHTML=`<p class="muted">No words match. Try another spelling.</p>`; return }
+    if(!items.length){ box.innerHTML=`<p class="muted">No ${WN} here${q?" match that search":" yet"}.</p>`; return }
     for(const w of items){
-      const r=document.createElement("div"); r.className="li";
-      r.innerHTML=`<span></span><span class="de">${deHTML(w)}${known(w)?' <span class="tag" style="color:var(--good)">✓</span>':""}</span><span class="en">${esc(w.en)}</span>`;
+      const r=document.createElement("div"), s=S.score[w.id]; r.className="li";
+      r.innerHTML=`<span></span><span class="de">${deHTML(w)}${s!==undefined?` <span class="conf" style="color:var(--${s>=3?"good":"muted"})" title="${catName(status(w))}, level ${s} of 5">${confStars(s)}</span>`:""}</span><span class="en">${esc(w.en)}</span>`;
       r.firstChild.appendChild(spkBtn(w,"small"));
       const st=document.createElement("button"); st.className="star"+(S.stars[w.id]?" on":""); st.textContent="★"; st.setAttribute("aria-label","Star "+w.de);
       st.onclick=()=>{ S.stars[w.id]=!S.stars[w.id]; if(!S.stars[w.id]) delete S.stars[w.id]; save(); st.classList.toggle("on") };
       r.appendChild(st); box.appendChild(r);
     }
   };
-  $("#q").oninput=draw; $("#onlyStar").onchange=draw; draw();
+  $("#q").oninput=draw; $("#onlyStar").onchange=draw; chips(); draw();
 }
 
 $("#backHome").onclick=showHome;
