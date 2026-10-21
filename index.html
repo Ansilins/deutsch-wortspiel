@@ -39,7 +39,7 @@ body::before{content:"";position:fixed;z-index:50;left:0;right:0;top:0;height:en
 :root{
   --bg:#f7f6f1; --grid:#e2e6e9; --surface:#ffffff; --ink:#1d2430; --muted:#5b6673; --line:#e3e6e9; --line2:#cdd4da;
   --good:#1a7d45; --bad:#c23b3b;
-  --der:#2763c4; --die:#c8344a; --das:#1d8a55; --plain:#4a5563;
+  --der:#2763c4; --die:#b8303f; --das:#177548; --plain:#4a5563;
   --shadow:0 1px 2px rgba(20,30,40,.05),0 6px 20px rgba(20,30,40,.06);
   --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,sans-serif;
@@ -112,6 +112,8 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 @media (min-width:600px){nav.modes button{font-size:.84rem;min-height:58px}}
 @media (hover:hover){nav.modes button:hover:not([aria-selected="true"]){background:var(--soft);color:var(--ink)}}
 .topics{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+/* a mouse wheel can't scroll the row sideways, so mouse users get a thin scrollbar to drag */
+@media (hover:hover) and (pointer:fine){.topics{scrollbar-width:thin;padding-bottom:4px}}
 .chip{flex:none;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 13px;font-size:.84rem;white-space:nowrap;min-height:44px}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 
@@ -127,7 +129,8 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .btn.back{display:inline-flex;align-items:center;gap:2px;padding:6px 14px 6px 8px;border-radius:99px}
 .speak{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;border:2px solid var(--accent);background:transparent;flex:none}
 .speak svg{width:22px;height:22px;fill:var(--ink)}
-.speak.small{width:34px;height:34px;border-width:1.5px}
+.speak.small{width:34px;height:34px;border-width:1.5px;position:relative}
+.speak.small::after{content:"";position:absolute;inset:-6.5px;border-radius:50%}   /* 44px to tap (from inside the 1.5px border), without making the rows taller */
 .speak.small svg{width:16px;height:16px}
 .speak.playing{background:var(--accent)}
 .speak.playing svg{fill:var(--accent-ink)}
@@ -154,8 +157,8 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .stamp{position:absolute;top:16px;z-index:2;font-family:var(--f-display);font-weight:800;font-size:1.2rem;letter-spacing:.02em;border:3px solid;border-radius:10px;padding:2px 10px;opacity:0;pointer-events:none;background:var(--surface)}
 .stamp.yes{left:16px;color:var(--good);transform:rotate(-12deg)}
 .stamp.no{right:16px;color:var(--bad);transform:rotate(12deg)}
-.swipe-hint{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}
-.swipe-hint .l{color:var(--bad);font-weight:700}.swipe-hint .r{color:var(--good);font-weight:700}
+.swipe-hint{text-align:center;font-size:.85rem;color:var(--muted)}
+.acts{flex:1 1 auto;max-width:320px;margin-left:auto;flex-wrap:nowrap}.acts .btn{flex:1 1 auto;white-space:nowrap}
 .deckbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
 .deckbar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
 /* paare sets */
@@ -181,6 +184,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .dots i.ok{background:var(--good)} .dots i.no{background:var(--bad)} .dots i.now{background:var(--accent)}
 .feedback{min-height:1.6em;font-weight:700;text-align:center}
 .feedback.ok{color:var(--good)} .feedback.no{color:var(--bad)}
+.feedback .ltr small{opacity:1}
 .big-ear{width:110px;height:110px;border-width:3px}
 .big-ear svg{width:44px;height:44px}
 
@@ -258,7 +262,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .mbar i{display:block;height:100%;border-radius:99px;background:var(--accent);transform-origin:left;animation:grow .5s ease-out both}
 .mbar.ok i{background:var(--good)}
 .streak{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:.9rem;color:var(--accent-text)}
-.rvd summary{list-style:none;cursor:pointer;color:var(--muted);font-size:.88rem;width:max-content;min-height:40px;display:flex;align-items:center;gap:4px}
+.rvd summary{list-style:none;cursor:pointer;color:var(--muted);font-size:.88rem;width:max-content;min-height:44px;display:flex;align-items:center;gap:4px}
 .rvd summary::-webkit-details-marker{display:none}
 .rvd summary .ic{width:16px;height:16px;transition:transform .2s}
 .rvd[open] summary .ic{transform:rotate(180deg)}
@@ -296,10 +300,10 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .wtile span{font-size:.8rem;color:var(--muted)}
 .wtile em{font-style:normal;font-size:.72rem;color:var(--muted)}
 .cats{display:flex;flex-wrap:wrap;gap:6px}
-.cat{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:.85rem;min-height:40px}
+.cat{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:.85rem;min-height:44px}
 .cat i{width:10px;height:10px;border-radius:3px;display:inline-block}
 .cat[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
-.lvlrow{display:grid;grid-template-columns:minmax(0,8.5rem) 1fr 3rem;gap:10px;align-items:center;font-size:.88rem;border:0;background:none;padding:5px 0;text-align:left;min-height:34px}
+.lvlrow{display:grid;grid-template-columns:minmax(0,8.5rem) 1fr 3rem;gap:10px;align-items:center;font-size:.88rem;border:0;background:none;padding:5px 0;text-align:left;min-height:44px}
 .lvlrow .track{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
 .lvlrow .track i{display:block;height:100%;border-radius:99px}
 .lvlrow .n{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;font-size:.82rem}
@@ -310,7 +314,8 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .stack{display:flex;gap:2px;height:16px;border-radius:99px;overflow:hidden;background:var(--line)}
 .stack i{display:block;height:100%;min-width:0}
 .goal-pick{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.goal-pick button{border:1px solid var(--line2);background:var(--surface);border-radius:10px;padding:4px 12px;font-size:.88rem;min-height:40px;min-width:44px}
+.goal-pick>.muted{flex-basis:100%}
+.goal-pick button{border:1px solid var(--line2);background:var(--surface);border-radius:10px;padding:4px 12px;font-size:.88rem;min-height:44px;min-width:44px}
 .goal-pick button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media (max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}}
@@ -318,9 +323,9 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .tile2 b{display:block;font-family:var(--f-display);font-size:1.45rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .tile2 span{font-size:.78rem;color:var(--muted)}
 .week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:130px;border-bottom:1px solid var(--line);padding-top:18px}
-.week .col7{display:grid;grid-template-rows:auto 1fr;align-items:end;justify-items:center;height:100%;gap:4px;position:relative}
-.week .col7 em{font-style:normal;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.week .bar{width:min(30px,80%);background:var(--accent);border-radius:6px 6px 0 0;align-self:end;min-height:2px}
+.week .col7{position:relative;height:100%}
+.week .col7 em{position:absolute;left:0;right:0;bottom:calc(var(--h) + 3px);text-align:center;font-style:normal;font-size:.75rem;line-height:1.2;color:var(--muted);font-variant-numeric:tabular-nums}
+.week .bar{position:absolute;bottom:0;left:50%;transform:translateX(-50%);height:var(--h);width:min(30px,80%);background:var(--accent);border-radius:6px 6px 0 0;min-height:2px}
 .week .bar.zero{background:var(--line)}
 .wkd{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;text-align:center;font-size:.75rem;color:var(--muted);margin-top:4px}
 .wkd .now{color:var(--ink);font-weight:700}
@@ -350,9 +355,10 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .lvpc .go{display:inline-flex;align-items:center;gap:2px}
 .lvpc .ic{width:16px;height:16px}
 @media (max-width:360px){.levels{padding-left:36px}.levels::before{left:12px}.lvnum{left:-38px;width:28px;height:28px;margin-top:-14px}.lvcard{gap:10px;padding:10px 12px}.lvbig{min-width:46px;height:46px}}
-.toast{position:fixed;z-index:60;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 32px));transform:translateX(-50%);display:flex;align-items:center;gap:12px;
+/* at the top it only covers the header, which nobody needs right after finishing a unit (at the bottom it hid Next) */
+.toast{position:fixed;z-index:60;left:50%;top:calc(10px + env(safe-area-inset-top,0px));width:min(440px,calc(100% - 32px));transform:translateX(-50%);display:flex;align-items:center;gap:12px;
   background:var(--ink);color:var(--bg);border-radius:16px;padding:12px 16px;font-size:.93rem;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none;animation:toastin .3s ease-out}
-@keyframes toastin{from{opacity:0;transform:translate(-50%,16px)}}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,-16px)}}
 /* a small star burst for a finished unit: six dots fly out once */
 .burst{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;animation:starin .45s .1s ease-out both}
 .burst .ic{fill:currentColor;width:20px;height:20px}
@@ -385,12 +391,16 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 
 /* list */
 .search{width:100%;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit;min-height:44px}
-.list{display:grid;gap:0;max-height:560px;overflow-y:auto}
+.list{display:grid;gap:0}
 .li{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:12px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--line)}
 .li .de{font-family:var(--f-display);font-weight:700;min-width:0;overflow-wrap:anywhere}
 .li .en{min-width:0;color:var(--muted)}
-.li .star{border:0;background:none;font-size:1.15rem;color:var(--line2);min-width:44px;min-height:44px}
-.li .star.on{color:var(--accent)}
+.li .star{border:0;background:none;font-size:1.15rem;color:var(--muted);min-width:44px;min-height:44px}
+.li .star.on{color:var(--accent-text)}
+.onlystar{min-height:44px;display:inline-flex;align-items:center;gap:8px}
+#onlyStar{width:20px;height:20px;margin:0}
+.morefilt[open]{flex-basis:100%}   /* closed, "More filters" fits next to the chips on a small phone */
+.morefilt .cats{margin-top:4px}
 @media (max-width:520px){.li{grid-template-columns:auto 1fr auto}.li .en{grid-column:2}.li .star{grid-row:1/3;grid-column:3}}
 
 .below{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 16px}
@@ -401,7 +411,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 .speed{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:.8rem;color:var(--muted)}
 .soundhint{margin-right:8px}
 .speed button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:2px 13px;font-size:.8rem;min-height:44px}
-.speed button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.speed button[aria-pressed="true"]{background:var(--soft);color:var(--accent-text);border-color:var(--accent);font-weight:700}
 .pop{animation:pop .4s}
 /* a swiped card flies past the screen edge: clip it here, not on body, so the page never scrolls sideways */
 .xclip{overflow-x:clip}
@@ -599,7 +609,7 @@ const TRACK = {
     unitNoun:u=>u.words.every(w=>w.letter)?"letters":u.words.some(w=>w.letter)?"letters and sounds":"sounds",
     q:{listen:"Listen, then pick what you heard.", deEn:"How does it sound?", enDe:"Which one is it?"},
     modes:[["cards","Swipe cards","See a letter, say its name"],["quiz","Quiz","Letters and their sounds"],["listen","Listen","Hear it, then pick it"],["match","Match pairs","Letters and how they sound"],["speak","Speak","Say the letter out loud"]],
-    done:"You know the whole alphabet and its sounds. Now try your first words in A1.",
+    done:"You know the whole alphabet and its sounds. Next: numbers in Zahlen, then your first words in A1.",
     feed:{go:"Learn the alphabet", keep:"Keep practising letters"}},
 };
 const isTrack = (lv=G.lv) => lv in TRACK;
@@ -677,8 +687,11 @@ function bump(w,ok){ const s=S.score[w.id]||0, n= ok? Math.min(5,s+1) : Math.max
 let lastUnit=0;
 function unitToast(done,next){
   const el=$("#toast"); el.innerHTML=`<span class="burst" aria-hidden="true">${ic("star")}${[0,60,120,180,240,300].map(r=>`<i style="--r:${r}deg"></i>`).join("")}</span><span><b>Unit complete: ${esc(done.name)}!</b> Next up: ${esc(next.name)}. It starts with your next round.</span>`; el.hidden=false;
-  clearTimeout(unitToast.t); unitToast.t=setTimeout(()=>el.hidden=true,6000);
+  clearTimeout(unitToast.t); unitToast.t=setTimeout(hideToast,4500);
+  setTimeout(()=>{ addEventListener("pointerdown",hideToast,true); addEventListener("keydown",hideToast,true); });   // from the next tap on, not the one that finished the unit
 }
+// on a short phone the toast can still sit over the word, so the next tap or key closes it (and still does what it does)
+function hideToast(){ $("#toast").hidden=true; removeEventListener("pointerdown",hideToast,true); removeEventListener("keydown",hideToast,true); }
 
 /* ---------- speech ---------- */
 let deVoice=null;
@@ -721,6 +734,8 @@ const $ = s=>document.querySelector(s);
 // a new screen fades in and rises a few pixels
 function enter(el){ el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); }
 const stage = $("#stage");
+// a result replaces a long round: if the page was scrolled down, bring the score back into view
+const showResult = ()=>{ if(stage.getBoundingClientRect().top<0) stage.scrollIntoView({block:"start"}); };
 const shuffle = a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]} return a};
 const pool = ()=> poolFor(S.sel);
 function pickWords(n){ // favour words you know least
@@ -786,7 +801,7 @@ function status(w,sc=S.score){ const s=sc[w.id]; return s===undefined?"new": s>=
 const CATS = [["mastered","Confident","var(--good)","5 right answers"],["learned","Known","color-mix(in srgb,var(--good) 45%,var(--bg))","3 or 4 right"],
   ["learning","Still learning","var(--accent)","started, under 3"],["new","Not started","var(--line)","never seen yet"]];
 const catName = c => CATS.find(x=>x[0]===c)[1];
-const confStars = s => s===undefined ? "" : "★".repeat(s)+"☆".repeat(5-s);
+const confStars = s => s===undefined ? "" : "●".repeat(s)+"○".repeat(5-s);   // dots: the star is for favourites
 // counts for one level: total, each category, learned (known + confident), remaining (not learned yet), and each confidence step 0 to 5
 function wordStats(lv=G.lv){
   const sc=G.levels[lv].score, ws=ALL[lv], c={new:0,learning:0,learned:0,mastered:0}, steps=[0,0,0,0,0,0];
@@ -815,7 +830,7 @@ function myWordsHTML(WN){
     <div class="cats">${CATS.map(c=>`<button class="cat" data-wf="${c[0]}"><i style="background:${c[2]}"></i>${c[1]} <b>${st[c[0]]}</b></button>`).join("")}</div>
     <div class="row spread" style="margin-top:6px"><h3 class="h2">Confidence levels</h3><span class="muted">each right answer moves a word up one level, a wrong one moves it down</span></div>
     <div class="tbars">${STEP.map(([s,lab])=>`<button class="lvlrow" data-wf="s${s}"><span class="nm"><span class="conf">${confStars(s)}</span> ${lab}</span><span class="track"><i style="width:${pc(st.steps[s])}%;background:${stepColor(s)}"></i></span><span class="n">${st.steps[s]}</span></button>`).join("")}
-      <button class="lvlrow" data-wf="new"><span class="nm">Not started</span><span class="track"><i style="width:${pc(st.new)}%;background:var(--muted)"></i></span><span class="n">${st.new}</span></button></div>
+      <button class="lvlrow" data-wf="new"><span class="nm">Not started</span><span class="track"><i style="width:${pc(st.new)}%;background:color-mix(in srgb,var(--muted) 40%,var(--line))"></i></span><span class="n">${st.new}</span></button></div>
   </section>`;
 }
 let progOpen=false;   // "Your progress" stays open while you move around this session
@@ -838,12 +853,12 @@ function Home(){
     : [["cards","Swipe cards","See a word, flip to check"],["quiz","Quiz","Pick the right meaning"],["listen","Listen","Hear a word, find it"],["match","Match pairs","Join words and meanings"],["speak","Speak","Say it, get a score"]];
   // the other tracks: the alphabet and numbers from a word level, or back to your words from a track
   const abcOpen=Object.keys(G.levels.ABC.score).length>0 && !UNITS.ABC.every(x=>unitDone(x,G.levels.ABC.score));
-  const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?[wl,"Z"] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?["ABC","Z"] : ["Z"];
+  const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?["Z",wl] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?["ABC","Z"] : ["Z"];
   const feedHTML=k=>{ const ous=UNITS[k], oci=curUnit(k), ou=ous[oci], osc=G.levels[k].score, OT=TRACK[k];
     const ogot=ou.words.filter(w=>(osc[w.id]||0)>=3).length, ostarted=Object.keys(osc).length>0;
     return `<section class="feed" data-lv="${k}">
       <span class="feedbig">${lvBadge(k)}</span>
-      <div class="feedtxt"><span><b>${OT?OT.title:k}</b> <span class="muted">· ${ostarted?`Unit ${oci+1} · ${esc(ou.name)} · ${ogot}/${ou.words.length}`:LVL[k].en}</span></span>
+      <div class="feedtxt"><span><b>${OT?OT.title:LVL[k].title}</b> <span class="muted">· ${ostarted?`Unit ${oci+1} · ${esc(ou.name)} · ${ogot}/${ou.words.length}`:LVL[k].en}</span></span>
         <button class="feedgo" id="go-${k}" data-golv="${k}">${OT?(ostarted?OT.feed.keep:OT.feed.go):ostarted?`Back to ${k}`:`Start ${k}`}</button></div>
       ${ic("chev")}
     </section>`; };
@@ -869,7 +884,7 @@ function Home(){
     ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b>${esc(T.tips[u.topic])}</p>`:""}
     <div class="hcta"><button class="btn cta" id="goPractice">${started?"Continue":"Start"}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
     <div class="udots">${dots}</div>
-    <p class="udcap muted">Unit ${ci+1} of ${us.length}${ci?" · tap a finished unit to review it":""}</p>
+    <p class="udcap muted">Unit ${ci+1}${ci?" · tap a finished unit to review it":""}</p>
   </section>
 
   <section class="sec">
@@ -878,8 +893,9 @@ function Home(){
   </section>
 
   <section class="panel slim">
-    <div class="trow"><b>Today</b><span class="muted grow1">${reached?"Goal reached!":`${tl} of ${goal} new ${WN}`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
+    <div class="trow"><b>Today</b><span class="muted grow1">${t.answers?`${t.answers} answered · `:""}${reached?"Goal reached!":`${tl} of ${goal} new ${WN} learned`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
     <span class="mbar${reached?" ok":""}" role="img" aria-label="Today's goal: ${t.learned} of ${goal} learned"><i style="width:${Math.min(100,t.learned/goal*100)}%"></i></span>
+    ${!tl&&t.answers?`<span class="muted" style="font-size:.8rem">A ${one(WN)} counts as learned after 3 right answers.</span>`:""}
   </section>
 
   ${weak.length?`<section class="panel slim">
@@ -899,7 +915,7 @@ function Home(){
       <section class="psec">
         <div class="row spread"><h3 class="h2">Last 7 days</h3><span class="muted">answers per day</span></div>
         <div>
-          <div class="week">${days.map(({d,r})=>`<div class="col7" title="${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}: ${r.answers} answers, ${r.learned} new ${WN} learned, ${r.xp} points"><em>${r.answers||""}</em><div class="bar ${r.answers?"":"zero"}" style="height:${r.answers/maxA*100}%"></div></div>`).join("")}</div>
+          <div class="week">${days.map(({d,r})=>`<div class="col7" style="--h:${r.answers/maxA*100}%" title="${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}: ${r.answers} answers, ${r.learned} new ${WN} learned, ${r.xp} points"><em>${r.answers||""}</em><div class="bar ${r.answers?"":"zero"}"></div></div>`).join("")}</div>
           <div class="wkd">${days.map(({d},k)=>`<span class="${k===6?"now":""}">${k===6?"Today":d.toLocaleDateString("en-GB",{weekday:"short"})}</span>`).join("")}</div>
         </div>
         <div class="goal-pick"><span class="muted">Daily goal, new ${WN}:</span>${[5,10,15,20].map(g=>`<button data-g="${g}" aria-pressed="${g===goal}">${g}</button>`).join("")}</div>
@@ -997,9 +1013,9 @@ function Cards(){
           <span class="stamp yes" id="stY">Knew it ✓</span><span class="stamp no" id="stN">Again ↺</span>
         </div>
       </div>
-      <div class="swipe-hint"><span class="l">← still learning</span><span>tap to flip</span><span class="r">I knew it →</span></div>
+      <div class="swipe-hint">Or swipe the card: right if you knew it, left if not</div>
       <div class="row spread"><div id="spk"></div>
-        <div class="row"><button class="btn" id="again2">Still learning</button><button class="btn good" id="knew">I knew it</button></div></div>
+        <div class="row acts"><button class="btn" id="again2">Still learning</button><button class="btn good" id="knew">I knew it</button></div></div>
       <div class="muted kbdhint">Keys: Space flips, P plays sound, ← or 1 still learning, → or 2 I knew it.</div>`;
     const sb=spkBtn(w); $("#spk").appendChild(sb);
     const sw=$("#sw"), card=$("#card"), stY=$("#stY"), stN=$("#stN");
@@ -1049,11 +1065,11 @@ function Quiz(kind){
     else if(mode==="de-en") prompt=`<div class="prompt" id="pr"><div class="word">${deHTML(w)}</div></div><div class="muted" style="text-align:center">${tq?.deEn||"What does it mean in English?"}</div>`;
     else prompt=`<div class="prompt" id="pr"><div class="meaning">${esc(w.en)}</div></div><div class="muted" style="text-align:center">${tq?.enDe||"Which German word is it?"}</div>`;
     stage.innerHTML=`
-      <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">Streak <b id="stk">${streak}</b></span></div>
+      <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">In a row: <b id="stk">${streak}</b></span></div>
       ${prompt}
       <div class="options">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><kbd>${k+1}</kbd><span>${key==="en"?esc(o.en):deHTML(o)}</span></button>`).join("")}</div>
       <div class="feedback" id="fb"></div>
-      <div class="row spread"><span class="tag">${tagHTML(w.topic)}</span><button class="btn" id="nx" hidden>Next</button></div>`;
+      <div class="row spread"><span class="tag">${tagHTML(w.topic)}</span><button class="btn primary" id="nx" hidden>Next</button></div>`;
     const pr=$("#pr");
     if(mode==="listen"){ const b=spkBtn(w,"big-ear"); pr.appendChild(b); setTimeout(()=>say(sayW(w),b),150); }
     else if(mode==="de-en" && !hush){ pr.appendChild(spkBtn(w)); }
@@ -1080,8 +1096,9 @@ function Quiz(kind){
     stage.innerHTML=`<div class="result">
       <div class="score">${right}/${N}</div>
       <div class="note">${pct===1?"Perfekt! Every one right.":pct>=.7?"Sehr gut! Keep going.":pct>=.4?"Nicht schlecht. Practise the red ones.":"Übung macht den Meister. Try the flashcards first."}</div>
-      <div class="review">${log.map(({w,ok})=>`<div><span style="color:var(--${ok?"good":"bad"});font-weight:700">${ok?"✓":"✗"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div>
-      <button class="btn primary" id="again">Play again</button></div>`;
+      <button class="btn primary" id="again">Play again</button>
+      <div class="review">${log.map(({w,ok})=>`<div><span style="color:var(--${ok?"good":"bad"});font-weight:700">${ok?"✓":"✗"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
+    showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
     $("#again").onclick=()=>Quiz(kind);
   }
@@ -1137,8 +1154,9 @@ function Match(){
   function finish(){ clearInterval(timer); if(!live()) return; const s=Math.round((Date.now()-t0)/1000); renderStats();
     stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei!"}</div>
       ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus points for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
-      <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div>
-      <button class="btn primary" id="again">Play new sets</button></div>`;
+      <button class="btn primary" id="again">Play new sets</button>
+      <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
+    showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k],"small")));
     $("#again").onclick=Match; }
   play();
@@ -1406,8 +1424,9 @@ function Speak(){
     keyHandler=null;
     const said=log.filter(x=>x.score!=null), avg=said.length?Math.round(said.reduce((a,b)=>a+b.score,0)/said.length):null;
     stage.innerHTML=`<div class="result"><div class="score">${avg??"–"}</div><div class="note">${avg==null?"You skipped every word. Try saying a few next round.":`Average score over ${said.length} word${said.length>1?"s":""}. ${grade(avg)[0]}`}</div>
-      <div class="review">${log.map(({w,score,heard})=>`<div><span class="pchip" style="--c:${score==null?"var(--line)":`var(--${grade(score)[1]})`}">${score??"–"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${heard?`heard “${esc(heard)}”`:"skipped"}</span></span></div>`).join("")}</div>
-      <button class="btn primary" id="again">Speak 10 more</button></div>`;
+      <button class="btn primary" id="again">Speak 10 more</button>
+      <div class="review">${log.map(({w,score,heard})=>`<div><span class="pchip" style="--c:${score==null?"var(--line)":`var(--${grade(score)[1]})`}">${score??"–"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${heard?`heard “${esc(heard)}”`:"skipped"}</span></span></div>`).join("")}</div></div>`;
+    showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
     $("#again").onclick=Speak;
   }
@@ -1424,15 +1443,17 @@ function List(){
   stage.innerHTML=`<div class="row spread"><input class="search" id="q" type="search" placeholder="Search German or English…" aria-label="Search words"></div>
     <div class="cats" id="scope"></div>
     <div class="cats" id="filt"></div>
-    <div class="row spread"><label class="muted"><input type="checkbox" id="onlyStar"> Only starred <span id="starN">${WN}</span></label><span class="muted" id="cnt"></span></div>
+    <div class="row spread"><label class="muted onlystar"><input type="checkbox" id="onlyStar"><span>Only starred <span id="starN">${WN}</span></span></label><span class="muted" id="cnt"></span></div>
     <div class="list" id="lst"></div>`;
   const chips=()=>{
     const ci=curUnit(), ul=S.sel==="review"&&ci>0?`Units 1 to ${ci+1}`:typeof S.sel==="number"&&S.sel<ci?UNITS[G.lv][S.sel].name:"This unit";
     $("#scope").innerHTML=[["unit",esc(ul)],["level",`All ${LVL[G.lv].name} ${WN}`]].map(([v,l])=>`<button class="cat" data-s="${v}" aria-pressed="${listView.scope===v}">${l}</button>`).join("");
-    const fs=["all","done","left",...CATS.map(c=>c[0])]; if(!fs.includes(listView.f)) fs.push(listView.f);
-    const base=listView.scope==="level"?WORDS:pool();
-    $("#filt").innerHTML=fs.map(f=>{ const [l,fn]=filterFor(f), c=CATS.find(x=>x[0]===f);
-      return `<button class="cat" data-f="${f}" aria-pressed="${listView.f===f}">${c?`<i style="background:${c[2]}"></i>`:""}${l} <b>${base.filter(fn).length}</b></button>` }).join("");
+    // All, Learned and Remaining up front; the four categories wait behind "More filters"
+    const main=["all","done","left"], more=CATS.map(c=>c[0]); if(![...main,...more].includes(listView.f)) main.push(listView.f);
+    const base=listView.scope==="level"?WORDS:pool(), wasOpen=$("#filt .morefilt")?.open;
+    const btn=f=>{ const [l,fn]=filterFor(f), c=CATS.find(x=>x[0]===f);
+      return `<button class="cat" data-f="${f}" aria-pressed="${listView.f===f}">${c?`<i style="background:${c[2]}"></i>`:""}${l} <b>${base.filter(fn).length}</b></button>` };
+    $("#filt").innerHTML=main.map(btn).join("")+`<details class="rvd morefilt"${wasOpen||more.includes(listView.f)?" open":""}><summary>More filters${ic("down")}</summary><div class="cats">${more.map(btn).join("")}</div></details>`;
     $("#scope").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.scope=b.dataset.s; chips(); draw(); });
     $("#filt").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.f=b.dataset.f; chips(); draw(); });
   };
@@ -1446,8 +1467,9 @@ function List(){
       const r=document.createElement("div"), s=S.score[w.id]; r.className="li";
       r.innerHTML=`<span></span><span class="de">${deHTML(w)}${s!==undefined?` <span class="conf" style="color:var(--${s>=3?"good":"muted"})" title="${catName(status(w))}, level ${s} of 5">${confStars(s)}</span>`:""}</span><span class="en">${esc(w.en)}</span>`;
       r.firstChild.appendChild(spkBtn(w,"small"));
-      const st=document.createElement("button"); st.className="star"+(S.stars[w.id]?" on":""); st.textContent="★"; st.setAttribute("aria-label","Star "+w.de);
-      st.onclick=()=>{ S.stars[w.id]=!S.stars[w.id]; if(!S.stars[w.id]) delete S.stars[w.id]; save(); st.classList.toggle("on") };
+      const st=document.createElement("button"); st.className="star"; st.setAttribute("aria-label","Star "+w.de);
+      const mark=()=>{ const on=!!S.stars[w.id]; st.classList.toggle("on",on); st.textContent=on?"★":"☆"; st.setAttribute("aria-pressed",on); };
+      st.onclick=()=>{ S.stars[w.id]=!S.stars[w.id]; if(!S.stars[w.id]) delete S.stars[w.id]; save(); mark(); }; mark();
       r.appendChild(st); box.appendChild(r);
     }
   };
