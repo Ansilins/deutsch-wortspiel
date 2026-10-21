@@ -34,75 +34,97 @@ body::before{content:"";position:fixed;z-index:50;left:0;right:0;top:0;height:en
 <title>Deutsch Wortspiel</title>
 <style>@font-face{font-family:"Bricolage Grotesque";font-weight:500;font-style:normal;font-display:swap;src:url("fonts/bricolage-grotesque-latin-500-normal.woff2") format("woff2")}@font-face{font-family:"Bricolage Grotesque";font-weight:700;font-style:normal;font-display:swap;src:url("fonts/bricolage-grotesque-latin-700-normal.woff2") format("woff2")}@font-face{font-family:"Bricolage Grotesque";font-weight:800;font-style:normal;font-display:swap;src:url("fonts/bricolage-grotesque-latin-800-normal.woff2") format("woff2")}@font-face{font-family:"Atkinson Hyperlegible";font-weight:400;font-style:normal;font-display:swap;src:url("fonts/atkinson-hyperlegible-latin-400-normal.woff2") format("woff2")}@font-face{font-family:"Atkinson Hyperlegible";font-weight:700;font-style:normal;font-display:swap;src:url("fonts/atkinson-hyperlegible-latin-700-normal.woff2") format("woff2")}@font-face{font-family:"Kalam";font-weight:400;font-style:normal;font-display:swap;src:url("fonts/kalam-latin-400-normal.woff2") format("woff2")}@font-face{font-family:"Kalam";font-weight:700;font-style:normal;font-display:swap;src:url("fonts/kalam-latin-700-normal.woff2") format("woff2")}</style>
 <style>
-/* Layout: one centred play column. Light = squared school exercise book (Karopapier), dark = classroom chalkboard (Tafel).
-   Noun genders carry the classic learner colours: der blue, die red, das green. */
+/* Layout: one centred column. Light = a calm paper notebook (squared paper only behind the top), dark = classroom chalkboard (Tafel).
+   Each step has its own accent colour (data-lv); noun genders keep the classic learner colours: der blue, die red, das green. */
 :root{
-  --bg:#f6f7f2; --grid:#dfe5ea; --surface:#ffffff; --ink:#1d2430; --muted:#5f6b78; --line:#d3d9df;
-  --accent:#e0a100; --accent-ink:#2a1f00; --good:#1f8a4c; --bad:#c23b3b;
+  --bg:#f7f6f1; --grid:#e2e6e9; --surface:#ffffff; --ink:#1d2430; --muted:#5b6673; --line:#e3e6e9; --line2:#cdd4da;
+  --good:#1a7d45; --bad:#c23b3b;
   --der:#2763c4; --die:#c8344a; --das:#1d8a55; --plain:#4a5563;
-  --shadow:0 1px 0 rgba(20,30,40,.06),0 6px 18px rgba(20,30,40,.07);
+  --shadow:0 1px 2px rgba(20,30,40,.05),0 6px 20px rgba(20,30,40,.06);
   --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
   --f-body:"Atkinson Hyperlegible",ui-sans-serif,system-ui,-apple-system,sans-serif;
   --f-hand:"Kalam","Comic Sans MS",cursive;
+  /* level colour: fill, text on the fill, the colour as text on a light surface, then the dark-mode fill and text on it */
+  --a-l:#e0a100; --ai-l:#2a1f00; --at-l:#8a5a00; --a-d:#f2c94c; --ai-d:#2a1f00;
 }
+[data-lv="ABC"]{--a-l:#6b4fd8;--ai-l:#fff;--at-l:#5b3cc4;--a-d:#b7a4ff;--ai-d:#1d1147}
+[data-lv="Z"]{--a-l:#0e7c72;--ai-l:#fff;--at-l:#0b6b63;--a-d:#5cd6c6;--ai-d:#052421}
+[data-lv="A1"]{--a-l:#e0a100;--ai-l:#2a1f00;--at-l:#8a5a00;--a-d:#f2c94c;--ai-d:#2a1f00}
+[data-lv="A2"]{--a-l:#2e62d6;--ai-l:#fff;--at-l:#2552c0;--a-d:#93b4ff;--ai-d:#0b1b40}
+:root,[data-lv]{--accent:var(--a-l);--accent-ink:var(--ai-l);--accent-text:var(--at-l);--soft:color-mix(in srgb,var(--accent) 13%,var(--surface))}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#1f2c27; --grid:#27362f; --surface:#263630; --ink:#eef1ea; --muted:#a9b8ae; --line:#3a4d44;
-  --accent:#f2c94c; --accent-ink:#2a1f00; --good:#6fd39a; --bad:#ff8a8a;
+  --bg:#1f2c27; --grid:#28382f; --surface:#263630; --ink:#eef1ea; --muted:#a9b8ae; --line:#34463e; --line2:#46594f;
+  --good:#6fd39a; --bad:#ff8a8a;
   --der:#8fb6ff; --die:#ff94a3; --das:#7fe0aa; --plain:#c9d3cc;
-  --shadow:0 1px 0 rgba(0,0,0,.2),0 8px 22px rgba(0,0,0,.28); color-scheme:dark}}
+  --shadow:0 1px 0 rgba(0,0,0,.2),0 8px 22px rgba(0,0,0,.26); color-scheme:dark}
+  :root:not([data-theme="light"]),:root:not([data-theme="light"]) [data-lv]{--accent:var(--a-d);--accent-ink:var(--ai-d);--accent-text:var(--a-d)}}
 :root[data-theme="dark"]{
-  --bg:#1f2c27; --grid:#27362f; --surface:#263630; --ink:#eef1ea; --muted:#a9b8ae; --line:#3a4d44;
-  --accent:#f2c94c; --accent-ink:#2a1f00; --good:#6fd39a; --bad:#ff8a8a;
+  --bg:#1f2c27; --grid:#28382f; --surface:#263630; --ink:#eef1ea; --muted:#a9b8ae; --line:#34463e; --line2:#46594f;
+  --good:#6fd39a; --bad:#ff8a8a;
   --der:#8fb6ff; --die:#ff94a3; --das:#7fe0aa; --plain:#c9d3cc;
-  --shadow:0 1px 0 rgba(0,0,0,.2),0 8px 22px rgba(0,0,0,.28); color-scheme:dark}
+  --shadow:0 1px 0 rgba(0,0,0,.2),0 8px 22px rgba(0,0,0,.26); color-scheme:dark}
+:root[data-theme="dark"],:root[data-theme="dark"] [data-lv]{--accent:var(--a-d);--accent-ink:var(--ai-d);--accent-text:var(--a-d)}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:24px 24px;}
-.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 48px;display:grid;gap:18px}
-button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* the squared paper fades out under the top bar */
+body{margin:0;min-height:100vh;background-color:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  background-image:linear-gradient(transparent,var(--bg) 220px),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:100% 100%,24px 24px,24px 24px;background-position:0 40px,0 0,0 0;background-repeat:no-repeat,repeat,repeat}
+.wrap{max-width:720px;margin:0 auto;display:grid;gap:14px}
+.hwrap{max-width:760px;margin:0 auto;display:grid;gap:20px}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s ease-out}
+button:active:not(:disabled){transform:scale(.97)}
 /* keeps clear of the notch and the home bar when the game runs full screen on a phone */
 .wrap,.hwrap{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-.wrap{padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px))}
-.hwrap{padding-top:calc(18px + env(safe-area-inset-top,0px));padding-bottom:calc(48px + env(safe-area-inset-bottom,0px))}
-@media (hover:none) and (pointer:coarse){.kbdhint{display:none}}
-button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+.hwrap{padding-top:calc(12px + env(safe-area-inset-top,0px));padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+/* keyboard shortcuts only where there is a keyboard and a mouse */
+.kbdhint,.opt kbd{display:none}
+@media (hover:hover) and (pointer:fine){.kbdhint{display:block}.opt kbd{display:inline-block}}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent-text);outline-offset:2px}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}}
+.enter{animation:rise .18s ease-out}
+@keyframes grow{from{transform:scaleX(0)}}
 
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
-h1{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,6vw,2.8rem);line-height:1;margin:0;letter-spacing:-.02em}
-h1 small{display:block;font-family:var(--f-hand);font-weight:400;font-size:1.05rem;color:var(--muted);letter-spacing:0;margin-top:6px}
-.stats{display:flex;gap:8px;flex-wrap:wrap}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 12px;min-width:74px;text-align:center}
-.stat b{display:block;font-family:var(--f-display);font-size:1.25rem;line-height:1.1;font-variant-numeric:tabular-nums}
-.stat span{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+/* practice header: back, where you are, how far this unit is */
+.phead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
+.pmid{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0}
+#pLevel{font-weight:700;font-size:.92rem;line-height:1.25;min-width:0;text-wrap:balance;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pknown{text-align:right;line-height:1.1}
+.pknown b{font-family:var(--f-display);font-weight:800;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.pknown span{display:block;font-size:.7rem;color:var(--muted)}
+.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);width:0;border-radius:99px;transition:width .4s}
+.progress-label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.82rem;color:var(--muted);margin-top:5px}
+#pTxt{text-wrap:balance}
+.pts{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;color:var(--accent-text);font-weight:700}
+.pts .ic{width:15px;height:15px}
+#sXp{display:inline-block;font-variant-numeric:tabular-nums}
 
-.progress{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
-.progress i{display:block;height:100%;background:var(--accent);width:0;transition:width .4s}
-.progress-label{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin-top:4px}
-
-nav.modes{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:5px}
-nav.modes button{border:0;background:none;border-radius:10px;padding:8px 4px;display:grid;gap:0;justify-items:center}
-nav.modes button b{font-family:var(--f-display);font-size:1rem}
-nav.modes button span{font-size:.72rem;color:var(--muted)}
-nav.modes button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
-nav.modes button[aria-selected="true"] span{color:inherit;opacity:.75}
-
-@media (max-width:560px){nav.modes{grid-template-columns:repeat(3,1fr)} nav.modes button span{display:none}}
-.topics{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
-.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:.85rem;white-space:nowrap}
+nav.modes{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px;box-shadow:var(--shadow)}
+nav.modes button{border:0;background:none;border-radius:12px;padding:6px 1px 5px;min-height:54px;min-width:0;display:grid;justify-items:center;align-content:center;gap:3px;color:var(--muted);font-size:.74rem;font-weight:700;line-height:1.1}
+nav.modes button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+@media (min-width:600px){nav.modes button{font-size:.84rem;min-height:58px}}
+@media (hover:hover){nav.modes button:hover:not([aria-selected="true"]){background:var(--soft);color:var(--ink)}}
+.topics{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.chip{flex:none;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 13px;font-size:.84rem;white-space:nowrap;min-height:44px}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 
-.stage{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:22px;min-height:340px;display:grid;gap:16px;align-content:start}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px;min-height:340px;display:grid;gap:14px;align-content:start}
+@media (min-width:600px){.stage{padding:24px}}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .spread{justify-content:space-between}
 .muted{color:var(--muted);font-size:.9rem}
-.btn{border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 16px;font-weight:700}
-.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.btn.good{background:var(--good);border-color:var(--good);color:#fff}
+.btn{border:1px solid var(--line2);background:var(--surface);border-radius:14px;padding:10px 16px;min-height:44px;font-weight:700}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.good{background:var(--good);border-color:var(--good);color:var(--surface)}
 .btn:disabled{opacity:.5;cursor:default}
+.btn.back{display:inline-flex;align-items:center;gap:2px;padding:6px 14px 6px 8px;border-radius:99px}
 .speak{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;border:2px solid var(--accent);background:transparent;flex:none}
 .speak svg{width:22px;height:22px;fill:var(--ink)}
 .speak.small{width:34px;height:34px;border-width:1.5px}
@@ -118,8 +140,8 @@ nav.modes button[aria-selected="true"] span{color:inherit;opacity:.75}
 .card{perspective:1200px;cursor:pointer;min-height:220px}
 .card-inner{position:relative;min-height:220px;transition:transform .5s;transform-style:preserve-3d}
 .card.flipped .card-inner{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;border:2px dashed var(--line);display:grid;place-content:center;text-align:center;padding:18px;gap:8px}
-.face.back{transform:rotateY(180deg);background:var(--bg)}
+.face{position:absolute;inset:0;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:18px;border:1px solid var(--line2);background:var(--surface);display:grid;place-content:center;text-align:center;padding:18px;gap:8px}
+.face.back{transform:rotateY(180deg);background:var(--soft)}
 .word{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,8vw,3.2rem);line-height:1.05;overflow-wrap:anywhere}
 .word .art{font-weight:500;opacity:.85}
 .meaning{font-family:var(--f-hand);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.15}
@@ -127,49 +149,33 @@ nav.modes button[aria-selected="true"] span{color:inherit;opacity:.75}
 .swipe-area{position:relative;min-height:270px}
 .swipe-area .card,.swipe-area .card-inner{min-height:270px}
 .swipe{position:relative;z-index:1;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform}
-.swipe .face.front{background:var(--surface)}
-.under{position:absolute;inset:0;border-radius:14px;border:2px dashed var(--line);background:var(--bg);transform:translateY(10px) scale(.95);opacity:.8}
-.stamp{position:absolute;top:16px;z-index:2;font-family:var(--f-display);font-weight:800;font-size:1.25rem;letter-spacing:.02em;border:3px solid;border-radius:10px;padding:2px 10px;opacity:0;pointer-events:none;background:var(--surface)}
+.swipe .face.front{box-shadow:var(--shadow)}
+.under{position:absolute;inset:0;border-radius:18px;border:1px solid var(--line);background:var(--bg);transform:translateY(10px) scale(.95)}
+.stamp{position:absolute;top:16px;z-index:2;font-family:var(--f-display);font-weight:800;font-size:1.2rem;letter-spacing:.02em;border:3px solid;border-radius:10px;padding:2px 10px;opacity:0;pointer-events:none;background:var(--surface)}
 .stamp.yes{left:16px;color:var(--good);transform:rotate(-12deg)}
 .stamp.no{right:16px;color:var(--bad);transform:rotate(12deg)}
 .swipe-hint{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}
 .swipe-hint .l{color:var(--bad);font-weight:700}.swipe-hint .r{color:var(--good);font-weight:700}
 .deckbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
-.deckbar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.deckbar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
 /* paare sets */
 .sets{display:flex;gap:6px;align-items:center}
 .sets i{width:26px;height:8px;border-radius:99px;background:var(--line)}
 .sets i.ok{background:var(--good)} .sets i.now{background:var(--accent)}
 .setmsg{min-height:1.6em;text-align:center;font-weight:700;color:var(--good)}
-/* my words: counts per category and confidence level */
-.wtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-@media (max-width:560px){.wtiles{grid-template-columns:repeat(2,1fr)}}
-.wtile{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:10px 12px;background:var(--bg);text-align:left;display:grid;gap:0}
-.wtile b{font-family:var(--f-display);font-size:1.7rem;line-height:1.1;font-variant-numeric:tabular-nums}
-.wtile span{font-size:.8rem;color:var(--muted)}
-.wtile em{font-style:normal;font-size:.72rem;color:var(--muted)}
-.cats{display:flex;flex-wrap:wrap;gap:6px}
-.cat{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 11px;font-size:.85rem}
-.cat i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.cat[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
-.lvlrow{display:grid;grid-template-columns:minmax(0,8.5rem) 1fr 3rem;gap:10px;align-items:center;font-size:.88rem;border:0;background:none;padding:3px 0;text-align:left}
-.lvlrow .track{height:12px;border-radius:4px;background:var(--line);overflow:hidden}
-.lvlrow .track i{display:block;height:100%}
-.lvlrow .n{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;font-size:.82rem}
-.lvlrow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (hover:hover){.lvlrow:hover .track{outline:1px solid var(--muted)}}
-.conf{font-size:.7rem;letter-spacing:1px;white-space:nowrap}
 
 /* quiz */
 .prompt{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center;padding:10px 0}
 .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:520px){.options{grid-template-columns:1fr}}
-.opt{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:14px;text-align:left;font-size:1.05rem;min-height:58px;display:flex;align-items:center;gap:10px}
-.opt kbd{font-family:var(--f-body);font-size:.75rem;border:1px solid var(--line);border-radius:6px;padding:1px 7px;color:var(--muted);flex:none}
-@media (hover:hover){.opt:hover:not(:disabled){border-color:var(--ink)}}
-.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--bg))}
-.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--bg))}
-.opt:disabled{cursor:default}
+.opt{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:13px 14px;text-align:left;font-size:1.05rem;min-height:56px;display:flex;align-items:center;gap:10px}
+.opt kbd{font-family:var(--f-body);font-size:.75rem;border:1px solid var(--line2);border-radius:6px;padding:1px 7px;color:var(--muted);flex:none}
+@media (hover:hover){.opt:hover:not(:disabled){border-color:var(--line2);background:var(--soft)}}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--surface));animation:okpop .3s ease-out}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface));animation:shake .25s}
+.opt:disabled{cursor:default;color:inherit}
+@keyframes okpop{50%{transform:scale(1.03)}}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 .dots{display:flex;gap:5px}
 .dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
 .dots i.ok{background:var(--good)} .dots i.no{background:var(--bad)} .dots i.now{background:var(--accent)}
@@ -181,138 +187,186 @@ nav.modes button[aria-selected="true"] span{color:inherit;opacity:.75}
 /* match */
 .pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .col{display:grid;gap:8px;align-content:start}
-.tile{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:12px 10px;min-height:52px;font-size:1rem;text-align:center;overflow-wrap:anywhere}
+.tile{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 10px;min-height:52px;font-size:1rem;text-align:center;overflow-wrap:anywhere;transition:transform .12s,opacity .25s}
 .tile.de{font-family:var(--f-display);font-weight:700}
-.tile.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 18%,var(--bg))}
-.tile.done{opacity:.25;cursor:default;border-style:dashed}
-.tile.shake{animation:shake .35s}
-@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.tile.sel{border-color:var(--accent);background:var(--soft)}
+.tile.done{opacity:.28;cursor:default;border-color:var(--good)}
+.tile.shake{animation:shake .3s}
 
 /* home */
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:46px}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--f-display);font-weight:800;font-size:1.2rem;letter-spacing:-.01em;line-height:1.1}
+.logo::before{content:"";width:12px;height:12px;border-radius:4px;background:var(--accent);flex:none}
+.lvbtn{display:inline-flex;align-items:center;gap:4px;min-height:44px;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 10px 4px 5px;box-shadow:var(--shadow)}
+.lvbtn b{font-family:var(--f-display);font-weight:800;background:var(--accent);color:var(--accent-ink);border-radius:99px;padding:3px 11px;line-height:1.35}
+.lvbtn .ic{color:var(--muted)}
 .home{display:grid;gap:22px}
-.h2{font-family:var(--f-display);font-weight:700;font-size:1.15rem;margin:0}
-.hero{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center}
-@media (max-width:520px){.hero{grid-template-columns:1fr;justify-items:center;text-align:center}}
-.ring{position:relative;width:150px;height:150px}
+.h2{font-family:var(--f-display);font-weight:700;font-size:1.1rem;margin:0}
+.sec{display:grid;gap:10px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;display:grid;gap:12px;align-content:start;min-width:0}
+.panel.slim{padding:12px 16px;gap:9px}
+.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-text);font-weight:700}
+.hhero{position:relative;overflow:hidden;background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px 20px 14px;display:grid;gap:14px}
+.hhero::before{content:"";position:absolute;inset:0 0 auto;height:5px;background:var(--accent)}
+.htop{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center}
+.hhero-txt{display:grid;gap:4px;min-width:0}
+.hhead{font-family:var(--f-display);font-weight:800;font-size:clamp(1.9rem,7vw,2.6rem);line-height:1.02;letter-spacing:-.025em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.lede{font-size:1.02rem;max-width:34em;margin:0;color:var(--ink)}
+.tip{margin:0;max-width:40em;font-size:.93rem;background:var(--soft);border-radius:12px;padding:10px 12px}
+.tip b{margin-right:6px;color:var(--accent-text)}
+.ring{position:relative;width:86px;height:86px}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:9}
+.ring .rbg{stroke:var(--line)}
+.ring .rfg{stroke:var(--accent);stroke-linecap:round;animation:ringin .6s ease-out both}
+@keyframes ringin{from{stroke-dashoffset:var(--c)}}
 .ring .pct{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
-.ring .pct b{font-family:var(--f-display);font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
-.ring .pct span{font-size:.75rem;color:var(--muted)}
-.hero-txt{display:grid;gap:8px;min-width:0}
-.hero-txt .big{font-family:var(--f-display);font-size:1.5rem;font-weight:700;line-height:1.15;text-wrap:balance}
+.ring .pct b{font-family:var(--f-display);font-size:1.35rem;line-height:1;font-variant-numeric:tabular-nums}
+.ring .pct span{font-size:.68rem;color:var(--muted)}
+.hcta{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.btn.cta{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-size:1.1rem;padding:12px 30px;min-height:54px;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+@media (max-width:520px){.hcta{justify-content:center}.hcta .cta{flex:1 1 100%}}
+@media (hover:hover){.btn.cta:hover{filter:brightness(1.05)}}
+.btn.link{border:0;background:none;color:var(--accent-text);padding:8px 4px;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+/* the unit path: finished, this one, locked */
+.udots{display:flex;border-top:1px solid var(--line);padding:10px max(0px,calc((100% - 460px)/2)) 0}
+.ud{flex:1;min-width:0;min-height:44px;border:0;background:none;padding:0;display:grid;place-items:center;position:relative}
+.ud::before{content:"";position:absolute;z-index:0;left:-50%;right:50%;top:50%;height:2px;margin-top:-1px;background:var(--line2)}
+.ud:first-child::before{display:none}
+.ud.done::before,.ud.now::before{background:var(--good)}
+.ud>span{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:.95rem;background:var(--surface);border:2px solid var(--line2);color:var(--muted)}
+.ud .ic{width:16px;height:16px}
+.ud.done>span{background:var(--good);border-color:var(--good);color:var(--surface)}
+.ud.now>span{width:38px;height:38px;background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 0 0 4px var(--soft)}
+.ud:disabled{cursor:default}
+@media (max-width:360px){.ud:nth-child(6){display:none}}
+.udcap{margin:-6px 0 0;text-align:center;font-size:.8rem}
+.modecards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.modecard:last-child{grid-column:1/-1}
+@media (min-width:640px){.modecards{grid-template-columns:repeat(6,minmax(0,1fr))}.modecard{grid-column:span 2}.modecard:nth-child(n+4){grid-column:span 3}}
+.modecard{display:grid;gap:1px;align-content:start;justify-items:start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow);min-width:0;transition:transform .15s,border-color .15s}
+.modecard .mi{width:42px;height:42px;border-radius:13px;background:var(--soft);color:var(--accent-text);display:grid;place-items:center;margin-bottom:8px}
+.modecard .mi .ic{width:22px;height:22px}
+.modecard b{font-family:var(--f-display);font-size:1.06rem;line-height:1.2}
+.modecard .d{font-size:.84rem;color:var(--muted);line-height:1.3}
+@media (max-width:639px){.modecard:last-child{grid-template-columns:auto minmax(0,1fr);column-gap:12px;align-items:center}.modecard:last-child .mi{grid-row:1/3;margin:0}}
+@media (hover:hover){.modecard:hover{transform:translateY(-2px);border-color:var(--line2)}}
+.trow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
+.trow>b{font-family:var(--f-display);font-size:1.05rem}
+.trow .grow1{flex:1;min-width:0}
+.mbar{display:block;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.mbar i{display:block;height:100%;border-radius:99px;background:var(--accent);transform-origin:left;animation:grow .5s ease-out both}
+.mbar.ok i{background:var(--good)}
+.streak{display:inline-flex;align-items:center;gap:4px;font-weight:700;font-size:.9rem;color:var(--accent-text)}
+.rvd summary{list-style:none;cursor:pointer;color:var(--muted);font-size:.88rem;width:max-content;min-height:40px;display:flex;align-items:center;gap:4px}
+.rvd summary::-webkit-details-marker{display:none}
+.rvd summary .ic{width:16px;height:16px;transition:transform .2s}
+.rvd[open] summary .ic{transform:rotate(180deg)}
+.review-list{display:grid;gap:0}
+.review-list div{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.rvt{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+/* other steps: one row each, the whole row is the button */
+.feeds{display:grid;gap:8px}
+.feed{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px;min-height:62px;transition:transform .12s,border-color .15s}
+.feed:active{transform:scale(.985)}
+@media (hover:hover){.feed:hover{border-color:var(--line2)}}
+.feedbig{font-family:var(--f-display);font-weight:800;font-size:.95rem;min-width:46px;height:42px;padding:0 7px;border-radius:12px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+.feedtxt{display:grid;gap:1px;min-width:0;font-size:.92rem;line-height:1.3}
+.feedtxt .muted{font-size:.88rem}
+.feedgo{border:0;background:none;padding:0;text-align:left;color:var(--accent-text);font-weight:700;font-size:.9rem;width:max-content;max-width:100%}
+.feedgo::before{content:"";position:absolute;inset:0;border-radius:16px}
+.feedgo:active:not(:disabled){transform:none}
+.feedgo:focus-visible{outline:none}
+.feedgo:focus-visible::before{outline:3px solid var(--accent-text);outline-offset:2px}
+.feed>.ic{color:var(--muted)}
+/* your progress: folded away until you open it */
+.prog{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.prog>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px;min-height:54px;font-family:var(--f-display);font-weight:700;font-size:1.05rem;border-radius:18px}
+.prog>summary::-webkit-details-marker{display:none}
+.prog>summary .ic{color:var(--muted);transition:transform .2s}
+.prog[open]>summary{border-bottom:1px solid var(--line);border-radius:18px 18px 0 0}
+.prog[open]>summary .ic{transform:rotate(180deg)}
+.progin{padding:16px 18px 20px;display:grid;gap:26px}
+.psec{display:grid;gap:12px;min-width:0}
+/* my words: counts per category and confidence level */
+.wtiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media (max-width:560px){.wtiles{grid-template-columns:repeat(2,1fr)}}
+.wtile{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:10px 12px;background:var(--bg);text-align:left;display:grid;gap:0}
+.wtile b{font-family:var(--f-display);font-size:1.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.wtile span{font-size:.8rem;color:var(--muted)}
+.wtile em{font-style:normal;font-size:.72rem;color:var(--muted)}
+.cats{display:flex;flex-wrap:wrap;gap:6px}
+.cat{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:.85rem;min-height:40px}
+.cat i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.cat[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.lvlrow{display:grid;grid-template-columns:minmax(0,8.5rem) 1fr 3rem;gap:10px;align-items:center;font-size:.88rem;border:0;background:none;padding:5px 0;text-align:left;min-height:34px}
+.lvlrow .track{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.lvlrow .track i{display:block;height:100%;border-radius:99px}
+.lvlrow .n{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;font-size:.82rem}
+.lvlrow .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (hover:hover){.lvlrow:hover .track{outline:1px solid var(--muted)}}
+.conf{font-size:.7rem;letter-spacing:1px;white-space:nowrap}
+.tbars{display:grid;gap:2px}
+.stack{display:flex;gap:2px;height:16px;border-radius:99px;overflow:hidden;background:var(--line)}
+.stack i{display:block;height:100%;min-width:0}
 .goal-pick{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.goal-pick button{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:4px 10px;font-size:.85rem}
-.goal-pick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.goal-pick button{border:1px solid var(--line2);background:var(--surface);border-radius:10px;padding:4px 12px;font-size:.88rem;min-height:40px;min-width:44px}
+.goal-pick button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 @media (max-width:560px){.tiles{grid-template-columns:repeat(2,1fr)}}
 .tile2{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg)}
-.tile2 b{display:block;font-family:var(--f-display);font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.tile2 b{display:block;font-family:var(--f-display);font-size:1.45rem;line-height:1.1;font-variant-numeric:tabular-nums}
 .tile2 span{font-size:.78rem;color:var(--muted)}
-.today{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
-.today i{display:block;height:100%;background:var(--good);border-radius:99px}
-.stack{display:flex;gap:2px;height:22px;border-radius:6px;overflow:hidden;background:var(--line)}
-.stack i{display:block;height:100%;min-width:0}
-.keys{display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;color:var(--ink)}
-.keys span{display:inline-flex;align-items:center;gap:6px}
-.keys i{width:12px;height:12px;border-radius:3px;display:inline-block}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:150px;border-bottom:1px solid var(--line);padding-top:18px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;align-items:end;height:130px;border-bottom:1px solid var(--line);padding-top:18px}
 .week .col7{display:grid;grid-template-rows:auto 1fr;align-items:end;justify-items:center;height:100%;gap:4px;position:relative}
 .week .col7 em{font-style:normal;font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.week .bar{width:min(34px,80%);background:var(--accent);border-radius:4px 4px 0 0;align-self:end;min-height:2px}
+.week .bar{width:min(30px,80%);background:var(--accent);border-radius:6px 6px 0 0;align-self:end;min-height:2px}
 .week .bar.zero{background:var(--line)}
 .wkd{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;text-align:center;font-size:.75rem;color:var(--muted);margin-top:4px}
 .wkd .now{color:var(--ink);font-weight:700}
-.tbars{display:grid;gap:6px}
-.tbar{display:grid;grid-template-columns:minmax(0,9.5rem) 1fr 3.6rem;gap:10px;align-items:center;border:0;background:none;padding:3px 0;text-align:left;font-size:.88rem}
-@media (hover:hover){.tbar:hover .track{outline:1px solid var(--muted)}}
-.tbar .track{height:12px;border-radius:4px;background:var(--line);overflow:hidden;display:flex;gap:2px}
-.tbar .track i{display:block;height:100%}
-.tbar .n{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;font-size:.8rem}
-.tbar .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.review-list{display:grid;gap:0}
-.review-list div{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media (max-width:560px){.how{grid-template-columns:1fr}}
 .how div{border-left:3px solid var(--accent);padding:2px 0 2px 10px;font-size:.88rem}
 .how b{display:block;font-family:var(--f-display)}
-.sec{display:grid;gap:10px}
-/* home page */
-.hwrap{max-width:980px;margin:0 auto;display:grid;gap:22px}
-.topbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:10px}
-.logo{font-family:var(--f-display);font-weight:800;font-size:1.35rem;letter-spacing:-.01em}
-.hhero{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:center;padding-block:18px 6px}
-@media (max-width:640px){.hhero{grid-template-columns:1fr;justify-items:start}.hhero .ring{justify-self:center}}
-.hhero-txt{display:grid;gap:14px;min-width:0}
-.eyebrow{font-size:.78rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:700}
-.hhead{font-family:var(--f-display);font-weight:800;font-size:clamp(2.4rem,7vw,4.2rem);line-height:.98;letter-spacing:-.03em;margin:0;text-wrap:balance}
-.lede{font-size:1.08rem;max-width:34em;margin:0;color:var(--ink)}
-.btn.cta{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-size:1.1rem;padding:14px 26px;border-radius:14px}
-@media (hover:hover){.btn.cta:hover{filter:brightness(1.05)}}
-.ring.big{width:230px;height:230px}
-.ring.big .pct b{font-size:3rem}
-.ring.big .pct span{font-size:.85rem}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:20px;display:grid;gap:12px;align-content:start;min-width:0}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
-@media (max-width:760px){.two{grid-template-columns:1fr}}
-.modecards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-@media (max-width:860px){.modecards{grid-template-columns:repeat(2,1fr)}.modecard:last-child{grid-column:1/-1}}
-.modecard{display:grid;gap:4px;text-align:left;align-content:start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);transition:transform .15s,border-color .15s}
-@media (hover:hover){.modecard:hover{transform:translateY(-2px);border-color:var(--ink)}}
-.modecard b{font-family:var(--f-display);font-size:1.4rem;line-height:1.1}
-.modecard .en{font-weight:700;font-size:.9rem}
-.modecard .d{font-size:.85rem;color:var(--muted)}
-.btn.back{padding:8px 12px}
-/* units */
-.lvbtn{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 14px;font-size:.88rem}
-.lvbtn b{font-family:var(--f-display);background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:0 6px;margin-right:4px}
-.pick{display:grid;gap:16px;padding-block:20px;justify-items:start}
-.pick .levels{width:100%}
-.lvcard[aria-current="true"]{border-color:var(--ink)}
-.path{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-@media (max-width:640px){.path{grid-template-columns:repeat(3,1fr)}}
-.unit{display:grid;justify-items:center;gap:4px;text-align:center;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 6px;min-width:0}
-.unit .un{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:1.1rem;background:var(--line)}
-.unit .ut{font-size:.82rem;font-weight:700;line-height:1.2;overflow-wrap:anywhere}
-.unit .us{font-size:.72rem;color:var(--muted)}
-.unit.done .un{background:var(--good);color:#fff}
-.unit.now{border-color:var(--ink);box-shadow:var(--shadow)}
-.unit.now .un{background:var(--accent);color:var(--accent-ink)}
-.unit.locked{opacity:.55;cursor:default}
-@media (hover:hover){.unit.done:hover,.unit.now:hover{border-color:var(--muted)}}
-.unitwords{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
-@media (max-width:640px){.unitwords{grid-template-columns:1fr}}
-.uwi{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
-.uwd{display:grid;min-width:0}.uwd .muted{font-size:.82rem}
-.uws{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.uwi.learned .uws,.uwi.mastered .uws{color:var(--good);font-size:1rem}
-.uwi.learning .uws{color:var(--accent-ink);background:var(--accent);border-radius:99px;padding:1px 7px;font-size:.66rem}
-.toast{background:var(--good);color:#fff;border-radius:12px;padding:12px 16px;font-size:.95rem}
-/* level picker */
-.levels{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:560px){.levels{grid-template-columns:1fr}}
-.lvcard{position:relative;overflow:hidden;display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;text-align:left;
-  background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 16px 16px}
-.lvcard[aria-checked="true"]{border-color:var(--ink);box-shadow:var(--shadow)}
-.lvcard[aria-checked="false"]{opacity:.8}
-@media (hover:hover){.lvcard[aria-checked="false"]:hover{opacity:1;border-color:var(--muted)}}
-.lvbig{font-family:var(--f-display);font-weight:800;font-size:2.2rem;line-height:1;letter-spacing:-.02em}
-.lvcard[aria-checked="true"] .lvbig{color:var(--accent-ink);background:var(--accent);border-radius:10px;padding:4px 8px}
-.lvtxt{display:grid;min-width:0}.lvtxt span{font-size:.85rem;color:var(--muted)}
-.lvpc{display:grid;text-align:right}.lvpc b{font-family:var(--f-display);font-size:1.2rem;font-variant-numeric:tabular-nums}.lvpc span{font-size:.75rem;color:var(--muted)}
-.lvbar{position:absolute;left:0;bottom:0;height:4px;background:var(--good)}
-.feed{grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px}
-.feedbig{font-family:var(--f-display);font-weight:800;font-size:1.7rem;line-height:1;letter-spacing:-.02em;background:var(--accent);color:var(--accent-ink);border-radius:12px;padding:10px 12px}
-.feedtxt{display:grid;gap:2px;min-width:0}.feedtxt b{font-family:var(--f-display);font-size:1.15rem}.feedtxt span{color:var(--muted);font-size:.92rem}
-@media (max-width:560px){.feed{grid-template-columns:auto minmax(0,1fr)}.feed .btn{grid-column:1/-1}}
+/* level picker: a numbered path from the first letters to A2 */
+.pick{display:grid;gap:14px;padding-block:4px 6px}
+.pickh{font-family:var(--f-display);font-weight:800;font-size:clamp(1.8rem,6.5vw,2.4rem);line-height:1.05;letter-spacing:-.025em;margin:0;text-wrap:balance}
+.pick .btn.back{justify-self:start}
+.levels{position:relative;display:grid;gap:12px;padding-left:42px;margin-top:4px}
+.levels::before{content:"";position:absolute;left:15px;top:36px;bottom:36px;width:2px;background:var(--line2)}
+.lvcard{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:12px 14px;min-height:78px;box-shadow:var(--shadow)}
+@media (hover:hover){.lvcard:hover{border-color:var(--line2)}}
+.lvcard[aria-current="true"]{border-color:var(--accent)}
+.lvcard[aria-current="true"]::after{content:"You're here";position:absolute;top:-11px;right:16px;background:var(--accent);color:var(--accent-ink);font-size:.72rem;font-weight:700;line-height:1.6;padding:0 9px;border-radius:99px}
+.lvnum{position:absolute;left:-44px;top:50%;margin-top:-16px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:2px solid var(--line2);font-family:var(--f-display);font-weight:800;font-size:.9rem;color:var(--muted)}
+.lvcard.started .lvnum{border-color:var(--accent);color:var(--accent-text)}
+.lvcard[aria-current="true"] .lvnum{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.lvbig{font-family:var(--f-display);font-weight:800;font-size:1.05rem;line-height:1;min-width:52px;height:52px;padding:0 6px;border-radius:14px;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+.lvtxt{display:grid;gap:1px;min-width:0}
+.lvtxt b{font-family:var(--f-display);font-size:1.12rem;line-height:1.2}
+.lvtxt span{font-size:.86rem;color:var(--muted);line-height:1.3}
+.lvpc{display:grid;justify-items:end;gap:6px;font-size:.88rem;font-weight:700;color:var(--accent-text);white-space:nowrap}
+.lvpc .mbar{width:56px;height:6px}
+.lvpc .go{display:inline-flex;align-items:center;gap:2px}
+.lvpc .ic{width:16px;height:16px}
+@media (max-width:360px){.levels{padding-left:36px}.levels::before{left:12px}.lvnum{left:-38px;width:28px;height:28px;margin-top:-14px}.lvcard{gap:10px;padding:10px 12px}.lvbig{min-width:46px;height:46px}}
+.toast{position:fixed;z-index:60;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:min(440px,calc(100% - 32px));transform:translateX(-50%);display:flex;align-items:center;gap:12px;
+  background:var(--ink);color:var(--bg);border-radius:16px;padding:12px 16px;font-size:.93rem;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none;animation:toastin .3s ease-out}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,16px)}}
+/* a small star burst for a finished unit: six dots fly out once */
+.burst{position:relative;flex:none;width:38px;height:38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;animation:starin .45s .1s ease-out both}
+.burst .ic{fill:currentColor;width:20px;height:20px}
+.burst i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:var(--accent);opacity:0;animation:spark .6s .2s ease-out}
+@keyframes starin{from{transform:scale(0)}70%{transform:scale(1.15)}}
+@keyframes spark{from{opacity:1;transform:rotate(var(--r)) translateY(-14px)}to{opacity:0;transform:rotate(var(--r)) translateY(-30px)}}
 .ltr{letter-spacing:.02em}.word .ltr{font-size:1.5em}.ltr small{font-size:.72em;opacity:.7;margin-left:.08em}
 .hl{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px;padding:0 .06em;color:inherit}
-.tip{margin:0;max-width:34em;font-size:.95rem;background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-left:4px solid var(--accent);border-radius:8px;padding:8px 12px}
-.tip b{margin-right:6px}
-.lvbadge{display:inline-block;font-size:.55em;vertical-align:middle;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:2px 8px;letter-spacing:0}
+.lvbadge{flex:none;display:inline-block;font-family:var(--f-display);font-weight:800;font-size:.85rem;line-height:1.4;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:2px 8px}
 /* speaking */
-.mic{width:96px;height:96px;border-radius:50%;border:0;background:var(--ink);display:grid;place-items:center;box-shadow:var(--shadow)}
-.mic svg{width:42px;height:42px;fill:var(--bg)}
+.mic{width:96px;height:96px;border-radius:50%;border:0;background:var(--accent);display:grid;place-items:center;box-shadow:var(--shadow)}
+.mic svg{width:42px;height:42px;fill:var(--accent-ink)}
 .mic.on{background:var(--bad);animation:pulse 1.2s infinite}
+.mic.on svg{fill:var(--surface)}
 .mic.wait{opacity:.6;cursor:progress}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
 .pron{min-height:96px;display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:left}
@@ -324,69 +378,66 @@ nav.modes button[aria-selected="true"] span{color:inherit;opacity:.75}
 .pchip{flex:none;min-width:40px;text-align:center;border-radius:99px;padding:2px 8px;font-weight:700;font-variant-numeric:tabular-nums;border:2px solid var(--c)}
 /* result */
 .result{text-align:center;display:grid;gap:10px;justify-items:center;padding:10px 0}
-.result .score{font-family:var(--f-display);font-weight:800;font-size:3.4rem;line-height:1}
+.result .score{font-family:var(--f-display);font-weight:800;font-size:3.4rem;line-height:1;color:var(--accent-text);animation:okpop .4s ease-out}
 .result .note{font-family:var(--f-hand);font-size:1.4rem}
 .review{width:100%;text-align:left;display:grid;gap:4px}
-.review div{display:flex;gap:10px;align-items:center;border-bottom:1px dashed var(--line);padding:6px 0}
+.review div{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
 
 /* list */
-.search{width:100%;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit}
+.search{width:100%;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit;min-height:44px}
 .list{display:grid;gap:0;max-height:560px;overflow-y:auto}
-.li{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:12px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--line)}
+.li{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:12px;align-items:center;padding:6px 2px;border-bottom:1px solid var(--line)}
 .li .de{font-family:var(--f-display);font-weight:700;min-width:0;overflow-wrap:anywhere}
 .li .en{min-width:0;color:var(--muted)}
-.li .star{border:0;background:none;font-size:1.1rem;color:var(--line);padding:4px}
+.li .star{border:0;background:none;font-size:1.15rem;color:var(--line2);min-width:44px;min-height:44px}
 .li .star.on{color:var(--accent)}
 @media (max-width:520px){.li{grid-template-columns:auto 1fr auto}.li .en{grid-column:2}.li .star{grid-row:1/3;grid-column:3}}
 
-.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.below{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 16px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
 .legend b{font-family:var(--f-display)}
-footer{font-size:.82rem;color:var(--muted)}
+footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 .voice-warn{background:color-mix(in srgb,var(--bad) 12%,var(--surface));border:1px solid var(--bad);border-radius:12px;padding:10px 14px;font-size:.9rem}
-.speed{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:.85rem;color:var(--muted)}
+.speed{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:.8rem;color:var(--muted)}
 .soundhint{margin-right:8px}
-.speed button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:3px 9px;font-size:.8rem}
-.speed button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.speed button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:2px 13px;font-size:.8rem;min-height:44px}
+.speed button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .pop{animation:pop .4s}
 /* a swiped card flies past the screen edge: clip it here, not on body, so the page never scrolls sideways */
 .xclip{overflow-x:clip}
-@keyframes pop{40%{transform:scale(1.12)}}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@keyframes pop{40%{transform:scale(1.15)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.burst i{display:none}}
 </style>
 </head>
 <body>
 
 <div class="xclip">
 <div id="homeView" class="hwrap">
-  <div class="topbar"><span class="logo">Deutsch Wortspiel</span><button class="lvbtn" id="lvBtn" hidden></button></div>
+  <div class="topbar"><span class="logo">Deutsch Wortspiel</span><button class="lvbtn" id="lvBtn" title="Change level" hidden></button></div>
   <div id="homeBody" class="home"></div>
-  <footer>Word lists from minddory.com's German A1 and A2 vocabulary lists. English meanings, articles and topics were added for this game. Your progress is saved on this device.</footer>
+  <footer>Word lists: minddory.com A1/A2. Your progress is saved on this device.</footer>
 </div>
 
 <div class="wrap" id="practiceView" hidden>
-  <header>
-    <div class="row" style="gap:12px;align-items:center"><button class="btn back" id="backHome" aria-label="Back to home">← Home</button><h1>Üben <span class="lvbadge lvname">A1</span><small>Practice</small></h1></div>
-    <div class="stats">
-      <div class="stat"><b id="sXp">0</b><span>XP</span></div>
-      <div class="stat"><b id="sStreak">0</b><span>Best streak</span></div>
-      <div class="stat"><b id="sKnown">0</b><span>Unit learned</span></div>
-    </div>
+  <header class="phead">
+    <button class="btn back" id="backHome" aria-label="Back to home">Home</button>
+    <div class="pmid"><span class="lvbadge lvname">A1</span><span id="pLevel">Unit 1</span></div>
+    <div class="pknown"><b id="sKnown">0</b><span>learned</span></div>
   </header>
-
   <div>
     <div class="progress" aria-hidden="true"><i id="pBar"></i></div>
-    <div class="progress-label"><span id="pLevel">Unit 1</span><span id="pTxt"></span></div>
+    <div class="progress-label"><span id="pTxt"></span><span class="pts" title="Points"><b id="sXp">0</b> points<span class="vh">, most right answers in a row: <b id="sStreak">0</b></span></span></div>
   </div>
 
   <div id="voiceWarn" class="voice-warn" hidden>No German voice was found on this device, so words are read by your default voice. On a phone, add a German voice in your system's text-to-speech settings for proper pronunciation.</div>
 
-  <nav class="modes" role="tablist" aria-label="Game mode">
-    <button role="tab" data-mode="cards"><b>Karten</b><span>Swipe cards</span></button>
-    <button role="tab" data-mode="quiz"><b>Quiz</b><span>Pick meaning</span></button>
-    <button role="tab" data-mode="listen"><b>Hören</b><span>Listen</span></button>
-    <button role="tab" data-mode="match"><b>Paare</b><span>Match pairs</span></button>
-    <button role="tab" data-mode="speak"><b>Sprechen</b><span>Speak</span></button>
-    <button role="tab" data-mode="list"><b>Liste</b><span>All words</span></button>
+  <nav class="modes" role="tablist" aria-label="Game">
+    <button role="tab" data-mode="cards"><span>Cards</span></button>
+    <button role="tab" data-mode="quiz"><span>Quiz</span></button>
+    <button role="tab" data-mode="listen"><span>Listen</span></button>
+    <button role="tab" data-mode="match"><span>Match</span></button>
+    <button role="tab" data-mode="speak"><span>Speak</span></button>
+    <button role="tab" data-mode="list"><span>Words</span></button>
   </nav>
 
   <div class="topics" id="topics" aria-label="Which words"></div>
@@ -394,14 +445,14 @@ footer{font-size:.82rem;color:var(--muted)}
 
   <section class="stage" id="stage" aria-live="polite"></section>
 
-  <div class="row spread">
+  <div class="below">
     <div class="legend"><span><b class="g-der">der</b> masculine</span><span><b class="g-die">die</b> feminine</span><span><b class="g-das">das</b> neuter</span></div>
     <div class="speed"><span class="soundhint" id="soundHint" hidden>No sound? Turn off silent mode.</span> Voice speed
       <button data-rate="0.6" aria-pressed="false">slow</button>
       <button data-rate="0.9" aria-pressed="true">normal</button>
     </div>
   </div>
-  <footer>Word lists from minddory.com's German A1 and A2 vocabulary lists. English meanings, articles and topics were added for this game. Your progress is saved on this device.</footer>
+  <footer>Word lists: minddory.com A1/A2. Your progress is saved on this device.</footer>
 </div>
 </div>
 
@@ -532,24 +583,24 @@ const ABC_TIPS = {
   "Word endings":"At the end of a word, b, d and g go hard: they sound like p, t and k. Only -ig is different: it ends like ich, as in richtig.",
 };
 const RAW = {ABC:LETTERS, A1:[["der Abend", "evening", "Time & Calendar"], ["aber", "but", "Little Words"], ["acht", "eight", "Numbers"], ["Achtung!", "attention! / watch out!", "Phrases"], ["die Adresse", "address", "Town & Travel"], ["alle", "all, everyone", "Little Words"], ["alles", "everything", "Little Words"], ["als", "than / as / when", "Little Words"], ["alt", "old", "Describing Words"], ["das Alter", "age", "People & Family"], ["an", "at / on", "Little Words"], ["der Anfang", "beginning", "Time & Calendar"], ["anschauen", "to look at", "Verbs"], ["die Antwort", "answer", "School & Work"], ["antworten", "to answer", "Verbs"], ["der Apfel", "apple", "Food & Drink"], ["die Arbeit", "work, job", "School & Work"], ["arbeiten", "to work", "Verbs"], ["der Arm", "arm", "Body"], ["die Ärztin", "doctor (woman)", "People & Family"], ["auch", "also, too", "Little Words"], ["auf", "on, onto", "Little Words"], ["aufstehen", "to get up", "Verbs"], ["das Auge", "eye", "Body"], ["der August", "August", "Time & Calendar"], ["aus", "out of / from", "Little Words"], ["das Auto", "car", "Town & Travel"], ["die Autobahn", "motorway, highway", "Town & Travel"], ["das Baby", "baby", "People & Family"], ["das Badezimmer", "bathroom", "Home"], ["die Banane", "banana", "Food & Drink"], ["der Bauch", "belly, stomach", "Body"], ["der Baum", "tree", "Nature & Weather"], ["bei", "at / near / with", "Little Words"], ["beide", "both", "Little Words"], ["das Bein", "leg", "Body"], ["bekommen", "to get, to receive", "Verbs"], ["besser", "better", "Describing Words"], ["das Bett", "bed", "Home"], ["die Biene", "bee", "Animals"], ["das Bier", "beer", "Food & Drink"], ["billig", "cheap", "Describing Words"], ["bis", "until", "Little Words"], ["ein bisschen", "a little bit", "Little Words"], ["bitte", "please", "Phrases"], ["bitteschön", "you're welcome / here you are", "Phrases"], ["das Blatt", "leaf / sheet of paper", "Nature & Weather"], ["blau", "blue", "Colours"], ["bleiben", "to stay", "Verbs"], ["blond", "blond", "Colours"], ["die Blume", "flower", "Nature & Weather"], ["die Bluse", "blouse", "Clothes"], ["brauchen", "to need", "Verbs"], ["braun", "brown", "Colours"], ["das Brot", "bread", "Food & Drink"], ["der Bruder", "brother", "People & Family"], ["das Buch", "book", "School & Work"], ["der Bus", "bus", "Town & Travel"], ["die Butter", "butter", "Food & Drink"], ["das Café", "café", "Town & Travel"], ["der Cent", "cent", "Town & Travel"], ["der Chef", "boss", "School & Work"], ["der Cousin", "cousin (male)", "People & Family"], ["da", "there", "Little Words"], ["danke", "thank you", "Phrases"], ["danken", "to thank", "Verbs"], ["dankeschön", "thank you very much", "Phrases"], ["dann", "then", "Little Words"], ["das", "the (neuter) / that", "Little Words"], ["dass", "that (as in \"I know that…\")", "Little Words"], ["dein", "your (informal)", "Little Words"], ["der", "the (masculine)", "Little Words"], ["Deutsch", "German (language)", "School & Work"], ["der Dezember", "December", "Time & Calendar"], ["dick", "thick / fat", "Describing Words"], ["die", "the (feminine / plural)", "Little Words"], ["der Dienstag", "Tuesday", "Time & Calendar"], ["dies", "this", "Little Words"], ["dieser", "this (one)", "Little Words"], ["der Doktor", "doctor", "People & Family"], ["der Donnerstag", "Thursday", "Time & Calendar"], ["dort", "there", "Little Words"], ["drei", "three", "Numbers"], ["dreimal", "three times", "Numbers"], ["dreißig", "thirty", "Numbers"], ["dreizehn", "thirteen", "Numbers"], ["du", "you (informal)", "Little Words"], ["dunkel", "dark", "Describing Words"], ["durch", "through", "Little Words"], ["dürfen", "to be allowed to, may", "Verbs"], ["der Durst", "thirst", "Food & Drink"], ["die Dusche", "shower", "Home"], ["duschen", "to shower", "Verbs"], ["die E-Mail", "email", "School & Work"], ["die Ehefrau", "wife", "People & Family"], ["der Ehemann", "husband", "People & Family"], ["das Ei", "egg", "Food & Drink"], ["ein", "a, an (masculine / neuter)", "Little Words"], ["eine", "a, an (feminine)", "Little Words"], ["der Eingang", "entrance", "Home"], ["einige", "some, a few", "Little Words"], ["einmal", "once", "Numbers"], ["eins", "one", "Numbers"], ["das Eis", "ice cream / ice", "Food & Drink"], ["der Elefant", "elephant", "Animals"], ["elf", "eleven", "Numbers"], ["das Ende", "end", "Time & Calendar"], ["Englisch", "English (language)", "School & Work"], ["Entschuldigung", "excuse me / sorry", "Phrases"], ["er", "he", "Little Words"], ["die Erdbeere", "strawberry", "Food & Drink"], ["erst", "first / only (not until)", "Little Words"], ["es", "it", "Little Words"], ["essen", "to eat", "Verbs"], ["etwas", "something", "Little Words"], ["euch", "you (plural, object)", "Little Words"], ["euer", "your (plural)", "Little Words"], ["der Euro", "euro", "Town & Travel"], ["der Fahrer", "driver", "People & Family"], ["fallen", "to fall", "Verbs"], ["falsch", "wrong, false", "Describing Words"], ["die Familie", "family", "People & Family"], ["die Farbe", "colour", "Colours"], ["der Februar", "February", "Time & Calendar"], ["das Fenster", "window", "Home"], ["die Ferien", "holidays", "Time & Calendar"], ["der Fernseher", "television", "Home"], ["der Fisch", "fish", "Food & Drink"], ["fit", "fit", "Describing Words"], ["die Flasche", "bottle", "Food & Drink"], ["das Fleisch", "meat", "Food & Drink"], ["der Fluss", "river", "Nature & Weather"], ["die Frage", "question", "School & Work"], ["fragen", "to ask", "Verbs"], ["die Frau", "woman / Mrs", "People & Family"], ["frei", "free", "Describing Words"], ["der Freitag", "Friday", "Time & Calendar"], ["der Freund", "friend (male) / boyfriend", "People & Family"], ["die Freundin", "friend (female) / girlfriend", "People & Family"], ["früh", "early", "Describing Words"], ["fünf", "five", "Numbers"], ["fünfzehn", "fifteen", "Numbers"], ["fünfzig", "fifty", "Numbers"], ["für", "for", "Little Words"], ["der Fuß", "foot", "Body"], ["der Fußball", "football, soccer", "Free Time"], ["die Gabel", "fork", "Home"], ["ganz", "whole / quite", "Describing Words"], ["der Garten", "garden", "Home"], ["geben", "to give", "Verbs"], ["die Geburt", "birth", "People & Family"], ["gegen", "against", "Little Words"], ["gehen", "to go, to walk", "Verbs"], ["gelb", "yellow", "Colours"], ["das Geld", "money", "Town & Travel"], ["das Gemüse", "vegetables", "Food & Drink"], ["geradeaus", "straight ahead", "Town & Travel"], ["gerne", "gladly, with pleasure", "Phrases"], ["die Geschwister", "siblings", "People & Family"], ["das Glas", "glass", "Food & Drink"], ["gleich", "same / right away", "Little Words"], ["glücklich", "happy", "Describing Words"], ["grau", "grey", "Colours"], ["groß", "big, tall", "Describing Words"], ["die Größe", "size", "Clothes"], ["die Großeltern", "grandparents", "People & Family"], ["die Großmutter", "grandmother", "People & Family"], ["der Großvater", "grandfather", "People & Family"], ["grün", "green", "Colours"], ["der Gruß", "greeting", "Phrases"], ["grüßen", "to greet", "Verbs"], ["gut", "good", "Describing Words"], ["Guten Tag", "good day, hello", "Phrases"], ["das Haar", "hair", "Body"], ["haben", "to have", "Verbs"], ["das Hähnchen", "chicken (to eat)", "Food & Drink"], ["halb", "half", "Numbers"], ["hallo", "hello", "Phrases"], ["halten", "to hold / to stop", "Verbs"], ["die Hand", "hand", "Body"], ["die Handschuhe", "gloves", "Clothes"], ["die Handtasche", "handbag", "Clothes"], ["der Hase", "hare, rabbit", "Animals"], ["die Hauptstadt", "capital city", "Town & Travel"], ["das Haus", "house", "Home"], ["heiß", "hot", "Describing Words"], ["heißen", "to be called", "Verbs"], ["hell", "bright, light", "Describing Words"], ["her", "here (towards me)", "Little Words"], ["hereinkommen", "to come in", "Verbs"], ["der Herr", "Mr / gentleman", "People & Family"], ["herunter", "down", "Little Words"], ["heute", "today", "Time & Calendar"], ["hier", "here", "Little Words"], ["die Hilfe", "help", "Phrases"], ["hin", "there (away from me)", "Little Words"], ["hinter", "behind", "Little Words"], ["hören", "to hear, to listen", "Verbs"], ["das Hotel", "hotel", "Town & Travel"], ["das Huhn", "hen, chicken", "Animals"], ["das Hühnchen", "chicken (dish)", "Food & Drink"], ["der Hund", "dog", "Animals"], ["hundert", "hundred", "Numbers"], ["der Hunger", "hunger", "Food & Drink"], ["ich", "I", "Little Words"], ["ihr", "you (plural) / her", "Little Words"], ["immer", "always", "Little Words"], ["in", "in", "Little Words"], ["ja", "yes", "Phrases"], ["das Jahr", "year", "Time & Calendar"], ["der Januar", "January", "Time & Calendar"], ["jeder", "every, each", "Little Words"], ["jedes Mal", "every time", "Little Words"], ["jetzt", "now", "Time & Calendar"], ["der Juli", "July", "Time & Calendar"], ["jung", "young", "Describing Words"], ["der Kaffee", "coffee", "Food & Drink"], ["kalt", "cold", "Describing Words"], ["die Kamera", "camera", "Free Time"], ["die Karte", "card / ticket / map", "Free Time"], ["der Käse", "cheese", "Food & Drink"], ["die Katze", "cat", "Animals"], ["kaufen", "to buy", "Verbs"], ["kein", "no, not a", "Little Words"], ["kennen", "to know (a person or place)", "Verbs"], ["das Kind", "child", "People & Family"], ["der Kindergarten", "kindergarten", "School & Work"], ["klar", "clear / sure", "Phrases"], ["die Klasse", "class", "School & Work"], ["klein", "small, little", "Describing Words"], ["das Knie", "knee", "Body"], ["kommen", "to come", "Verbs"], ["können", "can, to be able to", "Verbs"], ["der Kopf", "head", "Body"], ["krank", "ill, sick", "Describing Words"], ["die Küche", "kitchen", "Home"], ["der Kuchen", "cake", "Food & Drink"], ["die Kuh", "cow", "Animals"], ["die Lampe", "lamp", "Home"], ["das Land", "country / countryside", "Nature & Weather"], ["lange", "long (time)", "Describing Words"], ["langsam", "slow", "Describing Words"], ["lassen", "to let, to leave", "Verbs"], ["laufen", "to run, to walk", "Verbs"], ["leben", "to live", "Verbs"], ["legen", "to lay, to put down", "Verbs"], ["der Lehrer", "teacher (male)", "School & Work"], ["die Lehrerin", "teacher (female)", "School & Work"], ["lernen", "to learn", "Verbs"], ["lesen", "to read", "Verbs"], ["das Licht", "light", "Home"], ["lieb", "dear, kind", "Describing Words"], ["die Liebe", "love", "People & Family"], ["lieben", "to love", "Verbs"], ["lieber", "rather, preferably", "Little Words"], ["liegen", "to lie (be lying down)", "Verbs"], ["lila", "purple", "Colours"], ["die Linie", "line", "Town & Travel"], ["links", "left", "Town & Travel"], ["die Liste", "list", "School & Work"], ["der Liter", "litre", "Numbers"], ["der Löffel", "spoon", "Home"], ["machen", "to do, to make", "Verbs"], ["das Mädchen", "girl", "People & Family"], ["die Mama", "mum", "People & Family"], ["man", "one, you (people in general)", "Little Words"], ["der Mann", "man / husband", "People & Family"], ["der März", "March", "Time & Calendar"], ["die Mathematik", "maths", "School & Work"], ["die Maus", "mouse", "Animals"], ["mein", "my", "Little Words"], ["der Mensch", "person, human", "People & Family"], ["das Messer", "knife", "Home"], ["der Meter", "metre", "Numbers"], ["die Milch", "milk", "Food & Drink"], ["die Minute", "minute", "Time & Calendar"], ["mit", "with", "Little Words"], ["der Mittag", "midday, noon", "Time & Calendar"], ["der Mittwoch", "Wednesday", "Time & Calendar"], ["mögen", "to like", "Verbs"], ["der Moment", "moment", "Time & Calendar"], ["der Monat", "month", "Time & Calendar"], ["der Montag", "Monday", "Time & Calendar"], ["morgen", "tomorrow", "Time & Calendar"], ["der Morgen", "morning", "Time & Calendar"], ["müde", "tired", "Describing Words"], ["der Mund", "mouth", "Body"], ["müssen", "must, to have to", "Verbs"], ["die Mutter", "mother", "People & Family"], ["die Mutti", "mummy", "People & Family"], ["die Mütze", "cap, woolly hat", "Clothes"], ["nach", "after / to", "Little Words"], ["der Nachbar", "neighbour", "People & Family"], ["der Nachmittag", "afternoon", "Time & Calendar"], ["der Nachname", "surname", "People & Family"], ["die Nacht", "night", "Time & Calendar"], ["der Name", "name", "People & Family"], ["die Nase", "nose", "Body"], ["die Natur", "nature", "Nature & Weather"], ["neben", "next to", "Little Words"], ["nehmen", "to take", "Verbs"], ["nein", "no", "Phrases"], ["nett", "nice, kind", "Describing Words"], ["neu", "new", "Describing Words"], ["neun", "nine", "Numbers"], ["nicht", "not", "Little Words"], ["nichts", "nothing", "Little Words"], ["nie", "never", "Little Words"], ["noch", "still, yet", "Little Words"], ["noch mal", "once more, again", "Little Words"], ["der November", "November", "Time & Calendar"], ["null", "zero", "Numbers"], ["die Nummer", "number", "Numbers"], ["nun", "now / well", "Little Words"], ["nur", "only", "Little Words"], ["oben", "above, upstairs", "Little Words"], ["das Obst", "fruit", "Food & Drink"], ["oder", "or", "Little Words"], ["öffnen", "to open", "Verbs"], ["ohne", "without", "Little Words"], ["das Ohr", "ear", "Body"], ["der Oktober", "October", "Time & Calendar"], ["die Oma", "grandma", "People & Family"], ["der Onkel", "uncle", "People & Family"], ["der Opa", "grandpa", "People & Family"], ["die Orange", "orange", "Food & Drink"], ["der Orangensaft", "orange juice", "Food & Drink"], ["der Papa", "dad", "People & Family"], ["der Papi", "daddy", "People & Family"], ["das Papier", "paper", "School & Work"], ["der Pass", "passport", "Town & Travel"], ["der Platz", "place, seat / square", "Town & Travel"], ["die Polizei", "police", "Town & Travel"], ["der Preis", "price", "Town & Travel"], ["das Problem", "problem", "School & Work"], ["der Pullover", "pullover, jumper", "Clothes"], ["rauchen", "to smoke", "Verbs"], ["rechts", "right", "Town & Travel"], ["reden", "to talk", "Verbs"], ["der Regen", "rain", "Nature & Weather"], ["regnen", "to rain", "Nature & Weather"], ["richtig", "correct, right", "Describing Words"], ["der Rock", "skirt", "Clothes"], ["rosa", "pink", "Colours"], ["rot", "red", "Colours"], ["rund", "round", "Describing Words"], ["die Sache", "thing", "Little Words"], ["der Saft", "juice", "Food & Drink"], ["sagen", "to say", "Verbs"], ["der Salat", "salad, lettuce", "Food & Drink"], ["das Salz", "salt", "Food & Drink"], ["salzig", "salty", "Describing Words"], ["der Samstag", "Saturday", "Time & Calendar"], ["sauer", "sour / annoyed", "Describing Words"], ["der Schal", "scarf", "Clothes"], ["scharf", "spicy / sharp", "Describing Words"], ["scheinen", "to shine / to seem", "Verbs"], ["schlafen", "to sleep", "Verbs"], ["das Schlafzimmer", "bedroom", "Home"], ["schlecht", "bad", "Describing Words"], ["schließen", "to close", "Verbs"], ["der Schnee", "snow", "Nature & Weather"], ["schneien", "to snow", "Nature & Weather"], ["schnell", "fast, quick", "Describing Words"], ["schon", "already", "Little Words"], ["schön", "beautiful, nice", "Describing Words"], ["schreiben", "to write", "Verbs"], ["die Schule", "school", "School & Work"], ["der Schüler", "pupil (male)", "School & Work"], ["die Schülerin", "pupil (female)", "School & Work"], ["schwarz", "black", "Colours"], ["die Schwester", "sister", "People & Family"], ["sechs", "six", "Numbers"], ["der See", "lake", "Nature & Weather"], ["sehen", "to see", "Verbs"], ["sehr", "very", "Little Words"], ["sein", "to be / his", "Verbs"], ["die Seite", "page / side", "School & Work"], ["die Sekunde", "second (time)", "Time & Calendar"], ["setzen", "to put, to set (sich setzen = to sit down)", "Verbs"], ["sich", "oneself, himself, herself", "Little Words"], ["sie", "she / they", "Little Words"], ["sieben", "seven", "Numbers"], ["der Ski", "ski", "Free Time"], ["das Sofa", "sofa", "Home"], ["der Sommer", "summer", "Time & Calendar"], ["die Sonne", "sun", "Nature & Weather"], ["sonnig", "sunny", "Nature & Weather"], ["der Sonntag", "Sunday", "Time & Calendar"], ["spät", "late", "Describing Words"], ["spielen", "to play", "Verbs"], ["die Sprache", "language", "School & Work"], ["sprechen", "to speak", "Verbs"], ["die Stadt", "town, city", "Town & Travel"], ["stark", "strong", "Describing Words"], ["stellen", "to put (upright), to place", "Verbs"], ["die Stiefel", "boots", "Clothes"], ["die Straße", "street, road", "Town & Travel"], ["das Stück", "piece", "Food & Drink"], ["der Stuhl", "chair", "Home"], ["super", "great, super", "Phrases"], ["süß", "sweet / cute", "Describing Words"], ["die Tafel", "board, blackboard", "School & Work"], ["der Tag", "day", "Time & Calendar"], ["die Tante", "aunt", "People & Family"], ["die Tasche", "bag / pocket", "Clothes"], ["die Tasse", "cup", "Home"], ["tausend", "thousand", "Numbers"], ["das Taxi", "taxi", "Town & Travel"], ["der Tee", "tea", "Food & Drink"], ["das Telefon", "telephone", "School & Work"], ["die Telefonnummer", "phone number", "School & Work"], ["der Teller", "plate", "Home"], ["das Tennis", "tennis", "Free Time"], ["teuer", "expensive", "Describing Words"], ["das Tier", "animal", "Animals"], ["der Tisch", "table", "Home"], ["trinken", "to drink", "Verbs"], ["tschüss", "bye", "Phrases"], ["tun", "to do", "Verbs"], ["die Tür", "door", "Home"], ["die Tüte", "bag (paper or plastic)", "Town & Travel"], ["die U-Bahn", "underground, subway", "Town & Travel"], ["über", "over / about", "Little Words"], ["die Uhr", "clock / o'clock", "Time & Calendar"], ["die Uhrzeit", "time (on the clock)", "Time & Calendar"], ["und", "and", "Little Words"], ["unser", "our", "Little Words"], ["unten", "below, downstairs", "Little Words"], ["unter", "under", "Little Words"], ["der Vater", "father", "People & Family"], ["das Video", "video", "Free Time"], ["viel", "much, a lot", "Little Words"], ["viele", "many", "Little Words"], ["vier", "four", "Numbers"], ["der Vogel", "bird", "Animals"], ["von", "from / of", "Little Words"], ["vor", "in front of / before", "Little Words"], ["der Vormittag", "morning (before noon)", "Time & Calendar"], ["der Vorname", "first name", "People & Family"], ["vorne", "at the front", "Little Words"], ["der Wald", "forest, woods", "Nature & Weather"], ["wann?", "when?", "Question Words"], ["warm", "warm", "Describing Words"], ["was?", "what?", "Question Words"], ["das Wasser", "water", "Food & Drink"], ["der Weihnachtsmann", "Father Christmas, Santa", "People & Family"], ["weil", "because", "Little Words"], ["weiß", "white", "Colours"], ["welcher?", "which?", "Question Words"], ["wenig", "little, not much", "Little Words"], ["wenige", "few", "Little Words"], ["wenn", "if / when", "Little Words"], ["wer?", "who?", "Question Words"], ["werden", "to become", "Verbs"], ["wie?", "how?", "Question Words"], ["wie viel?", "how much?", "Question Words"], ["auf Wiedersehen", "goodbye", "Phrases"], ["willkommen", "welcome", "Phrases"], ["der Wind", "wind", "Nature & Weather"], ["der Winter", "winter", "Time & Calendar"], ["wir", "we", "Little Words"], ["wissen", "to know (a fact)", "Verbs"], ["wo?", "where?", "Question Words"], ["die Woche", "week", "Time & Calendar"], ["der Wochentag", "weekday", "Time & Calendar"], ["woher?", "where from?", "Question Words"], ["wohin?", "where to?", "Question Words"], ["wohnen", "to live (somewhere)", "Verbs"], ["die Wohnung", "flat, apartment", "Home"], ["das Wohnzimmer", "living room", "Home"], ["wollen", "to want", "Verbs"], ["das Wort", "word", "School & Work"], ["die Zahnbürste", "toothbrush", "Home"], ["zehn", "ten", "Numbers"], ["die Zeit", "time", "Time & Calendar"], ["das Zimmer", "room", "Home"], ["die Zitrone", "lemon", "Food & Drink"], ["zu", "to / too", "Little Words"], ["der Zucker", "sugar", "Food & Drink"], ["der Zug", "train", "Town & Travel"], ["zu Hause", "at home", "Home"], ["zurück", "back", "Little Words"], ["zwanzig", "twenty", "Numbers"], ["zwei", "two", "Numbers"], ["zweieinhalb", "two and a half", "Numbers"], ["zweimal", "twice", "Numbers"], ["zweite", "second", "Numbers"], ["zwischen", "between", "Little Words"], ["zwölf", "twelve", "Numbers"], ["die Jahre", "years", "Time & Calendar"], ["jede", "each, every (feminine)", "Little Words"], ["unsere", "our (feminine / plural)", "Little Words"], ["wieviel?", "how much? (older spelling of wie viel)", "Question Words"]], A2:[["abbiegen", "to turn (left/right)", "Town & Travel"], ["das Abendbrot", "supper, evening meal", "Food & Drink"], ["das Abendessen", "dinner", "Food & Drink"], ["abfahren", "to depart, to leave", "Town & Travel"], ["die Abfahrt", "departure", "Town & Travel"], ["der Abfall", "rubbish, waste", "Home"], ["der Abflug", "departure (flight)", "Town & Travel"], ["abholen", "to pick up, to collect", "Verbs"], ["abstellen", "to put down / to park / to switch off", "Verbs"], ["abwarten", "to wait and see", "Verbs"], ["der Affe", "monkey", "Animals"], ["die Ahnung", "idea, clue", "Little Words"], ["die Aktion", "action / special offer", "Shopping & Money"], ["der Alarm", "alarm", "Home"], ["das Album", "album", "Free Time"], ["der Alkohol", "alcohol", "Food & Drink"], ["allein", "alone", "Describing Words"], ["alleine", "alone, on your own", "Describing Words"], ["der Alltag", "everyday life", "Time & Calendar"], ["also", "so, therefore", "Little Words"], ["altmodisch", "old-fashioned", "Describing Words"], ["am liebsten", "most of all, best", "Little Words"], ["die Ameise", "ant", "Animals"], ["die Ampel", "traffic light", "Town & Travel"], ["anders", "different, differently", "Describing Words"], ["anderthalb", "one and a half", "Numbers"], ["anfangen", "to begin, to start", "Verbs"], ["der Anfänger", "beginner", "School & Work"], ["anfassen", "to touch", "Verbs"], ["angeben", "to show off / to state", "Verbs"], ["das Angebot", "offer", "Shopping & Money"], ["angeln", "to fish (with a rod)", "Free Time"], ["die Angst", "fear", "Feelings"], ["angucken", "to look at", "Verbs"], ["anhaben", "to have on, to wear", "Clothes"], ["ankommen", "to arrive", "Town & Travel"], ["die Ankunft", "arrival", "Town & Travel"], ["anmachen", "to switch on", "Verbs"], ["der Anruf", "phone call", "School & Work"], ["der Anrufbeantworter", "answering machine", "School & Work"], ["anrufen", "to call, to phone", "Verbs"], ["ansehen", "to look at, to watch", "Verbs"], ["anziehen", "to put on (clothes), to dress", "Clothes"], ["der Anzug", "suit", "Clothes"], ["der Appetit", "appetite", "Food & Drink"], ["der April", "April", "Time & Calendar"], ["arbeitslos", "unemployed", "School & Work"], ["die Arbeitszeit", "working hours", "School & Work"], ["das Arbeitszimmer", "study, home office", "Home"], ["der Architekt", "architect", "People & Family"], ["das Armband", "bracelet", "Clothes"], ["die Art", "kind, type / way", "Little Words"], ["der Artikel", "article", "School & Work"], ["der Arzt", "doctor", "Health"], ["die Asche", "ash", "Nature & Weather"], ["der Ast", "branch (of a tree)", "Nature & Weather"], ["der Astronaut", "astronaut", "People & Family"], ["atmen", "to breathe", "Verbs"], ["die Aufgabe", "task, exercise", "School & Work"], ["aufgehen", "to rise / to open", "Verbs"], ["aufmachen", "to open", "Verbs"], ["aufräumen", "to tidy up", "Home"], ["aufregend", "exciting", "Describing Words"], ["aufschreiben", "to write down", "Verbs"], ["aufwachen", "to wake up", "Verbs"], ["aufwecken", "to wake (someone) up", "Verbs"], ["der Aufzug", "lift, elevator", "Home"], ["der Augenblick", "moment", "Time & Calendar"], ["der Ausflug", "trip, outing", "Free Time"], ["der Ausgang", "exit", "Town & Travel"], ["ausgehen", "to go out", "Free Time"], ["der Ausländer", "foreigner", "People & Family"], ["ausmachen", "to switch off / to arrange", "Verbs"], ["auspacken", "to unpack", "Verbs"], ["aussehen", "to look (like), to appear", "Verbs"], ["außen", "outside", "Little Words"], ["außer", "except, apart from", "Little Words"], ["ausverkauft", "sold out", "Shopping & Money"], ["der Ausweis", "ID card", "Town & Travel"], ["auswendig", "by heart", "School & Work"], ["ausziehen", "to take off (clothes) / to move out", "Verbs"], ["automatisch", "automatic", "Describing Words"], ["backen", "to bake", "Food & Drink"], ["die Bäckerei", "bakery", "Shopping & Money"], ["das Bad", "bath / bathroom", "Home"], ["der Bahnhof", "train station", "Town & Travel"], ["bald", "soon", "Time & Calendar"], ["der Balkon", "balcony", "Home"], ["der Ball", "ball", "Free Time"], ["die Bank", "bank / bench", "Town & Travel"], ["die Bar", "bar", "Town & Travel"], ["der Bart", "beard", "Body"], ["basteln", "to do crafts, to make things", "Free Time"], ["die Bauchschmerzen", "stomach ache", "Health"], ["bauen", "to build", "Verbs"], ["der Bauer", "farmer", "People & Family"], ["beantworten", "to answer (a question)", "Verbs"], ["sich bedanken", "to say thank you", "Verbs"], ["bedeuten", "to mean", "Verbs"], ["die Bedeutung", "meaning", "School & Work"], ["die Bedienung", "service / waiter, waitress", "Food & Drink"], ["beginnen", "to begin", "Verbs"], ["begrüßen", "to greet, to welcome", "Verbs"], ["behalten", "to keep", "Verbs"], ["beißen", "to bite", "Verbs"], ["bekannt", "known, well-known", "Describing Words"], ["beliebt", "popular", "Describing Words"], ["bellen", "to bark", "Animals"], ["die Bemerkung", "remark, comment", "School & Work"], ["benutzen", "to use", "Verbs"], ["das Benzin", "petrol, gas", "Town & Travel"], ["bequem", "comfortable", "Describing Words"], ["der Berg", "mountain", "Nature & Weather"], ["der Bericht", "report", "School & Work"], ["der Beruf", "job, profession", "School & Work"], ["berühmt", "famous", "Describing Words"], ["beschäftigt", "busy", "Describing Words"], ["der Besen", "broom", "Home"], ["besetzt", "occupied, taken / busy (phone)", "Describing Words"], ["besondere", "special", "Describing Words"], ["besonders", "especially", "Little Words"], ["bestellen", "to order", "Shopping & Money"], ["die Bestellung", "order", "Shopping & Money"], ["bestimmt", "certainly / certain", "Little Words"], ["der Besuch", "visit / visitor(s)", "People & Family"], ["besuchen", "to visit", "Verbs"], ["der Besucher", "visitor", "People & Family"], ["bevor", "before", "Little Words"], ["die Bewegung", "movement / exercise", "Health"], ["bewölkt", "cloudy", "Nature & Weather"], ["bezahlen", "to pay", "Shopping & Money"], ["die Bibliothek", "library", "School & Work"], ["biegen", "to bend / to turn", "Verbs"], ["bieten", "to offer", "Verbs"], ["das Bild", "picture", "Home"], ["der Bildschirm", "screen", "School & Work"], ["die Birne", "pear / light bulb", "Food & Drink"], ["bitter", "bitter", "Describing Words"], ["blasen", "to blow", "Verbs"], ["blind", "blind", "Describing Words"], ["blöd", "stupid, silly", "Describing Words"], ["der Blödsinn", "nonsense", "Phrases"], ["der Boden", "floor / ground", "Home"], ["die Bohne", "bean", "Food & Drink"], ["bohren", "to drill", "Verbs"], ["böse", "angry / evil, bad", "Feelings"], ["die Botschaft", "embassy / message", "Town & Travel"], ["boxen", "to box", "Free Time"], ["der Boxer", "boxer", "People & Family"], ["braten", "to fry, to roast", "Food & Drink"], ["die Braut", "bride", "People & Family"], ["der Brei", "porridge, mash", "Food & Drink"], ["breit", "wide", "Describing Words"], ["bremsen", "to brake", "Town & Travel"], ["brennen", "to burn", "Verbs"], ["das Brett", "board, plank", "Home"], ["der Brief", "letter", "School & Work"], ["der Briefkasten", "letter box, mailbox", "Home"], ["die Brille", "glasses", "Clothes"], ["bringen", "to bring", "Verbs"], ["das Brötchen", "bread roll", "Food & Drink"], ["die Brücke", "bridge", "Town & Travel"], ["der Brunnen", "fountain / well", "Town & Travel"], ["buchen", "to book", "Town & Travel"], ["die Bücherei", "library", "School & Work"], ["das Bücherregal", "bookshelf", "Home"], ["bügeln", "to iron", "Home"], ["bunt", "colourful", "Describing Words"], ["das Büro", "office", "School & Work"], ["die Bushaltestelle", "bus stop", "Town & Travel"], ["die Chefin", "boss (woman)", "School & Work"], ["Chinesisch", "Chinese (language)", "School & Work"], ["der Club", "club", "Free Time"], ["der Computer", "computer", "School & Work"], ["cool", "cool", "Describing Words"], ["die Couch", "couch, sofa", "Home"], ["der Cowboy", "cowboy", "People & Family"], ["dabei", "with it / at the same time", "Little Words"], ["das Dach", "roof", "Home"], ["dahinten", "back there", "Little Words"], ["dahinter", "behind it", "Little Words"], ["damals", "back then", "Time & Calendar"], ["die Dame", "lady", "People & Family"], ["danach", "afterwards", "Time & Calendar"], ["daneben", "next to it", "Little Words"], ["daran", "on it, about it", "Little Words"], ["darauf", "on it / after that", "Little Words"], ["daraus", "out of it", "Little Words"], ["darin", "in it", "Little Words"], ["darum", "that's why / around it", "Little Words"], ["die Datei", "file (computer)", "School & Work"], ["das Datum", "date", "Time & Calendar"], ["dauern", "to last, to take (time)", "Verbs"], ["der Daumen", "thumb", "Body"], ["davon", "of it, from it", "Little Words"], ["die Decke", "blanket / ceiling", "Home"], ["decken", "to cover / to set (the table)", "Home"], ["denken", "to think", "Verbs"], ["deshalb", "that's why, therefore", "Little Words"], ["das Dessert", "dessert", "Food & Drink"], ["der Detektiv", "detective", "People & Family"], ["deutlich", "clear, clearly", "Describing Words"], ["der Diamant", "diamond", "Clothes"], ["der Dieb", "thief", "People & Family"], ["der Dienst", "service / duty", "School & Work"], ["dieselbe", "the same (one)", "Little Words"], ["diesmal", "this time", "Time & Calendar"], ["direkt", "direct, directly", "Describing Words"], ["doch", "but, yes (after a negative question)", "Little Words"], ["der Dollar", "dollar", "Shopping & Money"], ["doppelt", "double", "Numbers"], ["das Dorf", "village", "Town & Travel"], ["dorthin", "there (to that place)", "Little Words"], ["der Drachen", "dragon / kite", "Free Time"], ["das Drama", "drama", "Free Time"], ["drauf", "on it (spoken)", "Little Words"], ["draus", "out of it (spoken)", "Little Words"], ["draußen", "outside", "Little Words"], ["dreckig", "dirty", "Describing Words"], ["drinnen", "inside", "Little Words"], ["dritter", "third", "Numbers"], ["drüben", "over there", "Little Words"], ["drücken", "to press, to push", "Verbs"], ["der Drucker", "printer", "School & Work"], ["dumm", "stupid", "Describing Words"], ["die Dummheit", "stupidity, silly thing", "Feelings"], ["die Dunkelheit", "darkness", "Nature & Weather"], ["durstig", "thirsty", "Food & Drink"], ["eben", "just / flat", "Little Words"], ["echt", "real, really", "Describing Words"], ["die Ecke", "corner", "Town & Travel"], ["egal", "doesn't matter, all the same", "Phrases"], ["der Ehering", "wedding ring", "Clothes"], ["das Eichhörnchen", "squirrel", "Animals"], ["der Eimer", "bucket", "Home"], ["eineinhalb", "one and a half", "Numbers"], ["einfach", "simple, easy / simply", "Describing Words"], ["der Einkauf", "shopping, purchase", "Shopping & Money"], ["einkaufen", "to shop", "Shopping & Money"], ["die Einkaufsliste", "shopping list", "Shopping & Money"], ["das Einkaufszentrum", "shopping centre, mall", "Shopping & Money"], ["einladen", "to invite", "Verbs"], ["die Einladung", "invitation", "Free Time"], ["einpacken", "to pack, to wrap", "Verbs"], ["die Einrichtung", "furnishings / facility", "Home"], ["die Eintrittskarte", "admission ticket", "Free Time"], ["einverstanden", "agreed, OK", "Phrases"], ["der Einwohner", "inhabitant, resident", "People & Family"], ["einziger", "only, single", "Little Words"], ["die Eisenbahn", "railway", "Town & Travel"], ["eklig", "disgusting", "Describing Words"], ["elektrisch", "electric", "Describing Words"], ["die Eltern", "parents", "People & Family"], ["enden", "to end", "Verbs"], ["endlich", "finally", "Time & Calendar"], ["eng", "narrow, tight", "Describing Words"], ["der Enkel", "grandson, grandchild", "People & Family"], ["entdecken", "to discover", "Verbs"], ["die Ente", "duck", "Animals"], ["entschuldigen", "to excuse", "Verbs"], ["sich entspannen", "to relax", "Verbs"], ["die Erdnuss", "peanut", "Food & Drink"], ["erfahren", "to find out / experienced", "Verbs"], ["sich erinnern", "to remember", "Verbs"], ["die Erkältung", "cold (illness)", "Health"], ["erklären", "to explain", "Verbs"], ["erstens", "firstly", "Numbers"], ["erstmal", "first of all, for now", "Little Words"], ["erzählen", "to tell", "Verbs"], ["der Essig", "vinegar", "Food & Drink"], ["die Etage", "floor, storey", "Home"], ["die Eule", "owl", "Animals"], ["extra", "extra / on purpose", "Little Words"], ["die Fabrik", "factory", "School & Work"], ["die Fahne", "flag", "Little Words"], ["die Fähre", "ferry", "Town & Travel"], ["fahren", "to drive, to go (by vehicle)", "Town & Travel"], ["die Fahrkarte", "ticket (travel)", "Town & Travel"], ["das Fahrrad", "bicycle", "Town & Travel"], ["die Fahrt", "journey, ride", "Town & Travel"], ["das Fahrzeug", "vehicle", "Town & Travel"], ["fair", "fair", "Describing Words"], ["falls", "in case, if", "Little Words"], ["falten", "to fold", "Verbs"], ["der Fan", "fan", "Free Time"], ["fangen", "to catch", "Verbs"], ["fast", "almost", "Little Words"], ["fehlen", "to be missing", "Verbs"], ["der Fehler", "mistake", "School & Work"], ["die Feier", "party, celebration", "Free Time"], ["der Feierabend", "end of the working day", "School & Work"], ["der Feiertag", "public holiday", "Time & Calendar"], ["fein", "fine, delicate", "Describing Words"], ["das Feld", "field", "Nature & Weather"], ["das Fell", "fur", "Animals"], ["fern", "far, distant", "Describing Words"], ["die Fernbedienung", "remote control", "Home"], ["fernsehen", "to watch TV", "Free Time"], ["fertig", "ready, finished", "Describing Words"], ["fest", "firm, solid", "Describing Words"], ["feucht", "damp, moist", "Nature & Weather"], ["die Feuerwehr", "fire brigade", "Town & Travel"], ["das Feuerwerk", "fireworks", "Free Time"], ["das Feuerzeug", "lighter", "Home"], ["das Fieber", "fever", "Health"], ["die Figur", "figure", "Little Words"], ["der Film", "film, movie", "Free Time"], ["finden", "to find / to think (opinion)", "Verbs"], ["der Finger", "finger", "Body"], ["die Firma", "company, firm", "School & Work"], ["fischen", "to fish", "Free Time"], ["der Fischer", "fisherman", "People & Family"], ["flach", "flat", "Describing Words"], ["fliegen", "to fly", "Town & Travel"], ["fliegend", "flying", "Describing Words"], ["flirten", "to flirt", "Verbs"], ["der Flug", "flight", "Town & Travel"], ["der Flughafen", "airport", "Town & Travel"], ["das Flugzeug", "aeroplane", "Town & Travel"], ["der Flur", "hallway", "Home"], ["folgen", "to follow", "Verbs"], ["fort", "away, gone", "Little Words"], ["das Foto", "photo", "Free Time"], ["der Fotograf", "photographer", "People & Family"], ["fotografieren", "to take photos", "Free Time"], ["die Franzosen", "the French (people)", "People & Family"], ["der Freitagabend", "Friday evening", "Time & Calendar"], ["die Freizeit", "free time", "Free Time"], ["fressen", "to eat (animals)", "Animals"], ["die Freude", "joy", "Feelings"], ["freundlich", "friendly", "Describing Words"], ["die Freundlichkeit", "friendliness", "Feelings"], ["friedlich", "peaceful", "Describing Words"], ["frisch", "fresh", "Describing Words"], ["der Friseur", "hairdresser", "People & Family"], ["die Frisur", "hairstyle", "Body"], ["froh", "glad", "Feelings"], ["fröhlich", "cheerful, happy", "Feelings"], ["der Frosch", "frog", "Animals"], ["der Frost", "frost", "Nature & Weather"], ["früher", "earlier / in the past", "Time & Calendar"], ["das Frühjahr", "spring", "Time & Calendar"], ["der Frühling", "spring", "Time & Calendar"], ["das Frühstück", "breakfast", "Food & Drink"], ["frühstücken", "to have breakfast", "Food & Drink"], ["die Frühstückspause", "breakfast break", "School & Work"], ["fühlen", "to feel", "Feelings"], ["füllen", "to fill", "Verbs"], ["furchtbar", "terrible", "Describing Words"], ["füttern", "to feed", "Animals"], ["die Galerie", "gallery", "Free Time"], ["der Gang", "corridor / course (of a meal)", "Home"], ["die Garage", "garage", "Home"], ["der Gast", "guest", "People & Family"], ["das Gebäude", "building", "Town & Travel"], ["das Gebirge", "mountains, mountain range", "Nature & Weather"], ["der Geburtstag", "birthday", "Time & Calendar"], ["die Geburtstagsparty", "birthday party", "Free Time"], ["gefallen", "to please, to like", "Verbs"], ["das Gefängnis", "prison", "Town & Travel"], ["die Gegend", "area, region", "Town & Travel"], ["gegeneinander", "against each other", "Little Words"], ["das Gegenteil", "opposite", "Little Words"], ["geheim", "secret", "Describing Words"], ["das Gehirn", "brain", "Body"], ["gemein", "mean, nasty", "Describing Words"], ["gemütlich", "cosy", "Describing Words"], ["genau", "exactly", "Little Words"], ["genauso", "just the same", "Little Words"], ["genug", "enough", "Little Words"], ["das Gepäck", "luggage", "Town & Travel"], ["gerade", "just now / straight", "Little Words"], ["gern", "gladly, with pleasure", "Phrases"], ["das Geschäft", "shop / business", "Shopping & Money"], ["das Geschenk", "present, gift", "Free Time"], ["der Geschmack", "taste", "Food & Drink"], ["das Gesicht", "face", "Body"], ["gestern", "yesterday", "Time & Calendar"], ["gestreift", "striped", "Clothes"], ["gesund", "healthy", "Health"], ["die Gesundheit", "health / bless you!", "Health"], ["das Getränk", "drink", "Food & Drink"], ["das Gewicht", "weight", "Health"], ["gewinnen", "to win", "Free Time"], ["das Gift", "poison", "Health"], ["die Gitarre", "guitar", "Free Time"], ["glatt", "smooth / slippery", "Describing Words"], ["der Glaube", "belief, faith", "Feelings"], ["glauben", "to believe", "Verbs"], ["gleichfalls", "likewise, you too", "Phrases"], ["das Gleis", "platform, track", "Town & Travel"], ["die Glocke", "bell", "Little Words"], ["das Glück", "luck / happiness", "Feelings"], ["der Glückwunsch", "congratulations", "Phrases"], ["das Gold", "gold", "Shopping & Money"], ["golden", "golden", "Describing Words"], ["das Grab", "grave", "Little Words"], ["das Grad", "degree (temperature)", "Nature & Weather"], ["das Gramm", "gram", "Numbers"], ["die Grammatik", "grammar", "School & Work"], ["gratis", "free (of charge)", "Shopping & Money"], ["gratulieren", "to congratulate", "Verbs"], ["grillen", "to barbecue, to grill", "Food & Drink"], ["grinsen", "to grin", "Feelings"], ["die Grippe", "flu", "Health"], ["der Grund", "reason", "Little Words"], ["die Gruppe", "group", "People & Family"], ["gruselig", "creepy, scary", "Describing Words"], ["gucken", "to look", "Verbs"], ["der Gummi", "rubber", "Little Words"], ["günstig", "cheap, good value", "Shopping & Money"], ["der Gürtel", "belt", "Clothes"], ["die Haare", "hair", "Body"], ["der Haarschnitt", "haircut", "Body"], ["der Hahn", "rooster / tap", "Animals"], ["die Hälfte", "half", "Numbers"], ["der Hals", "neck, throat", "Body"], ["die Halskette", "necklace", "Clothes"], ["halt", "just (filler) / stop!", "Little Words"], ["die Haltestelle", "stop (bus, tram)", "Town & Travel"], ["das Handgelenk", "wrist", "Body"], ["der Handschuh", "glove", "Clothes"], ["das Handtuch", "towel", "Home"], ["das Handy", "mobile phone", "School & Work"], ["hängen", "to hang", "Verbs"], ["hart", "hard", "Describing Words"], ["das Häschen", "bunny", "Animals"], ["hassen", "to hate", "Feelings"], ["hässlich", "ugly", "Describing Words"], ["Haupt-", "main (prefix)", "Little Words"], ["die Hauptsache", "main thing", "Little Words"], ["die Hausaufgabe", "homework task", "School & Work"], ["die Hausaufgaben", "homework", "School & Work"], ["das Häuschen", "little house, cottage", "Home"], ["der Haushalt", "household, housework", "Home"], ["das Haustier", "pet", "Animals"], ["die Haustür", "front door", "Home"], ["heben", "to lift", "Verbs"], ["das Heft", "exercise book", "School & Work"], ["der Heiligabend", "Christmas Eve", "Time & Calendar"], ["heim", "home(wards)", "Home"], ["der Heimweg", "way home", "Town & Travel"], ["helfen", "to help", "Verbs"], ["der Helikopter", "helicopter", "Town & Travel"], ["das Hemd", "shirt", "Clothes"], ["heraus", "out", "Little Words"], ["der Herbst", "autumn", "Time & Calendar"], ["herein", "in(to here)", "Little Words"], ["herkommen", "to come here", "Verbs"], ["herum", "around", "Little Words"], ["das Herz", "heart", "Body"], ["herzlich", "warm, cordial", "Describing Words"], ["das Heu", "hay", "Nature & Weather"], ["hierher", "over here, to here", "Little Words"], ["hinauf", "up (there)", "Little Words"], ["hinbekommen", "to manage (to do)", "Verbs"], ["hinein", "in(to)", "Little Words"], ["hingehen", "to go there", "Verbs"], ["hinlegen", "to lay down / to lie down", "Verbs"], ["hinsetzen", "to sit down", "Verbs"], ["hinten", "at the back", "Little Words"], ["hinunter", "down (there)", "Little Words"], ["der Hirsch", "deer, stag", "Animals"], ["die Hitze", "heat", "Nature & Weather"], ["das Hobby", "hobby", "Free Time"], ["hoch", "high", "Describing Words"], ["die Hochzeit", "wedding", "Free Time"], ["hoffen", "to hope", "Verbs"], ["die Höhe", "height", "Numbers"], ["holen", "to fetch", "Verbs"], ["der Honig", "honey", "Food & Drink"], ["hoppla", "whoops", "Phrases"], ["die Hose", "trousers", "Clothes"], ["hübsch", "pretty", "Describing Words"], ["die Hüfte", "hip", "Body"], ["hungrig", "hungry", "Food & Drink"], ["hüpfen", "to hop, to jump", "Verbs"], ["husten", "to cough", "Health"], ["der Hut", "hat", "Clothes"], ["die Hütte", "hut, cabin", "Home"], ["die Idee", "idea", "Little Words"], ["die Information", "information", "School & Work"], ["informieren", "to inform", "Verbs"], ["der Inhalt", "contents", "Little Words"], ["innen", "inside", "Little Words"], ["das Insekt", "insect", "Animals"], ["die Insel", "island", "Nature & Weather"], ["das Instrument", "instrument", "Free Time"], ["interessant", "interesting", "Describing Words"], ["das Interesse", "interest", "Free Time"], ["sich interessieren", "to be interested", "Verbs"], ["irgend-", "some- (any-)", "Little Words"], ["irgendein", "some, any", "Little Words"], ["irgendwie", "somehow", "Little Words"], ["Italienisch", "Italian (language)", "School & Work"], ["die Jacke", "jacket", "Clothes"], ["die Jahreszeit", "season", "Time & Calendar"], ["Japanisch", "Japanese (language)", "School & Work"], ["jawohl", "yes indeed", "Phrases"], ["jederzeit", "any time", "Time & Calendar"], ["jemand", "someone", "Little Words"], ["joggen", "to jog", "Free Time"], ["der Joghurt", "yoghurt", "Food & Drink"], ["die Journalistin", "journalist (woman)", "People & Family"], ["die Jugend", "youth", "People & Family"], ["der Juni", "June", "Time & Calendar"], ["das Kabel", "cable", "Home"], ["der Kakao", "cocoa, hot chocolate", "Food & Drink"], ["der Kalender", "calendar", "Time & Calendar"], ["die Kälte", "cold, coldness", "Nature & Weather"], ["der Kampf", "fight, battle", "Little Words"], ["das Kaninchen", "rabbit", "Animals"], ["kaputt", "broken", "Describing Words"], ["kariert", "checked", "Clothes"], ["die Karte", "card / ticket / map", "Free Time"], ["der Karton", "cardboard box", "Home"], ["die Kasse", "till, checkout", "Shopping & Money"], ["der Kasten", "box, crate", "Home"], ["der Kater", "tomcat / hangover", "Animals"], ["das Kätzchen", "kitten", "Animals"], ["der Kaugummi", "chewing gum", "Food & Drink"], ["der Keks", "biscuit, cookie", "Food & Drink"], ["der Kellner", "waiter", "People & Family"], ["der Kerl", "guy, bloke", "People & Family"], ["die Kerze", "candle", "Home"], ["der Ketchup", "ketchup", "Food & Drink"], ["der Kilometer", "kilometre", "Numbers"], ["die Kindheit", "childhood", "People & Family"], ["das Kinn", "chin", "Body"], ["das Kino", "cinema", "Free Time"], ["die Kirche", "church", "Town & Travel"], ["das Kissen", "cushion, pillow", "Home"], ["die Kiste", "box, crate", "Home"], ["klatschen", "to clap", "Verbs"], ["das Klebeband", "sticky tape", "School & Work"], ["das Kleid", "dress", "Clothes"], ["die Kleidung", "clothes, clothing", "Clothes"], ["das Kleingeld", "small change", "Shopping & Money"], ["die Kleinigkeit", "small thing, trifle", "Little Words"], ["klettern", "to climb", "Free Time"], ["die Klimaanlage", "air conditioning", "Home"], ["klingeln", "to ring", "Verbs"], ["klingen", "to sound", "Verbs"], ["die Klinik", "clinic", "Health"], ["klopfen", "to knock", "Verbs"], ["der Klub", "club", "Free Time"], ["klug", "clever", "Describing Words"], ["die Kneipe", "pub", "Free Time"], ["der Knoblauch", "garlic", "Food & Drink"], ["der Knochen", "bone", "Body"], ["der Koch", "cook, chef", "People & Family"], ["kochen", "to cook", "Food & Drink"], ["der Koffer", "suitcase", "Town & Travel"], ["der Kofferraum", "car boot, trunk", "Town & Travel"], ["der Kollege", "colleague", "School & Work"], ["die Kollegin", "colleague (woman)", "School & Work"], ["komisch", "strange / funny", "Describing Words"], ["das Komma", "comma", "School & Work"], ["die Komödie", "comedy", "Free Time"], ["komplett", "complete", "Describing Words"], ["das Kompliment", "compliment", "Phrases"], ["das Kondom", "condom", "Health"], ["der König", "king", "People & Family"], ["der Kontakt", "contact", "People & Family"], ["das Köpfchen", "little head / brains", "Body"], ["die Kopfschmerzen", "headache", "Health"], ["das Kopfweh", "headache", "Health"], ["kopieren", "to copy", "School & Work"], ["kosten", "to cost / to taste", "Shopping & Money"], ["das Kostüm", "costume", "Clothes"], ["kräftig", "strong, powerful", "Describing Words"], ["das Krankenhaus", "hospital", "Health"], ["die Krankenschwester", "nurse", "Health"], ["die Krankheit", "illness", "Health"], ["kratzen", "to scratch", "Verbs"], ["die Krawatte", "tie", "Clothes"], ["das Kreuz", "cross", "Little Words"], ["die Kreuzung", "crossroads", "Town & Travel"], ["kriegen", "to get", "Verbs"], ["kugeln", "to roll", "Verbs"], ["kühl", "cool", "Nature & Weather"], ["der Kühlschrank", "fridge", "Home"], ["sich kümmern", "to take care of", "Verbs"], ["der Kunde", "customer", "Shopping & Money"], ["die Kundin", "customer (woman)", "Shopping & Money"], ["die Künstlerin", "artist (woman)", "People & Family"], ["der Kurs", "course", "School & Work"], ["kurz", "short", "Describing Words"], ["kürzer", "shorter", "Describing Words"], ["das Küsschen", "little kiss", "Feelings"], ["küssen", "to kiss", "Feelings"], ["das Labor", "laboratory", "School & Work"], ["lächeln", "to smile", "Feelings"], ["lachen", "to laugh", "Feelings"], ["der Lachs", "salmon", "Food & Drink"], ["der Laden", "shop", "Shopping & Money"], ["die Lage", "location / situation", "Little Words"], ["landen", "to land", "Town & Travel"], ["die Landkarte", "map", "Town & Travel"], ["die Landschaft", "landscape, scenery", "Nature & Weather"], ["lang", "long", "Describing Words"], ["die Länge", "length", "Numbers"], ["länger", "longer", "Describing Words"], ["die Langeweile", "boredom", "Feelings"], ["langweilig", "boring", "Describing Words"], ["laufend", "running, ongoing", "Describing Words"], ["der Läufer", "runner", "Free Time"], ["die Laune", "mood", "Feelings"], ["laut", "loud", "Describing Words"], ["der Lautsprecher", "loudspeaker", "Home"], ["lebendig", "alive, lively", "Describing Words"], ["die Lebensmittel", "groceries, food", "Shopping & Money"], ["lecker", "tasty, delicious", "Food & Drink"], ["leer", "empty", "Describing Words"], ["leicht", "easy / light", "Describing Words"], ["das Leid", "sorrow (es tut mir leid = I'm sorry)", "Phrases"], ["leider", "unfortunately", "Phrases"], ["leihen", "to lend, to borrow", "Verbs"], ["leise", "quiet", "Describing Words"], ["die Leiter", "ladder", "Home"], ["die Lektion", "lesson", "School & Work"], ["letzte", "last", "Little Words"], ["letzter", "last", "Little Words"], ["leuchten", "to shine, to glow", "Verbs"], ["die Leute", "people", "People & Family"], ["der Liebling", "darling, favourite", "People & Family"], ["Lieblings-", "favourite (prefix)", "Little Words"], ["das Lied", "song", "Free Time"], ["liefern", "to deliver", "Shopping & Money"], ["los", "off, go! / wrong (was ist los?)", "Phrases"], ["lösen", "to solve", "Verbs"], ["losgehen", "to set off, to start", "Verbs"], ["der Löwe", "lion", "Animals"], ["die Luft", "air", "Nature & Weather"], ["lügen", "to lie (tell lies)", "Verbs"], ["die Lust", "desire (Lust haben = to feel like)", "Feelings"], ["lustig", "funny", "Describing Words"], ["das Mädel", "girl, lass", "People & Family"], ["die Magie", "magic", "Free Time"], ["die Mahlzeit", "meal", "Food & Drink"], ["malen", "to paint", "Free Time"], ["der Maler", "painter", "People & Family"], ["manchmal", "sometimes", "Time & Calendar"], ["männlich", "male, masculine", "Describing Words"], ["der Mantel", "coat", "Clothes"], ["das Märchen", "fairy tale", "Free Time"], ["die Marke", "brand / stamp", "Shopping & Money"], ["der Markt", "market", "Shopping & Money"], ["die Maschine", "machine", "School & Work"], ["die Maske", "mask", "Clothes"], ["die Massage", "massage", "Health"], ["das Material", "material", "Little Words"], ["die Matratze", "mattress", "Home"], ["die Medizin", "medicine", "Health"], ["das Meer", "sea", "Nature & Weather"], ["das Mehl", "flour", "Food & Drink"], ["mehr", "more", "Little Words"], ["mehrmals", "several times", "Numbers"], ["meinen", "to mean, to think", "Verbs"], ["meist", "most", "Little Words"], ["meistens", "mostly, usually", "Time & Calendar"], ["melden", "to report / to sign up", "Verbs"], ["das Metall", "metal", "Little Words"], ["die Metzgerei", "butcher's shop", "Shopping & Money"], ["der Mexikaner", "Mexican (man)", "People & Family"], ["die Miete", "rent", "Home"], ["mieten", "to rent", "Home"], ["das Mikrofon", "microphone", "School & Work"], ["die Milliarde", "billion", "Numbers"], ["die Million", "million", "Numbers"], ["minus", "minus", "Numbers"], ["der Mitbewohner", "flatmate", "People & Family"], ["mitbringen", "to bring along", "Verbs"], ["miteinander", "with each other", "Little Words"], ["mitfahren", "to ride along", "Town & Travel"], ["mitkommen", "to come along", "Verbs"], ["mitmachen", "to join in", "Verbs"], ["das Mittagessen", "lunch", "Food & Drink"], ["mittags", "at midday", "Time & Calendar"], ["die Mittagspause", "lunch break", "School & Work"], ["die Mitte", "middle", "Little Words"], ["das Mittel", "means / remedy", "Little Words"], ["mitten", "in the middle", "Little Words"], ["die Mitternacht", "midnight", "Time & Calendar"], ["die Möbel", "furniture", "Home"], ["möchten", "would like", "Verbs"], ["modern", "modern", "Describing Words"], ["möglich", "possible", "Describing Words"], ["momentan", "at the moment", "Time & Calendar"], ["das Monster", "monster", "Free Time"], ["der Motor", "engine, motor", "Town & Travel"], ["das Motorrad", "motorbike", "Town & Travel"], ["die Müdigkeit", "tiredness", "Health"], ["die Münze", "coin", "Shopping & Money"], ["die Münzen", "coins", "Shopping & Money"], ["die Muschel", "shell, mussel", "Nature & Weather"], ["das Museum", "museum", "Free Time"], ["die Musik", "music", "Free Time"], ["der Musiker", "musician", "People & Family"], ["nachdem", "after (conjunction)", "Little Words"], ["die Nachricht", "message / news", "School & Work"], ["nächste", "next", "Little Words"], ["der Nachtisch", "dessert", "Food & Drink"], ["nachts", "at night", "Time & Calendar"], ["der Nacken", "neck (back of)", "Body"], ["nackt", "naked", "Describing Words"], ["nah", "near, close", "Describing Words"], ["nahe", "near, close", "Describing Words"], ["naja", "well…", "Phrases"], ["nass", "wet", "Describing Words"], ["natürlich", "of course / natural", "Phrases"], ["der Nebel", "fog", "Nature & Weather"], ["nebenan", "next door", "Home"], ["neblig", "foggy", "Nature & Weather"], ["der Neffe", "nephew", "People & Family"], ["negativ", "negative", "Describing Words"], ["nennen", "to name, to call", "Verbs"], ["nerven", "to get on someone's nerves", "Feelings"], ["nervig", "annoying", "Describing Words"], ["das Nest", "nest", "Animals"], ["die Nichte", "niece", "People & Family"], ["niedlich", "cute", "Describing Words"], ["niemand", "nobody", "Little Words"], ["nirgends", "nowhere", "Little Words"], ["nochmals", "once again", "Little Words"], ["der Norden", "north", "Town & Travel"], ["nördlich", "northern, to the north", "Town & Travel"], ["normal", "normal", "Describing Words"], ["die Nudeln", "pasta, noodles", "Food & Drink"], ["die Nuss", "nut", "Food & Drink"], ["der Ober", "waiter", "People & Family"], ["der Ofen", "oven, stove", "Home"], ["offen", "open", "Describing Words"], ["die Öffnungszeiten", "opening hours", "Shopping & Money"], ["oft", "often", "Time & Calendar"], ["der Ohrring", "earring", "Clothes"], ["das Öl", "oil", "Food & Drink"], ["online", "online", "School & Work"], ["die Ordnung", "order, tidiness (in Ordnung = OK)", "Phrases"], ["Ostern", "Easter", "Time & Calendar"], ["das Paar", "pair, couple (ein paar = a few)", "Numbers"], ["packen", "to pack", "Verbs"], ["die Packung", "packet", "Shopping & Money"], ["die Panik", "panic", "Feelings"], ["das Parfüm", "perfume", "Clothes"], ["der Park", "park", "Town & Travel"], ["parken", "to park", "Town & Travel"], ["der Parkplatz", "car park, parking space", "Town & Travel"], ["die Partei", "political party", "Little Words"], ["der Partner", "partner", "People & Family"], ["die Partnerin", "partner (woman)", "People & Family"], ["die Party", "party", "Free Time"], ["passen", "to fit / to suit", "Verbs"], ["passend", "suitable, matching", "Describing Words"], ["passieren", "to happen", "Verbs"], ["das Passwort", "password", "School & Work"], ["der Patient", "patient", "Health"], ["die Patientin", "patient (woman)", "Health"], ["die Pause", "break", "School & Work"], ["das Pech", "bad luck", "Feelings"], ["per", "by, per", "Little Words"], ["die Person", "person", "People & Family"], ["die Pfanne", "frying pan", "Home"], ["der Pfeffer", "pepper", "Food & Drink"], ["das Pferd", "horse", "Animals"], ["pflanzen", "to plant", "Nature & Weather"], ["das Pflaster", "plaster, band-aid", "Health"], ["die Pfote", "paw", "Animals"], ["das Pfund", "pound", "Shopping & Money"], ["die Phantasie", "imagination", "Feelings"], ["die Physik", "physics", "School & Work"], ["der Pilot", "pilot", "People & Family"], ["der Pirat", "pirate", "People & Family"], ["die Pistole", "pistol", "Little Words"], ["planen", "to plan", "Verbs"], ["der Planet", "planet", "Nature & Weather"], ["das Plastik", "plastic", "Little Words"], ["das Plätzchen", "biscuit, cookie / little spot", "Food & Drink"], ["plus", "plus", "Numbers"], ["das Poker", "poker", "Free Time"], ["der Polizist", "police officer", "People & Family"], ["die Pommes", "chips, fries", "Food & Drink"], ["das Popcorn", "popcorn", "Food & Drink"], ["das Portemonnaie", "purse, wallet", "Shopping & Money"], ["die Portion", "portion", "Food & Drink"], ["positiv", "positive", "Describing Words"], ["die Post", "post office / mail", "Town & Travel"], ["das Poster", "poster", "Home"], ["die Postkarte", "postcard", "Town & Travel"], ["die Postleitzahl", "postcode", "Town & Travel"], ["das Preisschild", "price tag", "Shopping & Money"], ["prima", "great", "Phrases"], ["der Prinz", "prince", "People & Family"], ["die Prinzessin", "princess", "People & Family"], ["privat", "private", "Describing Words"], ["probieren", "to try, to taste", "Verbs"], ["prost", "cheers!", "Phrases"], ["das Prozent", "percent", "Numbers"], ["die Prüfung", "exam", "School & Work"], ["der Pudding", "pudding", "Food & Drink"], ["der Punkt", "point / full stop", "Little Words"], ["pünktlich", "on time", "Time & Calendar"], ["die Puppe", "doll", "Free Time"], ["putzen", "to clean", "Home"], ["der Quark", "quark (soft cheese)", "Food & Drink"], ["die Quelle", "source / spring", "Nature & Weather"], ["der Rabatt", "discount", "Shopping & Money"], ["der Rand", "edge", "Little Words"], ["sich rasieren", "to shave", "Health"], ["raten", "to guess / to advise", "Verbs"], ["das Rathaus", "town hall", "Town & Travel"], ["die Ratte", "rat", "Animals"], ["der Raum", "room, space", "Home"], ["rausgehen", "to go out", "Verbs"], ["rechnen", "to calculate", "Numbers"], ["die Rechnung", "bill", "Shopping & Money"], ["das Regal", "shelf", "Home"], ["der Regenschirm", "umbrella", "Nature & Weather"], ["die Region", "region", "Town & Travel"], ["regnerisch", "rainy", "Nature & Weather"], ["reich", "rich", "Describing Words"], ["rein", "clean, pure / in (spoken)", "Little Words"], ["reinkommen", "to come in", "Verbs"], ["der Reis", "rice", "Food & Drink"], ["die Reise", "journey, trip", "Town & Travel"], ["reisen", "to travel", "Town & Travel"], ["der Reisepass", "passport", "Town & Travel"], ["reiten", "to ride (a horse)", "Free Time"], ["rennen", "to run", "Verbs"], ["die Rente", "pension", "School & Work"], ["die Reparatur", "repair", "School & Work"], ["der Reporter", "reporter", "People & Family"], ["die Reporterin", "reporter (woman)", "People & Family"], ["reservieren", "to reserve", "Town & Travel"], ["der Rest", "rest, remainder", "Little Words"], ["das Restaurant", "restaurant", "Food & Drink"], ["das Rezept", "recipe / prescription", "Food & Drink"], ["die Rezeption", "reception", "Town & Travel"], ["die Richtung", "direction", "Town & Travel"], ["riechen", "to smell", "Verbs"], ["der Riese", "giant", "People & Family"], ["riesig", "huge", "Describing Words"], ["das Rind", "cow, cattle / beef", "Animals"], ["der Ritter", "knight", "People & Family"], ["der Roboter", "robot", "School & Work"], ["die Rockmusik", "rock music", "Free Time"], ["das Rohr", "pipe", "Home"], ["die Rolle", "role / roll", "Little Words"], ["der Rollstuhl", "wheelchair", "Health"], ["der Roman", "novel", "Free Time"], ["romantisch", "romantic", "Describing Words"], ["die Rose", "rose", "Nature & Weather"], ["rothaarig", "red-haired", "Body"], ["der Rücken", "back", "Body"], ["der Rucksack", "backpack", "Town & Travel"], ["rufen", "to call, to shout", "Verbs"], ["runtergehen", "to go down", "Verbs"], ["Russisch", "Russian (language)", "School & Work"], ["der Saal", "hall", "Town & Travel"], ["der Sack", "sack, bag", "Home"], ["die Saison", "season", "Time & Calendar"], ["sammeln", "to collect", "Free Time"], ["der Samstagabend", "Saturday evening", "Time & Calendar"], ["der Sand", "sand", "Nature & Weather"], ["das Sandwich", "sandwich", "Food & Drink"], ["der Sänger", "singer", "People & Family"], ["die Sängerin", "singer (woman)", "People & Family"], ["satt", "full (after eating)", "Food & Drink"], ["der Satz", "sentence", "School & Work"], ["sauber", "clean", "Describing Words"], ["saugen", "to suck / to vacuum", "Home"], ["das Schaf", "sheep", "Animals"], ["der Schalter", "switch / counter", "Home"], ["der Schatz", "treasure / darling", "Feelings"], ["schauen", "to look", "Verbs"], ["die Schauspielerin", "actress", "People & Family"], ["die Scheibe", "slice / pane", "Food & Drink"], ["schenken", "to give (as a present)", "Free Time"], ["schick", "smart, chic", "Clothes"], ["schicken", "to send", "Verbs"], ["schieben", "to push", "Verbs"], ["schiessen", "to shoot (Swiss spelling)", "Verbs"], ["schießen", "to shoot", "Verbs"], ["der Schinken", "ham", "Food & Drink"], ["der Schlaf", "sleep", "Health"], ["der Schlag", "blow, hit", "Little Words"], ["schlagen", "to hit, to beat", "Verbs"], ["die Schlange", "snake / queue", "Animals"], ["schlechter", "worse", "Describing Words"], ["schlimm", "bad, serious", "Describing Words"], ["der Schlitten", "sledge", "Free Time"], ["der Schluss", "end", "Time & Calendar"], ["der Schlüssel", "key", "Home"], ["schmal", "narrow, slim", "Describing Words"], ["schmecken", "to taste", "Food & Drink"], ["schmelzen", "to melt", "Verbs"], ["der Schmutz", "dirt", "Home"], ["schmutzig", "dirty", "Describing Words"], ["die Schnecke", "snail", "Animals"], ["schneiden", "to cut", "Verbs"], ["die Schokolade", "chocolate", "Food & Drink"], ["der Schrank", "cupboard, wardrobe", "Home"], ["schreien", "to scream, to shout", "Verbs"], ["der Schritt", "step", "Little Words"], ["schüchtern", "shy", "Feelings"], ["der Schuh", "shoe", "Clothes"], ["die Schuhe", "shoes", "Clothes"], ["die Schuld", "fault, guilt", "Feelings"], ["die Schulter", "shoulder", "Body"], ["schütteln", "to shake", "Verbs"], ["schwach", "weak", "Describing Words"], ["der Schwager", "brother-in-law", "People & Family"], ["die Schwägerin", "sister-in-law", "People & Family"], ["schwanger", "pregnant", "Health"], ["das Schwein", "pig", "Animals"], ["das Schweinchen", "piglet", "Animals"], ["schwer", "heavy / difficult", "Describing Words"], ["der Schwiegervater", "father-in-law", "People & Family"], ["das Schwimmbad", "swimming pool", "Free Time"], ["schwimmen", "to swim", "Free Time"], ["schwindelig", "dizzy", "Health"], ["schwitzen", "to sweat", "Health"], ["schwul", "gay", "Describing Words"], ["seit", "since, for (time)", "Time & Calendar"], ["der Sekretär", "secretary", "School & Work"], ["die Sekretärin", "secretary (woman)", "School & Work"], ["selbe", "same", "Little Words"], ["selber", "myself, yourself (spoken)", "Little Words"], ["selbst", "self / even", "Little Words"], ["selten", "rarely", "Time & Calendar"], ["das Semester", "semester", "School & Work"], ["senden", "to send / to broadcast", "Verbs"], ["die Sendung", "programme / shipment", "Free Time"], ["der Senf", "mustard", "Food & Drink"], ["die Serie", "series", "Free Time"], ["der Service", "service", "Shopping & Money"], ["die Serviette", "napkin", "Food & Drink"], ["der Sex", "sex", "Little Words"], ["sich beeilen", "to hurry", "Verbs"], ["sich entschuldigen", "to apologise", "Verbs"], ["sicher", "safe / sure", "Describing Words"], ["siebter", "seventh", "Numbers"], ["der Sieger", "winner", "Free Time"], ["das Signal", "signal", "Little Words"], ["singen", "to sing", "Free Time"], ["der Single", "single (person)", "People & Family"], ["sitzen", "to sit", "Verbs"], ["der Snack", "snack", "Food & Drink"], ["die Socken", "socks", "Clothes"], ["sofort", "immediately", "Time & Calendar"], ["die Software", "software", "School & Work"], ["sogar", "even", "Little Words"], ["der Sohn", "son", "People & Family"], ["solch", "such", "Little Words"], ["solcher", "such a", "Little Words"], ["der Soldat", "soldier", "People & Family"], ["sollen", "should, to be supposed to", "Verbs"], ["der Sonnenaufgang", "sunrise", "Nature & Weather"], ["die Sonnenbrille", "sunglasses", "Clothes"], ["der Sonnenschein", "sunshine", "Nature & Weather"], ["sonntags", "on Sundays", "Time & Calendar"], ["das Souvenir", "souvenir", "Town & Travel"], ["soviel", "so much (also written so viel)", "Little Words"], ["Spanisch", "Spanish (language)", "School & Work"], ["sparen", "to save (money)", "Shopping & Money"], ["später", "later", "Time & Calendar"], ["spazieren", "to walk, to stroll", "Free Time"], ["der Speck", "bacon", "Food & Drink"], ["speichern", "to save (a file)", "School & Work"], ["die Speisekarte", "menu", "Food & Drink"], ["das Spiel", "game", "Free Time"], ["der Spieler", "player", "Free Time"], ["das Spielzeug", "toy", "Free Time"], ["spinnen", "to be crazy / to spin", "Verbs"], ["spitz", "pointed", "Describing Words"], ["der Spitzname", "nickname", "People & Family"], ["der Sport", "sport", "Free Time"], ["die Sporthalle", "sports hall", "Free Time"], ["der Sportler", "athlete", "Free Time"], ["der Sportplatz", "sports field", "Free Time"], ["springen", "to jump", "Verbs"], ["spülen", "to rinse / to wash up", "Home"], ["der Staat", "state", "Town & Travel"], ["die Stadtmitte", "town centre", "Town & Travel"], ["das Stadtzentrum", "city centre", "Town & Travel"], ["der Stall", "stable, barn", "Animals"], ["starten", "to start", "Verbs"], ["statt", "instead of", "Little Words"], ["die Statue", "statue", "Town & Travel"], ["der Staub", "dust", "Home"], ["das Steak", "steak", "Food & Drink"], ["stecken", "to put, to stick", "Verbs"], ["stehen", "to stand", "Verbs"], ["sterben", "to die", "Verbs"], ["der Stern", "star", "Nature & Weather"], ["die Stiefmutter", "stepmother", "People & Family"], ["der Stiefvater", "stepfather", "People & Family"], ["der Stift", "pen, pencil", "School & Work"], ["stimmen", "to be correct (das stimmt = that's right)", "Phrases"], ["die Stirn", "forehead", "Body"], ["das Stockwerk", "floor, storey", "Home"], ["der Stoff", "fabric / substance", "Clothes"], ["stoppen", "to stop", "Verbs"], ["strahlen", "to shine, to beam", "Verbs"], ["der Strand", "beach", "Nature & Weather"], ["die Straßenbahn", "tram", "Town & Travel"], ["streicheln", "to stroke, to pet", "Animals"], ["der Stress", "stress", "Feelings"], ["der Student", "student", "School & Work"], ["die Studentin", "student (woman)", "School & Work"], ["das Studio", "studio", "School & Work"], ["stumm", "mute, silent", "Describing Words"], ["die Stunde", "hour / lesson", "Time & Calendar"], ["die Stunden", "hours", "Time & Calendar"], ["suchen", "to look for", "Verbs"], ["der Süden", "south", "Town & Travel"], ["südlich", "southern, to the south", "Town & Travel"], ["der Supermarkt", "supermarket", "Shopping & Money"], ["die Suppe", "soup", "Food & Drink"], ["surfen", "to surf", "Free Time"], ["die Süßigkeit", "sweet, candy", "Food & Drink"], ["die Szene", "scene", "Free Time"], ["das Tablett", "tray", "Home"], ["die Tablette", "tablet, pill", "Health"], ["das Tagebuch", "diary", "Free Time"], ["täglich", "daily", "Time & Calendar"], ["tanken", "to fill up (with fuel)", "Town & Travel"], ["die Tankstelle", "petrol station", "Town & Travel"], ["tanzen", "to dance", "Free Time"], ["die Tänzerin", "dancer (woman)", "People & Family"], ["das Tattoo", "tattoo", "Body"], ["tauschen", "to swap, to exchange", "Verbs"], ["der Taxifahrer", "taxi driver", "People & Family"], ["das Team", "team", "School & Work"], ["der Teenager", "teenager", "People & Family"], ["teilen", "to share, to divide", "Verbs"], ["das Telefonbuch", "phone book", "School & Work"], ["telefonieren", "to talk on the phone", "School & Work"], ["die Temperatur", "temperature", "Nature & Weather"], ["das Tempo", "speed", "Town & Travel"], ["der Tequila", "tequila", "Food & Drink"], ["der Termin", "appointment", "Time & Calendar"], ["die Terrasse", "terrace, patio", "Home"], ["das Thema", "topic", "School & Work"], ["das Ticket", "ticket", "Town & Travel"], ["tief", "deep", "Describing Words"], ["die Tinte", "ink", "School & Work"], ["tippen", "to type / to tap", "School & Work"], ["der Titel", "title", "Little Words"], ["die Tochter", "daughter", "People & Family"], ["der Tod", "death", "Little Words"], ["toll", "great", "Phrases"], ["der Ton", "sound / tone", "Little Words"], ["die Tonne", "bin / tonne", "Home"], ["der Topf", "pot, saucepan", "Home"], ["das Tor", "gate / goal", "Free Time"], ["tot", "dead", "Describing Words"], ["total", "totally", "Little Words"], ["die Tour", "tour", "Town & Travel"], ["der Tourist", "tourist", "Town & Travel"], ["tragen", "to carry / to wear", "Verbs"], ["der Trainer", "coach, trainer", "Free Time"], ["trainieren", "to train", "Free Time"], ["das Training", "training", "Free Time"], ["der Traum", "dream", "Feelings"], ["träumen", "to dream", "Verbs"], ["traurig", "sad", "Feelings"], ["treffen", "to meet", "Verbs"], ["der Treffpunkt", "meeting point", "Town & Travel"], ["die Treppe", "stairs", "Home"], ["der Trick", "trick", "Little Words"], ["trocken", "dry", "Describing Words"], ["trocknen", "to dry", "Verbs"], ["der Tropfen", "drop", "Little Words"], ["trotz", "despite", "Little Words"], ["das Tuch", "cloth, scarf", "Clothes"], ["der Turm", "tower", "Town & Travel"], ["das Turnier", "tournament", "Free Time"], ["üben", "to practise", "School & Work"], ["überall", "everywhere", "Little Words"], ["überrascht", "surprised", "Feelings"], ["die Überraschung", "surprise", "Feelings"], ["übrig", "left over", "Little Words"], ["die Übung", "exercise, practice", "School & Work"], ["umarmen", "to hug", "Feelings"], ["umsteigen", "to change (trains)", "Town & Travel"], ["umziehen", "to move (house) / to change clothes", "Home"], ["der Umzug", "move (house)", "Home"], ["unbekannt", "unknown", "Describing Words"], ["unbequem", "uncomfortable", "Describing Words"], ["unentschieden", "draw, tie (game)", "Free Time"], ["unfair", "unfair", "Describing Words"], ["der Unfall", "accident", "Town & Travel"], ["das Unglück", "misfortune, accident", "Feelings"], ["unglücklich", "unhappy", "Feelings"], ["unnötig", "unnecessary", "Describing Words"], ["die Unordnung", "mess", "Home"], ["unruhig", "restless", "Feelings"], ["die Unterhose", "underpants", "Clothes"], ["die Unterschrift", "signature", "School & Work"], ["die Unterwäsche", "underwear", "Clothes"], ["unterwegs", "on the way", "Town & Travel"], ["der Valentinstag", "Valentine's Day", "Time & Calendar"], ["die Vase", "vase", "Home"], ["verbessern", "to improve, to correct", "Verbs"], ["verdienen", "to earn / to deserve", "School & Work"], ["vergessen", "to forget", "Verbs"], ["verheiraten", "to marry (off) (verheiratet = married)", "People & Family"], ["verkaufen", "to sell", "Shopping & Money"], ["der Verkäufer", "salesperson", "Shopping & Money"], ["verkehrt", "wrong, the wrong way round", "Describing Words"], ["verletzen", "to injure, to hurt", "Health"], ["sich verlieben", "to fall in love", "Feelings"], ["verlieren", "to lose", "Verbs"], ["der Verlierer", "loser", "Free Time"], ["verlobt", "engaged (to be married)", "People & Family"], ["verrückt", "crazy", "Describing Words"], ["verschieden", "different", "Describing Words"], ["verschwinden", "to disappear", "Verbs"], ["verspätet", "delayed, late", "Town & Travel"], ["verstecken", "to hide", "Verbs"], ["die Verwandten", "relatives", "People & Family"], ["Verzeihung", "excuse me, sorry", "Phrases"], ["vielleicht", "maybe, perhaps", "Little Words"], ["viermal", "four times", "Numbers"], ["das Viertel", "quarter", "Numbers"], ["die Villa", "villa", "Home"], ["voll", "full", "Describing Words"], ["voneinander", "from each other", "Little Words"], ["vorbei", "past, over", "Little Words"], ["vorbeikommen", "to come by, to drop in", "Verbs"], ["vorbeischauen", "to drop by", "Verbs"], ["vorgestern", "the day before yesterday", "Time & Calendar"], ["vorher", "before, beforehand", "Time & Calendar"], ["vorlesen", "to read aloud", "School & Work"], ["vorn", "at the front", "Little Words"], ["vorsichtig", "careful", "Describing Words"], ["vorstellen", "to introduce / to imagine", "Verbs"], ["wach", "awake", "Describing Words"], ["wachsen", "to grow", "Verbs"], ["die Waffe", "weapon", "Little Words"], ["wählen", "to choose / to vote / to dial", "Verbs"], ["wahr", "true", "Describing Words"], ["der Wal", "whale", "Animals"], ["die Wand", "wall", "Home"], ["wandern", "to hike", "Free Time"], ["die Wange", "cheek", "Body"], ["wärmen", "to warm", "Verbs"], ["warnen", "to warn", "Verbs"], ["warten", "to wait", "Verbs"], ["warum?", "why?", "Question Words"], ["die Wäsche", "laundry", "Home"], ["waschen", "to wash", "Home"], ["die Website", "website", "School & Work"], ["das Wechselgeld", "change (money)", "Shopping & Money"], ["wecken", "to wake (someone)", "Verbs"], ["der Weg", "way, path", "Town & Travel"], ["wegen", "because of", "Little Words"], ["wegfahren", "to drive away, to go away", "Town & Travel"], ["weggehen", "to go away", "Verbs"], ["weglaufen", "to run away", "Verbs"], ["wegnehmen", "to take away", "Verbs"], ["wegrennen", "to run away", "Verbs"], ["wehtun", "to hurt", "Health"], ["weiblich", "female, feminine", "Describing Words"], ["weich", "soft", "Describing Words"], ["Weihnachten", "Christmas", "Time & Calendar"], ["der Wein", "wine", "Food & Drink"], ["weinen", "to cry", "Feelings"], ["weit", "far / wide", "Describing Words"], ["weiter", "further, on", "Little Words"], ["weitergehen", "to go on, to continue", "Verbs"], ["welch", "which, what a", "Question Words"], ["werfen", "to throw", "Verbs"], ["die Werkstatt", "workshop, garage", "School & Work"], ["weshalb?", "why?", "Question Words"], ["die Weste", "waistcoat, vest", "Clothes"], ["das Wetter", "weather", "Nature & Weather"], ["der Whisky", "whisky", "Food & Drink"], ["wichtig", "important", "Describing Words"], ["wieder", "again", "Little Words"], ["wiederholen", "to repeat", "School & Work"], ["wiederkommen", "to come back", "Verbs"], ["wiegen", "to weigh", "Verbs"], ["die Wiese", "meadow", "Nature & Weather"], ["wieso?", "why?", "Question Words"], ["wild", "wild", "Describing Words"], ["die Windel", "nappy, diaper", "Home"], ["windig", "windy", "Nature & Weather"], ["winzig", "tiny", "Describing Words"], ["wischen", "to wipe", "Home"], ["witzig", "funny", "Describing Words"], ["woanders", "somewhere else", "Little Words"], ["das Wochenende", "weekend", "Time & Calendar"], ["wöchentlich", "weekly", "Time & Calendar"], ["wohl", "probably / well", "Little Words"], ["der Wolf", "wolf", "Animals"], ["die Wolke", "cloud", "Nature & Weather"], ["wolkig", "cloudy", "Nature & Weather"], ["woran?", "on what? about what?", "Question Words"], ["das Wörterbuch", "dictionary", "School & Work"], ["wunderbar", "wonderful", "Describing Words"], ["sich wundern", "to be surprised", "Feelings"], ["wunderschön", "beautiful", "Describing Words"], ["wundervoll", "wonderful", "Describing Words"], ["der Wunsch", "wish", "Feelings"], ["wünschen", "to wish", "Verbs"], ["würfeln", "to roll dice", "Free Time"], ["die Wut", "anger, rage", "Feelings"], ["zahlen", "to pay", "Shopping & Money"], ["zählen", "to count", "Numbers"], ["der Zahn", "tooth", "Body"], ["der Zahnarzt", "dentist", "Health"], ["der Zauberer", "magician, wizard", "People & Family"], ["der Zaun", "fence", "Home"], ["die Zehe", "toe", "Body"], ["das Zeichen", "sign", "Little Words"], ["zeichnen", "to draw", "Free Time"], ["die Zeichnung", "drawing", "Free Time"], ["zeigen", "to show", "Verbs"], ["die Zeile", "line (of text)", "School & Work"], ["die Zeitung", "newspaper", "School & Work"], ["zelten", "to camp", "Free Time"], ["der Zentimeter", "centimetre", "Numbers"], ["das Zeug", "stuff", "Little Words"], ["die Ziege", "goat", "Animals"], ["ziemlich", "quite, rather", "Little Words"], ["die Zigarre", "cigar", "Little Words"], ["der Zirkus", "circus", "Free Time"], ["der Zufall", "chance, coincidence", "Little Words"], ["zufrieden", "satisfied", "Feelings"], ["zuhören", "to listen", "Verbs"], ["zum Glück", "luckily", "Phrases"], ["zumachen", "to close", "Verbs"], ["die Zunge", "tongue", "Body"], ["zurückbringen", "to bring back", "Verbs"], ["zurückfahren", "to drive back", "Town & Travel"], ["zurückgehen", "to go back", "Verbs"], ["zurückrufen", "to call back", "Verbs"], ["zusammen", "together", "Little Words"], ["zuschauen", "to watch", "Verbs"], ["die Zutat", "ingredient", "Food & Drink"], ["zweitens", "secondly", "Numbers"], ["die Zwiebeln", "onions", "Food & Drink"], ["der Zwilling", "twin", "People & Family"]], Z:NUMBERS};
-const LVL = {ABC:{name:"Alphabet",badge:"ABC",de:"Alphabet",en:"Letters and sounds, start here if you're new"},
-  A1:{name:"A1",de:"Anfänger",en:"Beginner"}, A2:{name:"A2",de:"Grundstufe",en:"Elementary"},
-  Z:{name:"Zahlen",badge:"123",de:"Zahlen",en:"Numbers only"}};
+// the order is the learning path: letters, numbers, then the word levels
+const LVL = {ABC:{name:"Alphabet",badge:"ABC",en:"Letters and sounds"}, Z:{name:"Zahlen",badge:"123",en:"Numbers"},
+  A1:{name:"A1",title:"Beginner",en:"Your first words"}, A2:{name:"A2",title:"Elementary",en:"More everyday words"}};
 const lvBadge = k => LVL[k].badge || k;
 const isNum = (lv=G.lv) => lv==="Z";
 // the two practice tracks next to the word levels: what they call their cards and how their games are worded
 const TRACK = {
   Z:{noun:"numbers", title:"Zahlen", tips:NUM_TIPS, flip:"Tap to see the number", pairs:"match each number with its digits.",
     q:{listen:"Listen, then pick the number you heard.", deEn:"Which number is it?", enDe:"How do you say it in German?"},
-    modes:[["cards","Karten","Swipe cards","Flip for the digits, then swipe right if you knew it."],["quiz","Quiz","Words and digits","10 quick questions in both directions."],["listen","Hören","Listen","Hear a number and pick its digits."],["match","Paare","Match pairs","Match numbers to their digits, set after set."],["speak","Sprechen","Speak","Say the number out loud and get a score."]],
+    modes:[["cards","Swipe cards","Flip to see the digits"],["quiz","Quiz","Words and digits"],["listen","Listen","Hear a number, pick it"],["match","Match pairs","Numbers and their digits"],["speak","Speak","Say the number out loud"]],
     done:"You've learned every numbers unit. Keep reviewing so they stay quick.",
-    feed:{title:"Zahlen · numbers only", text:"Learn German numbers on their own, from 0 to a million, plus years, prices, fractions and 1st, 2nd, 3rd.", go:"Practise numbers", keep:"Keep practising numbers"}},
+    feed:{go:"Practise numbers", keep:"Keep practising numbers"}},
   ABC:{noun:"letters and sounds", title:"Alphabet", tips:ABC_TIPS, flip:"Tap to see how it's said", pairs:"match each letter or word with its sound.",
     unitNoun:u=>u.words.every(w=>w.letter)?"letters":u.words.some(w=>w.letter)?"letters and sounds":"sounds",
     q:{listen:"Listen, then pick what you heard.", deEn:"How does it sound?", enDe:"Which one is it?"},
-    modes:[["cards","Karten","Swipe cards","See a letter, say its name, then flip to check."],["quiz","Quiz","Letters and sounds","10 quick questions in both directions."],["listen","Hören","Listen","Hear a letter or a word and pick it."],["match","Paare","Match pairs","Match letters to how they sound, set after set."],["speak","Sprechen","Speak","Say the letter out loud and get a score."]],
+    modes:[["cards","Swipe cards","See a letter, say its name"],["quiz","Quiz","Letters and their sounds"],["listen","Listen","Hear it, then pick it"],["match","Match pairs","Letters and how they sound"],["speak","Speak","Say the letter out loud"]],
     done:"You know the whole alphabet and its sounds. Now try your first words in A1.",
-    feed:{title:"Alphabet · letters and sounds", text:"New to German? Start with the letters: how each one is said, then Ä, Ö, Ü, ß and sounds like ei, ie and sch.", go:"Learn the alphabet", keep:"Keep practising letters"}},
+    feed:{go:"Learn the alphabet", keep:"Keep practising letters"}},
 };
 const isTrack = (lv=G.lv) => lv in TRACK;
 const one = n => n==="letters and sounds" ? "letter or sound" : n.slice(0,-1);   // "5 sounds" but "1 sound"
@@ -586,6 +637,18 @@ function poolFor(sel){
   return us[c].words;
 }
 const SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>';
+// small line icons (stroke = currentColor), one per game plus a few for navigation
+const ICONS = {cards:'<rect x="3" y="7" width="13" height="14" rx="2.5"/><path d="M8 3.5h10.5A2.5 2.5 0 0 1 21 6v11"/>',
+  quiz:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.3a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.6M12 17.2v.1"/>',
+  listen:'<path d="M4 18v-5a8 8 0 0 1 16 0v5"/><path d="M20 19a2 2 0 0 1-2 2h-1v-6h3zM4 19a2 2 0 0 0 2 2h1v-6H4z"/>',
+  match:'<rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/><path d="M10.5 6.8h3.2a3.5 3.5 0 0 1 3.5 3.5v3.2"/>',
+  speak:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',
+  list:'<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>',
+  back:'<path d="M15 18l-6-6 6-6"/>', chev:'<path d="M9 18l6-6-6-6"/>', down:'<path d="M6 9l6 6 6-6"/>',
+  star:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
+  flame:'<path d="M12 21c-3.9 0-6.8-2.6-6.8-6.3 0-2.9 1.9-5 3.4-6.3.3 1.7 1.2 2.9 2.4 3.4C11 8.3 12.2 5.3 14.6 3c.3 2.9 1.9 4.4 3.1 6.1a7.5 7.5 0 0 1 1.1 5.6C18.8 18.4 15.9 21 12 21z"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'};
+const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 
 /* ---------- saved progress (per browser) ---------- */
 // every level keeps its own progress: words, XP, streaks, goal, speaking scores
@@ -601,6 +664,7 @@ function setLevel(lv){ lastUnit=curUnit(lv);
   const rate=S.rate; G.lv=lv; S=G.levels[lv]; S.rate=rate; if(!isTrack(lv)) G.wordLv=lv;
   WORDS=ALL[lv]; if(S.sel===undefined||S.sel==="All"||typeof S.sel==="string"&&!["unit","review"].includes(S.sel)) S.sel="unit";
   document.querySelectorAll(".lvname").forEach(e=>e.textContent=lvBadge(lv));
+  document.documentElement.dataset.lv=lv; document.querySelector(".legend").hidden=isTrack(lv);   // der/die/das only matter for words
   save(); renderTopics(); renderStats(); syncSpeed();
 }
 const dkey = d=>{ const x=new Date(d); return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0") };
@@ -612,7 +676,7 @@ function bump(w,ok){ const s=S.score[w.id]||0, n= ok? Math.min(5,s+1) : Math.max
   const before=lastUnit; lastUnit=curUnit(); if(lastUnit!==before){ if(lastUnit>before) unitToast(UNITS[G.lv][before], UNITS[G.lv][lastUnit]); renderTopics(); } }
 let lastUnit=0;
 function unitToast(done,next){
-  const el=$("#toast"); el.innerHTML=`<b>Unit complete: ${esc(done.name)}!</b> Next up: ${esc(next.name)}. It starts with your next round.`; el.hidden=false;
+  const el=$("#toast"); el.innerHTML=`<span class="burst" aria-hidden="true">${ic("star")}${[0,60,120,180,240,300].map(r=>`<i style="--r:${r}deg"></i>`).join("")}</span><span><b>Unit complete: ${esc(done.name)}!</b> Next up: ${esc(next.name)}. It starts with your next round.</span>`; el.hidden=false;
   clearTimeout(unitToast.t); unitToast.t=setTimeout(()=>el.hidden=true,6000);
 }
 
@@ -654,6 +718,8 @@ const tagHTML = t => esc(t).replace(/ß/g,'<span class="nocase">ß</span>');   /
 
 /* ---------- helpers ---------- */
 const $ = s=>document.querySelector(s);
+// a new screen fades in and rises a few pixels
+function enter(el){ el.classList.remove("enter"); void el.offsetWidth; el.classList.add("enter"); }
 const stage = $("#stage");
 const shuffle = a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]} return a};
 const pool = ()=> poolFor(S.sel);
@@ -667,19 +733,19 @@ function distractors(w,n,key){
   const out=[]; for(const x of [...same,...any]){ if(out.length>=n) break; if(!out.some(o=>o[key]===x[key])) out.push(x) }
   return out;
 }
-const LEVELS=["Anfänger","Lernender","Entdecker","Sprecher","Kenner","Profi","Meister"];
 function renderStats(){
   const u=UNITS[G.lv][curUnit()], k=unitLearned(u), need=unitNeed(u);
   $("#sXp").textContent=S.xp; $("#sStreak").textContent=S.best; $("#sKnown").textContent=`${k}/${u.words.length}`;
   $("#pBar").style.width = (k/u.words.length*100)+"%";
   $("#pLevel").textContent = `Unit ${u.i+1} · ${u.name}`;
-  $("#pTxt").textContent = k>=need ? "Unit done!" : `learn ${need-k} more to unlock the next unit`;
+  $("#pTxt").textContent = k>=need ? "Unit done!" : `Learn ${need-k} more to unlock the next unit`;
 }
 function addXp(n){ S.xp+=n; todayRec().xp+=n; renderStats(); const el=$("#sXp"); el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
 
 /* ---------- topics & modes ---------- */
 function renderTopics(){ // the practice screen only offers this unit, finished units and a mixed review
   const box=$("#topics"); box.innerHTML=""; const us=UNITS[G.lv], ci=curUnit();
+  box.hidden=ci===0;                                          // unit 1 has nothing else to pick
   const opts=[["unit",`This unit · ${us[ci].name}`]];
   if(ci>0) opts.push(["review",`Mix all ${ci+1} units`]);
   for(let i=ci-1;i>=0;i--) opts.push([i,`✓ ${us[i].name}`]);
@@ -705,6 +771,7 @@ function start(){
   keyHandler=null; if("speechSynthesis" in window) speechSynthesis.cancel();
   document.querySelectorAll("nav.modes button").forEach(b=>b.setAttribute("aria-selected", b.dataset.mode===S.mode));
   if(S.mode==="home") S.mode="cards";
+  enter(stage);
   ({cards:Cards,quiz:()=>Quiz("quiz"),listen:()=>Quiz("listen"),match:Match,speak:Speak,list:List})[S.mode]();
 }
 
@@ -736,7 +803,7 @@ function myWordsHTML(WN){
   const tile=(f,n,label,sub,c)=>`<button class="wtile" data-wf="${f}" style="--c:${c}"><b>${n}</b><span>${label}</span><em>${sub}</em></button>`;
   const STEP=[[5,"Confident"],[4,"Known"],[3,"Known"],[2,"Learning"],[1,"Learning"],[0,"Learning"]];
   const stepColor=s=>CATS.find(c=>c[0]===(s>=5?"mastered":s>=3?"learned":"learning"))[2];
-  return `<section class="panel" id="myWords">
+  return `<section class="psec" id="myWords">
     <div class="row spread"><h3 class="h2">Your ${WN} in ${esc(name)}</h3><span class="muted">tap a number to see the ${WN}</span></div>
     <div class="wtiles">
       ${tile("all",st.total,`${WN} in ${esc(name)}`,"total","var(--ink)")}
@@ -751,138 +818,140 @@ function myWordsHTML(WN){
       <button class="lvlrow" data-wf="new"><span class="nm">Not started</span><span class="track"><i style="width:${pc(st.new)}%;background:var(--muted)"></i></span><span class="n">${st.new}</span></button></div>
   </section>`;
 }
+let progOpen=false;   // "Your progress" stays open while you move around this session
 function Home(){
   keyHandler=null;
   if(!G.chosen || G.picking) return LevelPick();
-  const us=UNITS[G.lv], ci=curUnit(), u=us[ci], need=unitNeed(u), got=unitLearned(u);
+  const us=UNITS[G.lv], ci=curUnit(), u=us[ci], need=unitNeed(u), got=unitLearned(u), n=u.words.length, left=need-got;
   const allDone = ci===us.length-1 && unitDone(u);
-  const pct=Math.round(Math.min(got,u.words.length)/u.words.length*100);
+  const started = u.words.some(w=>S.score[w.id]!==undefined);
   const t=todayRec(), goal=S.goal, streak=dayStreak();
-  const C=2*Math.PI*64;
+  const C=2*Math.PI*42;
   const days=[...Array(7)].map((_,k)=>{ const d=new Date(); d.setDate(d.getDate()-6+k); const r=S.days[dkey(d)]||{xp:0,answers:0,learned:0}; return {d,r} });
   const maxA=Math.max(10,...days.map(x=>x.r.answers));
   const open=us.slice(0,ci+1).flatMap(x=>x.words);
   const weak=open.filter(w=>status(w)==="learning" && !u.words.includes(w)).sort((a,b)=>S.score[a.id]-S.score[b.id]).slice(0,5);
   // the path shows only a small window: two finished units, this one, and the next three
   const from=Math.max(0,ci-2), to=Math.min(us.length,ci+4);
-  const T=TRACK[G.lv], WN=T?.noun||"words", UN=T?.unitNoun?.(u)||WN, lvTitle=T?T.title:`Niveau ${G.lv}`;
+  const T=TRACK[G.lv], WN=T?.noun||"words", UN=T?.unitNoun?.(u)||WN, lvTitle=T?T.title:G.lv;
   const MODES=T?T.modes
-    : [["cards","Karten","Swipe cards","Swipe right if you knew it, left if you're still learning."],["quiz","Quiz","Pick the meaning","10 quick questions in both directions."],["listen","Hören","Listen","Hear a word and find it among four."],["match","Paare","Match pairs","Race the clock through set after set of pairs."],["speak","Sprechen","Speak","Say the word out loud and get a pronunciation score."]];
+    : [["cards","Swipe cards","See a word, flip to check"],["quiz","Quiz","Pick the right meaning"],["listen","Listen","Hear a word, find it"],["match","Match pairs","Join words and meanings"],["speak","Speak","Say it, get a score"]];
   // the other tracks: the alphabet and numbers from a word level, or back to your words from a track
   const abcOpen=Object.keys(G.levels.ABC.score).length>0 && !UNITS.ABC.every(x=>unitDone(x,G.levels.ABC.score));
   const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?[wl,"Z"] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?["ABC","Z"] : ["Z"];
   const feedHTML=k=>{ const ous=UNITS[k], oci=curUnit(k), ou=ous[oci], osc=G.levels[k].score, OT=TRACK[k];
     const ogot=ou.words.filter(w=>(osc[w.id]||0)>=3).length, ostarted=Object.keys(osc).length>0;
-    const where=ostarted?`Unit ${oci+1} · ${esc(ou.name)} · ${ogot}/${ou.words.length} learned`:`Unit 1 is ${esc(ou.name)}.`;
-    return `<section class="panel feed">
-    <span class="feedbig">${lvBadge(k)}</span>
-    <div class="feedtxt">${OT?`<b>${OT.feed.title}</b><span>${OT.feed.text} ${where}</span>`
-      : `<b>${ostarted?"Back to your words":"Your first words"} · ${k}</b><span>${ostarted?where:"Start with unit 1."}</span>`}</div>
-    <button class="btn primary" id="go-${k}" data-golv="${k}">${OT?(ostarted?OT.feed.keep:OT.feed.go):ostarted?`Back to ${k}`:`Start ${k}`}</button>
-  </section>`; };
+    return `<section class="feed" data-lv="${k}">
+      <span class="feedbig">${lvBadge(k)}</span>
+      <div class="feedtxt"><span><b>${OT?OT.title:k}</b> <span class="muted">· ${ostarted?`Unit ${oci+1} · ${esc(ou.name)} · ${ogot}/${ou.words.length}`:LVL[k].en}</span></span>
+        <button class="feedgo" id="go-${k}" data-golv="${k}">${OT?(ostarted?OT.feed.keep:OT.feed.go):ostarted?`Back to ${k}`:`Start ${k}`}</button></div>
+      ${ic("chev")}
+    </section>`; };
+  const dots=us.slice(from,to).map(x=>{ const st=x.i<ci||unitDone(x)?"done":x.i===ci?"now":"locked";
+    const lab=st==="done"?`Review unit ${x.i+1}: ${x.name}`:st==="now"?`Unit ${x.i+1}: ${x.name}`:`Unit ${x.i+1} is locked`;
+    return `<button class="ud ${st}" data-u="${x.i}" ${st==="locked"?"disabled":""} aria-label="${esc(lab)}" title="${esc(lab)}"><span>${st==="done"?ic("check"):st==="locked"?ic("lock"):x.i+1}</span></button>` }).join("");
+  const tl=Math.min(t.learned,goal), reached=t.learned>=goal;
   const el=$("#homeBody");
   el.innerHTML=`
   <section class="hhero">
-    <div class="hhero-txt">
-      <span class="eyebrow">${lvTitle} · Unit ${ci+1}</span>
-      <h2 class="hhead">${allDone?`${LVL[G.lv].name} complete!`:esc(u.name)}</h2>
-      <p class="lede">${allDone?(T?T.done:`You've learned every unit in ${G.lv}. Keep reviewing, or move on to the next level.`)
-        : got>=need? `Unit done!` : got? `${u.words.length} ${UN} in this unit. Learn ${need-got} more to unlock the next one.` : `Just ${u.words.length} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
-      ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b> ${esc(T.tips[u.topic])}</p>`:""}
-      <div class="row"><button class="btn cta" id="goPractice">${got?"Keep practising":"Start this unit"}</button><button class="btn" id="goList">See the ${u.words.length} ${UN}</button></div>
+    <div class="htop">
+      <div class="hhero-txt">
+        <span class="eyebrow">${lvTitle} · Unit ${ci+1}</span>
+        <h2 class="hhead">${allDone?`${LVL[G.lv].name} complete!`:esc(u.name)}</h2>
+      </div>
+      <div class="ring" role="img" aria-label="${got} of ${n} ${UN} in this unit learned">
+        <svg viewBox="0 0 100 100"><circle class="rbg" cx="50" cy="50" r="42"/>${got?`<circle class="rfg" cx="50" cy="50" r="42" style="--c:${C.toFixed(1)};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-got/n)).toFixed(1)}"/>`:""}</svg>
+        <div class="pct"><b>${got}/${n}</b><span>learned</span></div>
+      </div>
     </div>
-    <div class="ring big" role="img" aria-label="${got} of ${u.words.length} ${UN} in this unit learned">
-      <svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" fill="none" stroke="var(--line)" stroke-width="12"/>
-      ${got?`<circle cx="75" cy="75" r="64" fill="none" stroke="var(--good)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C*got/u.words.length} ${C}"/>`:""}</svg>
-      <div class="pct"><b>${got}/${u.words.length}</b><span>${UN} learned</span></div>
-    </div>
-  </section>
-
-  ${feeds.map(feedHTML).join("\n  ")}
-
-  <section class="panel">
-    <div class="row spread"><h3 class="h2">Your path</h3><span class="muted">${ci} unit${ci===1?"":"s"} finished</span></div>
-    <div class="path">${us.slice(from,to).map(x=>{ const st=x.i<ci||unitDone(x)?"done":x.i===ci?"now":"locked";
-      return `<button class="unit ${st}" data-u="${x.i}" ${st==="locked"?"disabled":""} title="${esc(x.name)}"><span class="un">${st==="done"?"✓":st==="locked"?"🔒":x.i+1}</span><span class="ut">${st==="locked"?`Unit ${x.i+1}`:esc(x.name)}</span><span class="us">${st==="done"?"Review":st==="now"?`${got}/${x.words.length}`:"Locked"}</span></button>` }).join("")}</div>
-    <p class="muted" style="margin:0">Finish one unit at a time. Tap a finished unit to review it.</p>
-  </section>
-
-  ${myWordsHTML(WN)}
-
-  <section class="panel">
-    <div class="row spread"><h3 class="h2">${UN[0].toUpperCase()+UN.slice(1)} in this unit</h3><span class="muted">tap 🔊 to hear one</span></div>
-    <div class="unitwords" id="uw"></div>
+    <p class="lede">${allDone?(T?T.done:`You've learned every unit in ${G.lv}. Keep reviewing, or move on to the next level.`)
+      : got>=need? `Unit done!` : got? `Learn ${left} more ${left===1?one(UN):UN} to unlock the next unit.` : `Just ${n} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
+    ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b>${esc(T.tips[u.topic])}</p>`:""}
+    <div class="hcta"><button class="btn cta" id="goPractice">${started?"Continue":"Start"}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
+    <div class="udots">${dots}</div>
+    <p class="udcap muted">Unit ${ci+1} of ${us.length}${ci?" · tap a finished unit to review it":""}</p>
   </section>
 
   <section class="sec">
-    <h3 class="h2">Choose a game</h3>
-    <div class="modecards">${MODES.map(([m,de,en,d])=>`<button class="modecard" data-m="${m}"><b>${de}</b><span class="en">${en}</span><span class="d">${d}</span></button>`).join("")}</div>
+    <h3 class="h2">Pick a game</h3>
+    <div class="modecards">${MODES.map(([m,en,d])=>`<button class="modecard" data-m="${m}"><span class="mi">${ic(m)}</span><b>${en}</b><span class="d">${d}</span></button>`).join("")}</div>
   </section>
 
-  <div class="two">
-    <section class="panel">
-      <div class="row spread"><h3 class="h2">Today</h3><span class="muted">${Math.min(t.learned,goal)} of ${goal} new words${t.learned>=goal?" · done!":""}</span></div>
-      <div class="today" role="img" aria-label="Today's goal ${t.learned} of ${goal}"><i style="width:${Math.min(100,t.learned/goal*100)}%"></i></div>
-      <div class="goal-pick"><span class="muted">New words per day:</span>${[5,10,15,20].map(g=>`<button data-g="${g}" aria-pressed="${g===goal}">${g}</button>`).join("")}</div>
-      <div class="tiles">
-        <div class="tile2"><b>${streak}</b><span>day streak</span></div>
-        <div class="tile2"><b>${t.answers}</b><span>answers today</span></div>
-        <div class="tile2"><b>${S.xp}</b><span>XP</span></div>
-        <div class="tile2"><b>${pronAvg()}</b><span>speaking score</span></div>
-      </div>
-      <div class="row spread" style="margin-top:6px"><h3 class="h2">Last 7 days</h3><span class="muted">answers per day</span></div>
-      <div>
-        <div class="week">${days.map(({d,r})=>`<div class="col7" title="${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}: ${r.answers} answers, ${r.learned} new words learned, ${r.xp} XP"><em>${r.answers||""}</em><div class="bar ${r.answers?"":"zero"}" style="height:${r.answers/maxA*100}%"></div></div>`).join("")}</div>
-        <div class="wkd">${days.map(({d},k)=>`<span class="${k===6?"now":""}">${k===6?"Today":d.toLocaleDateString("de-DE",{weekday:"short"})}</span>`).join("")}</div>
-      </div>
-    </section>
-    <section class="panel">
-      <h3 class="h2">${weak.length?"Old words to refresh":"Refresh old words"}</h3>
-      ${weak.length?`<div class="review-list" id="rv"></div><button class="btn primary" id="goRev">Review all finished units</button>`
-        : `<p class="muted" style="margin:0">${ci?"Nothing slipping right now. Every word from your finished units is still learned.":"Words from finished units show up here when they need a refresh."}</p>`}
-    </section>
-  </div>
+  <section class="panel slim">
+    <div class="trow"><b>Today</b><span class="muted grow1">${reached?"Goal reached!":`${tl} of ${goal} new ${WN}`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
+    <span class="mbar${reached?" ok":""}" role="img" aria-label="Today's goal: ${t.learned} of ${goal} learned"><i style="width:${Math.min(100,t.learned/goal*100)}%"></i></span>
+  </section>
+
+  ${weak.length?`<section class="panel slim">
+    <div class="trow"><span class="grow1"><b>${weak.length} ${weak.length===1?one(WN):WN}</b> ${weak.length===1?"needs":"need"} a quick refresh</span><button class="btn primary" id="goRev">Review</button></div>
+    <details class="rvd"><summary>Show ${weak.length===1?"it":"them"}${ic("down")}</summary><div class="review-list" id="rv"></div></details>
+  </section>`:""}
 
   <section class="sec">
-    <h3 class="h2">How it works</h3>
-    <div class="how">
-      <div><b>Small units</b>Each unit has about ${UNIT_MAX} words. Learn 80% of them and the next unit opens.</div>
-      <div><b>Known</b>A word counts as known (learned) after 3 right answers. A wrong answer moves it back one step.</div>
-      <div><b>Confident</b>After 5 right answers you're confident with a word. Come back every day to keep your streak.</div>
+    <h3 class="h2">Other steps</h3>
+    <div class="feeds">${feeds.map(feedHTML).join("")}</div>
+  </section>
+
+  <details class="prog" id="prog"${progOpen?" open":""}>
+    <summary>Your progress in ${esc(LVL[G.lv].name)}${ic("down")}</summary>
+    <div class="progin">
+      ${myWordsHTML(WN)}
+      <section class="psec">
+        <div class="row spread"><h3 class="h2">Last 7 days</h3><span class="muted">answers per day</span></div>
+        <div>
+          <div class="week">${days.map(({d,r})=>`<div class="col7" title="${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}: ${r.answers} answers, ${r.learned} new ${WN} learned, ${r.xp} points"><em>${r.answers||""}</em><div class="bar ${r.answers?"":"zero"}" style="height:${r.answers/maxA*100}%"></div></div>`).join("")}</div>
+          <div class="wkd">${days.map(({d},k)=>`<span class="${k===6?"now":""}">${k===6?"Today":d.toLocaleDateString("en-GB",{weekday:"short"})}</span>`).join("")}</div>
+        </div>
+        <div class="goal-pick"><span class="muted">Daily goal, new ${WN}:</span>${[5,10,15,20].map(g=>`<button data-g="${g}" aria-pressed="${g===goal}">${g}</button>`).join("")}</div>
+      </section>
+      <section class="psec">
+        <h3 class="h2">Records</h3>
+        <div class="tiles">
+          <div class="tile2"><b>${S.xp}</b><span>points</span></div>
+          <div class="tile2"><b>${S.best}</b><span>most right in a row</span></div>
+          <div class="tile2"><b>${streak}</b><span>days in a row</span></div>
+          <div class="tile2"><b>${pronAvg()}</b><span>speaking score</span></div>
+        </div>
+      </section>
+      <section class="psec">
+        <h3 class="h2">How it works</h3>
+        <div class="how">
+          <div><b>Small units</b>Each unit has about ${UNIT_MAX} ${WN}. Learn 80% of them and the next unit opens.</div>
+          <div><b>Known</b>Something counts as known (learned) after 3 right answers. A wrong answer moves it back one step.</div>
+          <div><b>Confident</b>After 5 right answers you're confident with it. Come back every day to keep your streak.</div>
+        </div>
+      </section>
     </div>
-  </section>`;
-  const uw=$("#uw");
-  u.words.forEach(w=>{ const st=status(w); const d=document.createElement("div"); d.className="uwi "+st;
-    d.innerHTML=`<span></span><span class="uwd"><b>${deHTML(w)}</b><span class="muted">${esc(w.en)}</span></span><span class="uws">${{new:"new",learning:"learning",learned:"✓",mastered:"★"}[st]}</span>`;
-    d.firstChild.appendChild(spkBtn(w,"small")); uw.appendChild(d) });
+  </details>`;
   el.querySelectorAll("[data-wf]").forEach(b=>b.onclick=()=>{ listView={scope:"level",f:b.dataset.wf}; showPractice("list"); });
   el.querySelectorAll(".goal-pick button").forEach(b=>b.onclick=()=>{ S.goal=+b.dataset.g; save(); Home(); });
-  el.querySelectorAll(".unit.done").forEach(b=>b.onclick=()=>showPractice("cards",+b.dataset.u));
-  el.querySelectorAll(".unit.now").forEach(b=>b.onclick=()=>showPractice(S.lastMode||"cards","unit"));
+  el.querySelectorAll(".ud.done").forEach(b=>b.onclick=()=>showPractice("cards",+b.dataset.u));
+  el.querySelectorAll(".ud.now").forEach(b=>b.onclick=()=>showPractice(S.lastMode||"cards","unit"));
   el.querySelectorAll(".modecard").forEach(b=>b.onclick=()=>showPractice(b.dataset.m,"unit"));
-  const rv=$("#rv"); if(rv) weak.forEach(w=>{ const d=document.createElement("div"); d.innerHTML=`<span></span><span><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span><span class="tag">${tagHTML(w.topic)}</span>`; d.firstChild.appendChild(spkBtn(w,"small")); rv.appendChild(d) });
+  const rv=$("#rv"); if(rv) weak.forEach(w=>{ const d=document.createElement("div"); d.innerHTML=`<span></span><span><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span><span class="rvt">${tagHTML(w.topic)}</span>`; d.firstChild.appendChild(spkBtn(w,"small")); rv.appendChild(d) });
   $("#goPractice").onclick=()=>showPractice(S.lastMode||"cards","unit");
   el.querySelectorAll("[data-golv]").forEach(b=>b.onclick=()=>{ G.chosen=true; setLevel(b.dataset.golv); showHome(); });
   $("#goList").onclick=()=>{ listView={scope:"unit",f:"all"}; showPractice("list","unit"); };
   $("#goRev") && ($("#goRev").onclick=()=>showPractice("cards","review"));
+  const pd=$("#prog"); pd.ontoggle=()=>{ progOpen=pd.open; };
 }
 function LevelPick(){
   const el=$("#homeBody");
   el.innerHTML=`<section class="pick">
-    <span class="eyebrow">Step 1</span>
-    <h2 class="hhead">Which level do you<br>want to practise?</h2>
-    <p class="lede">Each level is split into small units of about ${UNIT_MAX} words, and you work on one unit at a time. You can switch levels whenever you like, and each level keeps its own progress.</p>
+    ${G.chosen?`<button class="btn back" id="cancelPick">${ic("back")}Back</button>`:""}
+    <h2 class="pickh">Where do you want to start?</h2>
+    <p class="lede">New to German? Start at the top. Each step is split into small units, and each keeps its own progress.</p>
     <div class="levels" id="levels"></div>
-    ${G.chosen?`<button class="btn" id="cancelPick">Back</button>`:""}
   </section>`;
   const box=$("#levels");
-  for(const k of Object.keys(LVL)){
-    const us=UNITS[k], ci=curUnit(k), started=Object.keys(G.levels[k].score).length>0;
-    const b=document.createElement("button"); b.className="lvcard"; b.setAttribute("aria-current",k===G.lv&&G.chosen?"true":"false");
-    b.innerHTML=`<span class="lvbig">${lvBadge(k)}</span><span class="lvtxt"><b>${LVL[k].de}</b><span>${LVL[k].en} · ${us.length} small units</span></span><span class="lvpc"><b>${started?`Unit ${ci+1}`:"Start"}</b><span>${started?"you're here":"at unit 1"}</span></span>`;
+  Object.keys(LVL).forEach((k,i)=>{
+    const sc=G.levels[k].score, u=UNITS[k][curUnit(k)], started=Object.keys(sc).length>0, here=k===G.lv&&G.chosen;
+    const b=document.createElement("button"); b.className="lvcard"+(started?" started":""); b.dataset.lv=k; b.setAttribute("aria-current",here?"true":"false");
+    b.innerHTML=`<span class="lvnum" aria-hidden="true">${i+1}</span><span class="lvbig">${lvBadge(k)}</span><span class="lvtxt"><b>${LVL[k].title||LVL[k].name}</b><span>${LVL[k].en}</span></span>
+      <span class="lvpc">${started?`<span>Unit ${u.i+1}</span><span class="mbar" role="img" aria-label="${unitLearned(u,sc)} of ${u.words.length} learned in this unit"><i style="width:${unitLearned(u,sc)/u.words.length*100}%"></i></span>`:`<span class="go">Start${ic("chev")}</span>`}</span>`;
     b.onclick=()=>{ G.chosen=true; G.picking=false; setLevel(k); showHome(); };
     box.appendChild(b);
-  }
+  });
   $("#cancelPick") && ($("#cancelPick").onclick=()=>{ G.picking=false; save(); showHome(); });
 }
 function pronAvg(){ const v=Object.values(S.pron||{}); return v.length? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : "–"; }
@@ -890,8 +959,8 @@ function showHome(){
   stopListening?.(); stopListening=null;
   if("speechSynthesis" in window) speechSynthesis.cancel();
   keyHandler=null; $("#practiceView").hidden=true; $("#homeView").hidden=false;
-  $("#lvBtn").innerHTML=`<b>${lvBadge(G.lv)}</b> ${LVL[G.lv].de} · Change level`; $("#lvBtn").hidden=!G.chosen||G.picking;
-  Home(); window.scrollTo(0,0);
+  $("#lvBtn").innerHTML=`<b>${lvBadge(G.lv)}</b><span class="vh">Change level (now ${LVL[G.lv].name})</span>${ic("down")}`; $("#lvBtn").hidden=!G.chosen||G.picking;
+  Home(); enter($("#homeBody")); window.scrollTo(0,0);
 }
 function showPractice(mode,sel){
   if(sel!==undefined){ S.sel=sel; }
@@ -925,7 +994,7 @@ function Cards(){
               <div class="face back"><div class="meaning">${esc(w.en)}</div><div class="muted">${esc(w.ex||w.de)}</div></div>
             </div>
           </div>
-          <span class="stamp yes" id="stY">Weiß ich ✓</span><span class="stamp no" id="stN">Nochmal ↺</span>
+          <span class="stamp yes" id="stY">Knew it ✓</span><span class="stamp no" id="stN">Again ↺</span>
         </div>
       </div>
       <div class="swipe-hint"><span class="l">← still learning</span><span>tap to flip</span><span class="r">I knew it →</span></div>
@@ -1067,7 +1136,7 @@ function Match(){
   }
   function finish(){ clearInterval(timer); if(!live()) return; const s=Math.round((Date.now()-t0)/1000); renderStats();
     stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei!"}</div>
-      ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus XP for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
+      ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus points for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
       <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div>
       <button class="btn primary" id="again">Play new sets</button></div>`;
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k],"small")));
@@ -1385,6 +1454,9 @@ function List(){
   $("#q").oninput=draw; $("#onlyStar").onchange=draw; chips(); draw();
 }
 
+$("#backHome").insertAdjacentHTML("afterbegin",ic("back"));
+$(".pts").insertAdjacentHTML("afterbegin",ic("star"));
+document.querySelectorAll("nav.modes button").forEach(b=>b.insertAdjacentHTML("afterbegin",ic(b.dataset.mode)));
 $("#backHome").onclick=showHome;
 $("#lvBtn").onclick=()=>{ G.picking=true; save(); showHome(); };
 setLevel(G.lv); lastUnit=curUnit(); showHome();
