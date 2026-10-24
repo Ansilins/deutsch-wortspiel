@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Learn German A1 and A2 words in small units: flashcards, quizzes, listening, matching and pronunciation practice.">
-<meta name="theme-color" content="#1f2c27">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f1">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f2c27">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -67,12 +68,14 @@ body::before{content:"";position:fixed;z-index:50;left:0;right:0;top:0;height:en
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;touch-action:manipulation;accent-color:var(--accent-text)}   /* no double-tap zoom; pinch still works */
+/* game pieces don't select or pop up a callout on a long press; lists and home text stay selectable */
+.prompt,.opt,.tile,.modecard,.lvcard,.feed,nav.modes,.udots,.result .score,.pscore{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 /* the squared paper fades out under the top bar */
 body{margin:0;min-height:100vh;background-color:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
   background-image:linear-gradient(transparent,var(--bg) 220px),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:100% 100%,24px 24px,24px 24px;background-position:0 40px,0 0,0 0;background-repeat:no-repeat,repeat,repeat}
-.wrap{max-width:720px;margin:0 auto;display:grid;gap:14px}
+.wrap{max-width:720px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .hwrap{max-width:760px;margin:0 auto;display:grid;gap:20px}
 button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .12s ease-out}
 button:active:not(:disabled){transform:scale(.97)}
@@ -108,16 +111,16 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 nav.modes{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px;box-shadow:var(--shadow)}
 nav.modes button{border:0;background:none;border-radius:12px;padding:6px 1px 5px;min-height:54px;min-width:0;display:grid;justify-items:center;align-content:center;gap:3px;color:var(--muted);font-size:.74rem;font-weight:700;line-height:1.1}
 nav.modes button span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
 @media (min-width:600px){nav.modes button{font-size:.84rem;min-height:58px}}
-@media (hover:hover){nav.modes button:hover:not([aria-selected="true"]){background:var(--soft);color:var(--ink)}}
+@media (hover:hover){nav.modes button:hover:not([aria-current="page"]){background:var(--soft);color:var(--ink)}}
 .topics{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
 /* a mouse wheel can't scroll the row sideways, so mouse users get a thin scrollbar to drag */
 @media (hover:hover) and (pointer:fine){.topics{scrollbar-width:thin;padding-bottom:4px}}
 .chip{flex:none;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 13px;font-size:.84rem;white-space:nowrap;min-height:44px}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
 
-.stage{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px;min-height:340px;display:grid;gap:14px;align-content:start}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px;min-height:340px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px;align-content:start}
 @media (min-width:600px){.stage{padding:24px}}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .spread{justify-content:space-between}
@@ -127,6 +130,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .btn.good{background:var(--good);border-color:var(--good);color:var(--surface)}
 .btn:disabled{opacity:.5;cursor:default}
 .btn.back{display:inline-flex;align-items:center;gap:2px;padding:6px 14px 6px 8px;border-radius:99px}
+@media (max-width:359px){#backHome .bk{display:none}#backHome{padding:6px 10px}}   /* the unit name needs the room at 320px */
 .speak{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;border:2px solid var(--accent);background:transparent;flex:none}
 .speak svg{width:22px;height:22px;fill:var(--ink)}
 .speak.small{width:34px;height:34px;border-width:1.5px;position:relative}
@@ -147,6 +151,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .face.back{transform:rotateY(180deg);background:var(--soft)}
 .word{font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,8vw,3.2rem);line-height:1.05;overflow-wrap:anywhere}
 .word .art{font-weight:500;opacity:.85}
+.word.long{font-size:clamp(1.6rem,6.4vw,2.6rem)}
 .meaning{font-family:var(--f-hand);font-size:clamp(1.6rem,6vw,2.3rem);line-height:1.15}
 /* swipe cards: drag right if you knew it, left if you're still learning it */
 .swipe-area{position:relative;min-height:270px}
@@ -168,6 +173,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .setmsg{min-height:1.6em;text-align:center;font-weight:700;color:var(--good)}
 
 /* quiz */
+.prompt:focus{outline:none}
 .prompt{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center;padding:10px 0}
 .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media (max-width:520px){.options{grid-template-columns:1fr}}
@@ -185,14 +191,18 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .feedback{min-height:1.6em;font-weight:700;text-align:center}
 .feedback.ok{color:var(--good)} .feedback.no{color:var(--bad)}
 .feedback .ltr small{opacity:1}
+.speak-ph{display:inline-block;width:46px;height:46px;flex:none}
 .big-ear{width:110px;height:110px;border-width:3px}
 .big-ear svg{width:44px;height:44px}
 
 /* match */
-.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.col{display:grid;gap:8px;align-content:start}
+/* one grid for both columns, so a pair of tiles shares a row even when one side wraps */
+.pairs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 10px}
+.col{display:contents}
 .tile{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:12px 10px;min-height:52px;font-size:1rem;text-align:center;overflow-wrap:anywhere;transition:transform .12s,opacity .25s}
 .tile.de{font-family:var(--f-display);font-weight:700}
+.tile.long{font-size:.9rem}
+@media (max-width:359px){.tile{padding:12px 6px;font-size:.94rem}}   /* der Glückwunsch fits a 320px column without breaking */
 .tile.sel{border-color:var(--accent);background:var(--soft)}
 .tile.done{opacity:.28;cursor:default;border-color:var(--good)}
 .tile.shake{animation:shake .3s}
@@ -217,7 +227,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .hhead{font-family:var(--f-display);font-weight:800;font-size:clamp(1.9rem,7vw,2.6rem);line-height:1.02;letter-spacing:-.025em;margin:0;text-wrap:balance;overflow-wrap:anywhere}
 .lede{font-size:1.02rem;max-width:34em;margin:0;color:var(--ink)}
 .tip{margin:0;max-width:40em;font-size:.93rem;background:var(--soft);border-radius:12px;padding:10px 12px}
-.tip b{margin-right:6px;color:var(--accent-text)}
+.tip b{margin-right:2px;color:var(--accent-text)}
 .ring{position:relative;width:86px;height:86px}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:9}
@@ -235,7 +245,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 /* the unit path: finished, this one, locked */
 .udots{display:flex;border-top:1px solid var(--line);padding:10px max(0px,calc((100% - 460px)/2)) 0}
 .ud{flex:1;min-width:0;min-height:44px;border:0;background:none;padding:0;display:grid;place-items:center;position:relative}
-.ud::before{content:"";position:absolute;z-index:0;left:-50%;right:50%;top:50%;height:2px;margin-top:-1px;background:var(--line2)}
+.ud::before{content:"";position:absolute;z-index:0;left:-50%;right:50%;top:50%;height:2px;margin-top:-1px;background:var(--line2);pointer-events:none}
 .ud:first-child::before{display:none}
 .ud.done::before,.ud.now::before{background:var(--good)}
 .ud>span{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:.95rem;background:var(--surface);border:2px solid var(--line2);color:var(--muted)}
@@ -258,6 +268,7 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .trow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 12px}
 .trow>b{font-family:var(--f-display);font-size:1.05rem}
 .trow .grow1{flex:1;min-width:0}
+.trow .tsum{flex:1 1 12rem}   /* with a streak at 320px it wraps under, instead of one word per line */
 .mbar{display:block;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
 .mbar i{display:block;height:100%;border-radius:99px;background:var(--accent);transform-origin:left;animation:grow .5s ease-out both}
 .mbar.ok i{background:var(--good)}
@@ -297,12 +308,12 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 @media (max-width:560px){.wtiles{grid-template-columns:repeat(2,1fr)}}
 .wtile{border:1px solid var(--line);border-left:5px solid var(--c);border-radius:12px;padding:10px 12px;background:var(--bg);text-align:left;display:grid;gap:0}
 .wtile b{font-family:var(--f-display);font-size:1.6rem;line-height:1.1;font-variant-numeric:tabular-nums}
-.wtile span{font-size:.8rem;color:var(--muted)}
+.wtile span{font-size:.8rem;color:var(--muted)}.wtile span::first-letter{text-transform:uppercase}
 .wtile em{font-style:normal;font-size:.72rem;color:var(--muted)}
 .cats{display:flex;flex-wrap:wrap;gap:6px}
 .cat{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:.85rem;min-height:44px}
 .cat i{width:10px;height:10px;border-radius:3px;display:inline-block}
-.cat[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.cat[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:700}
 .lvlrow{display:grid;grid-template-columns:minmax(0,8.5rem) 1fr 3rem;gap:10px;align-items:center;font-size:.88rem;border:0;background:none;padding:5px 0;text-align:left;min-height:44px}
 .lvlrow .track{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
 .lvlrow .track i{display:block;height:100%;border-radius:99px}
@@ -374,20 +385,24 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .mic.on{background:var(--bad);animation:pulse 1.2s infinite}
 .mic.on svg{fill:var(--surface)}
 .mic.wait{opacity:.6;cursor:progress}
+.stage:has(.mic.on) #ref .speak{opacity:.4}
 @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--bad) 45%,transparent)}100%{box-shadow:0 0 0 22px transparent}}
-.pron{min-height:96px;display:flex;gap:18px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:left}
+.pron{min-height:96px;display:flex;gap:12px;align-items:center;justify-content:center;text-align:left}
+.pron .pscore{width:64px;height:64px}.pron .pscore b{width:50px;height:50px;font-size:1.35rem}
 .pscore{width:88px;height:88px;border-radius:50%;display:grid;place-items:center;flex:none;
   background:conic-gradient(var(--c) calc(var(--p)*1%),var(--line) 0)}
 .pscore b{width:70px;height:70px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-family:var(--f-display);font-size:1.8rem;font-variant-numeric:tabular-nums}
-.pinfo{display:grid;gap:2px;min-width:0}
+.pinfo{display:grid;gap:2px;min-width:0;flex:1 1 auto;overflow-wrap:anywhere}
 .pmsg{font-family:var(--f-display);font-weight:700;font-size:1.2rem}
 .pchip{flex:none;min-width:40px;text-align:center;border-radius:99px;padding:2px 8px;font-weight:700;font-variant-numeric:tabular-nums;border:2px solid var(--c)}
 /* result */
-.result{text-align:center;display:grid;gap:10px;justify-items:center;padding:10px 0}
+.result{text-align:center;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;justify-items:center;padding:10px 0}
 .result .score{font-family:var(--f-display);font-weight:800;font-size:3.4rem;line-height:1;color:var(--accent-text);animation:okpop .4s ease-out}
 .result .note{font-family:var(--f-hand);font-size:1.4rem}
-.review{width:100%;text-align:left;display:grid;gap:4px}
+.review{width:100%;text-align:left;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
 .review div{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
+.review div>span{min-width:0;overflow-wrap:anywhere}.opt>span{min-width:0;overflow-wrap:anywhere}
+.word,.tile,.opt>span,.review b,.li .de,.pinfo{-webkit-hyphens:auto;hyphens:auto}
 
 /* list */
 .search{width:100%;border:1px solid var(--line2);background:var(--bg);color:var(--ink);border-radius:12px;padding:10px 14px;font:inherit;min-height:44px}
@@ -407,7 +422,10 @@ nav.modes button[aria-selected="true"]{background:var(--accent);color:var(--acce
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
 .legend b{font-family:var(--f-display)}
 footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
-.voice-warn{background:color-mix(in srgb,var(--bad) 12%,var(--surface));border:1px solid var(--bad);border-radius:12px;padding:10px 14px;font-size:.9rem}
+/* a calm note, not an error: what's missing on this phone, with the steps folded away */
+.voice-warn{background:var(--soft);border:1px solid var(--accent);border-radius:12px;padding:8px 12px;font-size:.88rem;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.voice-warn p{margin:0;flex:1 1 14rem}.voice-warn details{order:3;flex-basis:100%}
+.voice-warn summary{cursor:pointer;color:var(--accent-text);font-weight:700;min-height:44px;display:flex;align-items:center}
 .speed{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:.8rem;color:var(--muted)}
 .soundhint{margin-right:8px}
 .speed button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:2px 13px;font-size:.8rem;min-height:44px}
@@ -416,6 +434,21 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 /* a swiped card flies past the screen edge: clip it here, not on body, so the page never scrolls sideways */
 .xclip{overflow-x:clip}
 @keyframes pop{40%{transform:scale(1.15)}}
+/* short screens (iPhone SE, small Androids, landscape): the game card and its answer buttons fit without scrolling */
+@media (max-height:700px){
+  .wrap{gap:10px}
+  nav.modes button{min-height:46px;gap:1px}
+  .stage{padding:14px;gap:10px;min-height:0}
+  .prompt{padding:2px 0}
+  .opt{min-height:48px;padding:10px 12px}
+  .swipe-area,.swipe-area .card,.swipe-area .card-inner{min-height:210px}
+  .big-ear{width:88px;height:88px}
+  .mic{width:80px;height:80px}
+}
+@media (max-height:600px){
+  .wrap,.stage{gap:8px}
+  .swipe-area,.swipe-area .card,.swipe-area .card-inner{min-height:160px}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.burst i{display:none}}
 </style>
 </head>
@@ -430,7 +463,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 
 <div class="wrap" id="practiceView" hidden>
   <header class="phead">
-    <button class="btn back" id="backHome" aria-label="Back to home">Home</button>
+    <button class="btn back" id="backHome" aria-label="Back to home"><span class="bk">Home</span></button>
     <div class="pmid"><span class="lvbadge lvname">A1</span><span id="pLevel">Unit 1</span></div>
     <div class="pknown"><b id="sKnown">0</b><span>learned</span></div>
   </header>
@@ -439,21 +472,22 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
     <div class="progress-label"><span id="pTxt"></span><span class="pts" title="Points"><b id="sXp">0</b> points<span class="vh">, most right answers in a row: <b id="sStreak">0</b></span></span></div>
   </div>
 
-  <div id="voiceWarn" class="voice-warn" hidden>No German voice was found on this device, so words are read by your default voice. On a phone, add a German voice in your system's text-to-speech settings for proper pronunciation.</div>
+  <div id="voiceWarn" class="voice-warn" role="note" hidden><p id="vwText"></p><details><summary>How to fix</summary><p id="vwHow"></p></details><button class="btn" id="vwOk">Got it</button></div>
 
-  <nav class="modes" role="tablist" aria-label="Game">
-    <button role="tab" data-mode="cards"><span>Cards</span></button>
-    <button role="tab" data-mode="quiz"><span>Quiz</span></button>
-    <button role="tab" data-mode="listen"><span>Listen</span></button>
-    <button role="tab" data-mode="match"><span>Match</span></button>
-    <button role="tab" data-mode="speak"><span>Speak</span></button>
-    <button role="tab" data-mode="list"><span>Words</span></button>
+  <nav class="modes" aria-label="Game">
+    <button data-mode="cards"><span>Cards</span></button>
+    <button data-mode="quiz"><span>Quiz</span></button>
+    <button data-mode="listen"><span>Listen</span></button>
+    <button data-mode="match"><span>Match</span></button>
+    <button data-mode="speak"><span>Speak</span></button>
+    <button data-mode="list"><span>Words</span></button>
   </nav>
 
   <div class="topics" id="topics" aria-label="Which words"></div>
   <div class="toast" id="toast" role="status" hidden></div>
 
-  <section class="stage" id="stage" aria-live="polite"></section>
+  <div id="sr" class="vh" role="status" aria-live="polite"></div>
+  <section class="stage" id="stage"></section>
 
   <div class="below">
     <div class="legend"><span><b class="g-der">der</b> masculine</span><span><b class="g-die">die</b> feminine</span><span><b class="g-das">das</b> neuter</span></div>
@@ -525,13 +559,13 @@ const NUM_TIPS = {
    extra: say = what the voice reads out, alt = other ways a speech checker may write it, ex = an example, hl = the letters to highlight.
    Saved progress is keyed by position, so new rows only ever go at the end. */
 const LETTERS = [
-  ["A",'sounds like "ah"',"A to G",{say:"A",alt:["ah","aa"],ex:"A · as in der Apfel (apple)"}],
-  ["B",'sounds like "bay"',"A to G",{say:"Be",alt:["be","beh"],ex:"Be · as in der Ball (ball)"}],
+  ["A",'sounds like "ah"',"A to G",{say:"Ah",alt:["ah","aa"],ex:"A · as in der Apfel (apple)"}],
+  ["B",'sounds like "bay"',"A to G",{say:"Beh",alt:["be","beh"],ex:"Be · as in der Ball (ball)"}],
   ["C",'sounds like "tsay"',"A to G",{say:"Zeh",alt:["ce","ze","zeh","tse"],ex:"Ce · in words it is mostly a k sound: das Café (café)"}],
-  ["D",'sounds like "day"',"A to G",{say:"De",alt:["de","deh"],ex:"De · as in danke (thank you)"}],
-  ["E",'sounds like "ay"',"A to G",{say:"E",alt:["eh"],ex:"E · as in der Esel (donkey)"}],
+  ["D",'sounds like "day"',"A to G",{say:"Deh",alt:["de","deh"],ex:"De · as in danke (thank you)"}],
+  ["E",'sounds like "ay"',"A to G",{say:"Eh",alt:["eh"],ex:"E · as in der Esel (donkey)"}],
   ["F",'sounds like "eff"',"A to G",{say:"Eff",alt:["ef","eff"],ex:"Ef · as in der Fisch (fish)"}],
-  ["G",'sounds like "gay"',"A to G",{say:"Ge",alt:["ge","geh"],ex:"Ge · as in gut (good)"}],
+  ["G",'sounds like "gay"',"A to G",{say:"Geh",alt:["ge","geh"],ex:"Ge · as in gut (good)"}],
   ["H",'sounds like "hah"',"H to N",{say:"Ha",alt:["ha","hah"],ex:"Ha · as in das Haus (house)"}],
   ["I",'sounds like "ee"',"H to N",{say:"Ih",alt:["ih","ie"],ex:"I · as in der Igel (hedgehog)"}],
   ["J",'sounds like "yot"',"H to N",{say:"Jott",alt:["jot","jott","jod"],ex:"Jot · as in die Jacke (jacket)"}],
@@ -539,21 +573,21 @@ const LETTERS = [
   ["L",'sounds like "el"',"H to N",{say:"Ell",alt:["el","ell"],ex:"El · as in die Lampe (lamp)"}],
   ["M",'sounds like "em"',"H to N",{say:"Emm",alt:["em","emm"],ex:"Em · as in die Maus (mouse)"}],
   ["N",'sounds like "en"',"H to N",{say:"Enn",alt:["en","enn"],ex:"En · as in die Nase (nose)"}],
-  ["O",'sounds like "oh"',"O to U",{say:"O",alt:["oh"],ex:"O · as in der Opa (grandpa)"}],
-  ["P",'sounds like "pay"',"O to U",{say:"Pe",alt:["pe","peh"],ex:"Pe · as in die Pizza (pizza)"}],
+  ["O",'sounds like "oh"',"O to U",{say:"Oh",alt:["oh"],ex:"O · as in der Opa (grandpa)"}],
+  ["P",'sounds like "pay"',"O to U",{say:"Peh",alt:["pe","peh"],ex:"Pe · as in die Pizza (pizza)"}],
   ["Q",'sounds like "koo"',"O to U",{say:"Kuh",alt:["ku","kuh"],ex:"Ku · as in die Qualle (jellyfish)"}],
   ["R",'sounds like "air"',"O to U",{say:"Err",alt:["er","err"],ex:"Er · as in der Regen (rain)"}],
   ["S",'sounds like "ess"',"O to U",{say:"Es",alt:["es","ess"],ex:"Es · as in der Salat (salad)"}],
-  ["T",'sounds like "tay"',"O to U",{say:"Te",alt:["te","teh","tee"],ex:"Te · as in der Tisch (table)"}],
-  ["U",'sounds like "oo"',"O to U",{say:"U",alt:["uh"],ex:"U · as in die Uhr (clock)"}],
+  ["T",'sounds like "tay"',"O to U",{say:"Teh",alt:["te","teh","tee"],ex:"Te · as in der Tisch (table)"}],
+  ["U",'sounds like "oo"',"O to U",{say:"Uh",alt:["uh"],ex:"U · as in die Uhr (clock)"}],
   ["V",'sounds like "fow" (rhymes with "how")',"V to Z",{say:"Fau",alt:["vau","fau"],ex:"Vau · as in der Vogel (bird)"}],
-  ["W",'sounds like "vay"',"V to Z",{say:"We",alt:["we","weh"],ex:"We · as in das Wasser (water)"}],
+  ["W",'sounds like "vay"',"V to Z",{say:"Weh",alt:["we","weh"],ex:"We · as in das Wasser (water)"}],
   ["X",'sounds like "iks"',"V to Z",{say:"Ix",alt:["ix","iks"],ex:"Ix · as in das Taxi (taxi)"}],
   ["Y",'sounds like "IP-see-lon", with rounded lips',"V to Z",{say:"Ypsilon",alt:["ypsilon","üpsilon"],ex:"Ypsilon · as in das Yoga (yoga)"}],
   ["Z",'sounds like "tset"',"V to Z",{say:"Zett",alt:["zett","zet"],ex:"Zett · as in der Zoo (zoo)"}],
-  ["Ä",'like the "e" in "bed", but longer',"Ä Ö Ü ß",{say:"Ä",alt:["äh","ae"],ex:"Ä · as in der Käse (cheese)"}],
-  ["Ö",'say "ay" with your lips rounded',"Ä Ö Ü ß",{say:"Ö",alt:["öh","oe"],ex:"Ö · as in schön (beautiful)"}],
-  ["Ü",'say "ee" with your lips rounded',"Ä Ö Ü ß",{say:"Ü",alt:["üh","ue"],ex:"Ü · as in die Tür (door)"}],
+  ["Ä",'like the "e" in "bed", but longer',"Ä Ö Ü ß",{say:"Äh",alt:["äh","ae"],ex:"Ä · as in der Käse (cheese)"}],
+  ["Ö",'say "ay" with your lips rounded',"Ä Ö Ü ß",{say:"Öh",alt:["öh","oe"],ex:"Ö · as in schön (beautiful)"}],
+  ["Ü",'say "ee" with your lips rounded',"Ä Ö Ü ß",{say:"Üh",alt:["üh","ue"],ex:"Ü · as in die Tür (door)"}],
   ["ß",'a sharp "ss"',"Ä Ö Ü ß",{say:"Eszett",alt:["eszett","scharfes s"],ex:"Eszett · as in die Straße (street)"}],
   ["drei",'ei sounds like "eye"',"Vowel pairs",{hl:"ei",ex:"means three"}],
   ["vier",'ie sounds like "ee"',"Vowel pairs",{hl:"ie",ex:"means four"}],
@@ -600,15 +634,17 @@ const lvBadge = k => LVL[k].badge || k;
 const isNum = (lv=G.lv) => lv==="Z";
 // the two practice tracks next to the word levels: what they call their cards and how their games are worded
 const TRACK = {
-  Z:{noun:"numbers", title:"Zahlen", tips:NUM_TIPS, flip:"Tap to see the number", pairs:"match each number with its digits.",
+  Z:{noun:"numbers", title:"Zahlen", tips:NUM_TIPS, flip:"Tap to see the number", pairs:"match each number with its digits.", tap:"Tap a number word to hear it.",
     q:{listen:"Listen, then pick the number you heard.", deEn:"Which number is it?", enDe:"How do you say it in German?"},
     modes:[["cards","Swipe cards","Flip to see the digits"],["quiz","Quiz","Words and digits"],["listen","Listen","Hear a number, pick it"],["match","Match pairs","Numbers and their digits"],["speak","Speak","Say the number out loud"]],
     done:"You've learned every numbers unit. Keep reviewing so they stay quick.",
     feed:{go:"Practise numbers", keep:"Keep practising numbers"}},
-  ABC:{noun:"letters and sounds", title:"Alphabet", tips:ABC_TIPS, flip:"Tap to see how it's said", pairs:"match each letter or word with its sound.",
+  ABC:{noun:"letters and sounds", title:"Alphabet", tips:ABC_TIPS, flip:"Tap to see how it's said", pairs:"match each letter or word with its sound.", tap:"Tap a letter or word on the left to hear it.",
     unitNoun:u=>u.words.every(w=>w.letter)?"letters":u.words.some(w=>w.letter)?"letters and sounds":"sounds",
     q:{listen:"Listen, then pick what you heard.", deEn:"How does it sound?", enDe:"Which one is it?"},
     modes:[["cards","Swipe cards","See a letter, say its name"],["quiz","Quiz","Letters and their sounds"],["listen","Listen","Hear it, then pick it"],["match","Match pairs","Letters and how they sound"],["speak","Speak","Say the letter out loud"]],
+    // the sound units hold real words (drei, die Schule)
+    modesSound:[["cards","Swipe cards","See a word, hear its sound"],["quiz","Quiz","Hear a sound, pick the word"],["listen","Listen","Hear it, then pick it"],["match","Match pairs","Words and their sounds"],["speak","Speak","Say the word out loud"]],
     done:"You know the whole alphabet and its sounds. Next: numbers in Zahlen, then your first words in A1.",
     feed:{go:"Learn the alphabet", keep:"Keep practising letters"}},
 };
@@ -639,9 +675,13 @@ const UNITS={ABC:makeUnits(ALL.ABC), A1:makeUnits(ALL.A1), A2:makeUnits(ALL.A2),
 const unitNeed = u => Math.ceil(u.words.length*0.8);
 const unitLearned = (u,sc=S.score) => u.words.filter(w=>(sc[w.id]||0)>=3).length;
 const unitDone = (u,sc) => unitLearned(u,sc) >= unitNeed(u);
-function curUnit(lv=G.lv){ const sc=G.levels[lv].score, us=UNITS[lv]; const i=us.findIndex(u=>!unitDone(u,sc)); return i<0? us.length-1 : i; }
+function firstOpenUnit(lv){ const sc=G.levels[lv].score, us=UNITS[lv]; const i=us.findIndex(u=>!unitDone(u,sc)); return i<0? us.length-1 : i; }
+// a unit, once reached, stays open: a wrong answer in a review lowers that word's score but never locks units again
+function curUnit(lv=G.lv){ const f=firstOpenUnit(lv), r=Math.min(REACHED[lv]||0, UNITS[lv].length-1);
+  if(f>r){ REACHED[lv]=f; store.set("wortspielReached",REACHED); } return Math.max(f,r); }
 function poolFor(sel){
   const us=UNITS[G.lv], c=curUnit();
+  if(sel==="weak"){ const ws=weakWords(); if(ws.length) return ws; sel="review"; }
   if(sel==="review") return us.slice(0,c+1).flatMap(u=>u.words);
   if(typeof sel==="number" && sel<=c) return us[sel].words;
   return us[c].words;
@@ -666,8 +706,10 @@ const store = {
   get(k){ try{ return JSON.parse(localStorage.getItem(k)||"null") }catch(e){ return null } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)) }catch(e){} }
 };
+const REACHED = store.get("wortspielReached") || {};   // furthest unit reached per level; not part of the "wortspiel" save
 const fresh = ()=>({xp:0,best:0,score:{},stars:{},days:{},pron:{},goal:10,mode:"cards",sel:"unit",rate:0.9});
-const G = store.get("wortspiel") || {lv:"A1", levels:{A1:store.get("a1wortspiel")||{}}};   // older saves were A1 only
+const G = store.get("wortspiel") || (()=>{ const a1=store.get("a1wortspiel");   // older saves were A1 only
+  return {lv:"A1", chosen:!!(a1 && a1.score && Object.keys(a1.score).length), levels:{A1:a1||{}}}; })();
 for(const k of Object.keys(LVL)) G.levels[k] = Object.assign(fresh(), G.levels[k]||{});
 let S = G.levels[G.lv] || G.levels.A1;
 function setLevel(lv){ lastUnit=curUnit(lv);
@@ -675,57 +717,90 @@ function setLevel(lv){ lastUnit=curUnit(lv);
   WORDS=ALL[lv]; if(S.sel===undefined||S.sel==="All"||typeof S.sel==="string"&&!["unit","review"].includes(S.sel)) S.sel="unit";
   document.querySelectorAll(".lvname").forEach(e=>e.textContent=lvBadge(lv));
   document.documentElement.dataset.lv=lv; document.querySelector(".legend").hidden=isTrack(lv);   // der/die/das only matter for words
+  document.querySelector('nav.modes [data-mode="list"] span').textContent=isTrack(lv)?"List":"Words";
   save(); renderTopics(); renderStats(); syncSpeed();
 }
 const dkey = d=>{ const x=new Date(d); return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0") };
 const todayRec = ()=> (S.days[dkey(Date.now())] ||= {xp:0,answers:0,learned:0});
 const save = ()=>store.set("wortspiel",G);
 const known = w => (S.score[w.id]||0) >= 3;
-function bump(w,ok){ const s=S.score[w.id]||0, n= ok? Math.min(5,s+1) : Math.max(0,s-1); S.score[w.id]=n;
+function bump(w,ok){ const wasAll=levelDone(), s=S.score[w.id]||0, n= ok? Math.min(5,s+1) : Math.max(0,s-1); S.score[w.id]=n;
   const r=todayRec(); r.answers++; if(s<3&&n>=3) r.learned++; if(s>=3&&n<3) r.learned=Math.max(0,r.learned-1);
-  const before=lastUnit; lastUnit=curUnit(); if(lastUnit!==before){ if(lastUnit>before) unitToast(UNITS[G.lv][before], UNITS[G.lv][lastUnit]); renderTopics(); } }
+  const before=lastUnit; lastUnit=curUnit(); if(lastUnit>before) unitToast(UNITS[G.lv][before], UNITS[G.lv][lastUnit]);
+  if(!wasAll && levelDone()) toast(`<b>${LVL[G.lv].name} complete!</b> ${{ABC:"Next up: numbers in Zahlen.",Z:"Next up: your first words in A1.",A1:"Next up: A2.",A2:"You've finished every level."}[G.lv]}`); }
+// the last unit has nothing to unlock, so finishing it is finishing the level
+const levelDone=()=>{ const us=UNITS[G.lv]; return curUnit()===us.length-1 && unitDone(us[us.length-1]); };
 let lastUnit=0;
-function unitToast(done,next){
-  const el=$("#toast"); el.innerHTML=`<span class="burst" aria-hidden="true">${ic("star")}${[0,60,120,180,240,300].map(r=>`<i style="--r:${r}deg"></i>`).join("")}</span><span><b>Unit complete: ${esc(done.name)}!</b> Next up: ${esc(next.name)}. It starts with your next round.</span>`; el.hidden=false;
-  clearTimeout(unitToast.t); unitToast.t=setTimeout(hideToast,4500);
+function toast(html){
+  const el=$("#toast"); el.innerHTML=`<span class="burst" aria-hidden="true">${ic("star")}${[0,60,120,180,240,300].map(r=>`<i style="--r:${r}deg"></i>`).join("")}</span><span>${html}</span>`; el.hidden=false;
+  clearTimeout(toast.t); toast.t=setTimeout(hideToast,4500);
   setTimeout(()=>{ addEventListener("pointerdown",hideToast,true); addEventListener("keydown",hideToast,true); });   // from the next tap on, not the one that finished the unit
 }
+const unitToast=(d,n)=>toast(`<b>Unit complete: ${esc(d.name)}!</b> Next up: ${esc(n.name)}. It starts with your next round.`);
 // on a short phone the toast can still sit over the word, so the next tap or key closes it (and still does what it does)
 function hideToast(){ $("#toast").hidden=true; removeEventListener("pointerdown",hideToast,true); removeEventListener("keydown",hideToast,true); }
 
 /* ---------- speech ---------- */
 let deVoice=null;
+// the IOS constant further down isn't set yet when pickVoice first runs
+const PHONE_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
 function pickVoice(){
   const vs = speechSynthesis.getVoices();
   if(!vs.length) return;
   deVoice = vs.find(v=>v.lang==="de-DE"&&/google|premium|enhanced|anna|helena|katja/i.test(v.name)) || vs.find(v=>v.lang==="de-DE") || vs.find(v=>/^de/i.test(v.lang)) || null;
-  document.getElementById("voiceWarn").hidden = !!deVoice;
+  // $ isn't defined yet when this first runs
+  const vw=document.getElementById("voiceWarn"); vw.hidden = !!deVoice || !!pickVoice.closed;
+  if(!deVoice){ document.getElementById("vwText").textContent="No German voice on this phone, so letters and words will sound wrong.";
+    document.getElementById("vwHow").textContent = PHONE_IOS ? "On iPhone: Settings › Accessibility › Spoken Content › Voices › German, then download a voice such as Anna. Close and reopen the game afterwards."
+      : /Android/.test(navigator.userAgent) ? "On Android: open Settings and search for Text-to-speech. Open the preferred engine's settings (Speech Services by Google), then Install voice data › German (Germany). Close and reopen the game afterwards."
+      : "Add a German voice in your computer's speech settings, then reload the page."; }
 }
 if("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-if(/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1)) document.getElementById("soundHint").hidden=false;
+else { document.getElementById("vwText").textContent="This browser can't play sound, so the speaker buttons and Listen won't work here.";
+  document.getElementById("vwHow").textContent="Open the game in Safari on an iPhone, or in Chrome on Android."; document.getElementById("voiceWarn").hidden=false; }
+// "Got it" hides the note until the game is opened again
+document.getElementById("vwOk").onclick=()=>{ pickVoice.closed=true; document.getElementById("voiceWarn").hidden=true; };
+// stops the voice and anything about to be said (a new screen, a new question, the microphone, the app going to the background)
+function stopVoice(){
+  clearTimeout(say.t); say.t=0; say.u=null; say.c=Date.now();
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  document.querySelectorAll(".speak.playing").forEach(b=>b.classList.remove("playing"));
+}
+if(PHONE_IOS) document.getElementById("soundHint").hidden=false;
 function say(text, btn){
   if(!("speechSynthesis" in window)) return;
-  const busy = speechSynthesis.speaking || speechSynthesis.pending;
-  if(busy) speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace(/[?!]/g,""));
+  const busy = speechSynthesis.speaking || speechSynthesis.pending || !!say.t || Date.now()-(say.c||0)<60;
+  clearTimeout(say.t); say.t=0;
+  if(busy){ speechSynthesis.cancel(); say.c=Date.now(); }
+  if(speechSynthesis.paused) speechSynthesis.resume();
+  const u = new SpeechSynthesisUtterance(text.replace(/[?!]/g,"").replace(/-$/,""));
   u.lang="de-DE"; if(deVoice) u.voice=deVoice; u.rate=S.rate;
   say.u = u;                                                   // Safari forgets unreferenced utterances and never ends them
   document.querySelectorAll(".speak.playing").forEach(b=>b.classList.remove("playing"));
-  if(btn){ btn.classList.add("playing"); u.onend=u.onerror=()=>btn.classList.remove("playing"); }
+  if(btn){ btn.classList.add("playing"); u.onend=u.onerror=()=>{ if(say.u===u||!say.u) btn.classList.remove("playing"); }; }
+  // a voice that fails (not one we stopped) shows the sound hint
+  const off=u.onerror; u.onerror=e=>{ off?.(e); if(e?.error && !/interrupted|canceled/.test(e.error)){ const h=document.getElementById("soundHint"); h.textContent="No sound? Check the volume"+(PHONE_IOS?" and turn off silent mode":"")+"."; h.hidden=false; } };
   // speaking straight after cancel() is sometimes dropped on iPhones, so give it a moment
-  if(busy) setTimeout(()=>speechSynthesis.speak(u),60); else speechSynthesis.speak(u);
+  if(busy) say.t=setTimeout(()=>{ say.t=0; if(say.u===u) speechSynthesis.speak(u); },60); else speechSynthesis.speak(u);
 }
+document.addEventListener("visibilitychange",()=>{ if(document.hidden){ stopVoice(); stopListening?.(); } });
+addEventListener("pagehide",()=>{ stopVoice(); stopListening?.(); });
 // what the voice reads out: a letter's German name (Be, Jot, Zett) rather than the bare letter
 const sayW = w => w.say || w.de;
-const sayLabel = w => w.letter && w.name ? `${w.de} (${w.name})` : w.de;   // "say J (Jot)": what the screen asks for
+// the English as a question: drops a note in brackets that contains the answer, e.g. das Leid "sorrow (es tut mir leid = I'm sorry)"
+const enQ = w => { const st=w.base.toLowerCase().replace(/(en|e|n)$/,""); if(st.length<3) return w.en;
+  const re=new RegExp("(^|[^a-zäöüß])"+st.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"); return w.en.replace(/\s*\(([^)]*)\)/g,(m,n)=>re.test(n)?"":m); };
+const sayLabel = w => !w.letter ? w.de : w.name && w.name!==w.de ? `${w.de} (${w.name})` : `${w.de}, ${w.en}`;   // "say J (Jot)": what the screen asks for
 function spkBtn(w,cls=""){ const b=document.createElement("button"); b.className="speak "+cls; b.innerHTML=SPK; b.setAttribute("aria-label","Hear "+w.de); b.onclick=e=>{e.stopPropagation(); say(sayW(w),b)}; return b; }
 // marks the letters a sound card is about, e.g. the ei in drei
 function hlHTML(s,h){ const i=s.toLowerCase().indexOf(h.toLowerCase()); return i<0? esc(s) : esc(s.slice(0,i))+`<b class="hl">${esc(s.slice(i,i+h.length))}</b>`+esc(s.slice(i+h.length)); }
-function deHTML(w){
+function deHTML(w){ return `<span lang="de">${deInner(w)}</span>`; }
+function deInner(w){
   if(w.letter) return `<span class="ltr">${esc(w.de)}${w.de.toLowerCase()!==w.de?` <small>${esc(w.de.toLowerCase())}</small>`:""}</span>`;
   const base = w.hl ? hlHTML(w.base,w.hl) : esc(w.base);
   return w.art ? `<span class="art g-${w.art}">${w.art}</span> <span class="g-${w.art}">${base}</span>` : base;
 }
+const isLong = w => w.de.split(" ").some(t=>t.length>13);   // zweitausendsechsundzwanzig, der Anrufbeantworter
 function esc(s){ return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) }
 const tagHTML = t => esc(t).replace(/ß/g,'<span class="nocase">ß</span>');   // uppercase labels would turn ß into SS
 
@@ -736,24 +811,36 @@ function enter(el){ el.classList.remove("enter"); void el.offsetWidth; el.classL
 const stage = $("#stage");
 // a result replaces a long round: if the page was scrolled down, bring the score back into view
 const showResult = ()=>{ if(stage.getBoundingClientRect().top<0) stage.scrollIntoView({block:"start"}); };
+// one short, polite announcement for screen readers (answer feedback); the game card itself is not a live region
+function announce(t){ const r=$("#sr"); r.textContent=""; setTimeout(()=>{ r.textContent=t; },60); }
 const shuffle = a=>{a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]} return a};
 const pool = ()=> poolFor(S.sel);
+// started words under 3 right answers in finished units, weakest first: the home "quick refresh" list and the Review deck
+function weakWords(){ const ci=curUnit(); return UNITS[G.lv].slice(0,ci).flatMap(u=>u.words).filter(w=>status(w)==="learning").sort((a,b)=>S.score[a.id]-S.score[b.id]).slice(0,5); }
 function pickWords(n){ // favour words you know least
   const p = shuffle(pool()).sort((a,b)=>(S.score[a.id]||0)-(S.score[b.id]||0));
   return shuffle(p.slice(0, Math.max(n, Math.min(p.length, n*2)))).slice(0,n);
 }
+// two words count as the same answer when their English is the same once a note in brackets is dropped and at most one has a note
+// (why? = warum?/wieso?, doctor / doctor (woman)), or when they sound the same (das/dass, der Club/der Klub, wie viel?/wieviel?)
+const enCore = s => s.toLowerCase().replace(/\([^)]*\)/g,"").replace(/[?!.]/g,"").trim();
+const sameMeaning = (a,b) => a.en===b.en || (enCore(a.en)===enCore(b.en) && !(a.en.includes("(") && b.en.includes("(")));
+const soundKey = s => s.toLowerCase().replace(/ß/g,"ss").replace(/c/g,"k").replace(/[^a-zäöü]/g,"").replace(/(.)\1+/g,"$1");
 function distractors(w,n,key){
-  const same = shuffle(WORDS.filter(x=>x.id!==w.id && x.topic===w.topic && x[key]!==w[key]));
-  const any = shuffle(WORDS.filter(x=>x.id!==w.id && x[key]!==w[key]));
+  const fair = x => x.id!==w.id && x[key]!==w[key] && !sameMeaning(x,w) && (w.letter || x.letter || soundKey(x.de)!==soundKey(w.de));
+  const same = shuffle(WORDS.filter(x=>fair(x) && x.topic===w.topic));
+  const any = shuffle(WORDS.filter(fair));
   const out=[]; for(const x of [...same,...any]){ if(out.length>=n) break; if(!out.some(o=>o[key]===x[key])) out.push(x) }
   return out;
 }
 function renderStats(){
-  const u=UNITS[G.lv][curUnit()], k=unitLearned(u), need=unitNeed(u);
+  // reviewing a finished unit shows that unit; the last unit's goal is finishing the level
+  const us=UNITS[G.lv], ci=curUnit(), rv=typeof S.sel==="number" && S.sel<ci, u=us[rv?S.sel:ci], k=unitLearned(u), need=unitNeed(u),
+    goal=u.i===us.length-1?`finish ${G.lv==="ABC"?"the Alphabet":LVL[G.lv].name}`:"unlock the next unit";
   $("#sXp").textContent=S.xp; $("#sStreak").textContent=S.best; $("#sKnown").textContent=`${k}/${u.words.length}`;
   $("#pBar").style.width = (k/u.words.length*100)+"%";
-  $("#pLevel").textContent = `Unit ${u.i+1} · ${u.name}`;
-  $("#pTxt").textContent = k>=need ? "Unit done!" : `Learn ${need-k} more to unlock the next unit`;
+  $("#pLevel").textContent = `${rv?"Review\u00a0· ":""}Unit\u00a0${u.i+1}\u00a0· ${u.name}`;   // no-break spaces keep "Unit 7 ·" on one line
+  $("#pTxt").textContent = rv ? "Reviewing a finished unit" : k>=need ? "Unit done!" : `Learn ${need-k} more to ${goal}`;
 }
 function addXp(n){ S.xp+=n; todayRec().xp+=n; renderStats(); const el=$("#sXp"); el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
 
@@ -762,11 +849,12 @@ function renderTopics(){ // the practice screen only offers this unit, finished 
   const box=$("#topics"); box.innerHTML=""; const us=UNITS[G.lv], ci=curUnit();
   box.hidden=ci===0;                                          // unit 1 has nothing else to pick
   const opts=[["unit",`This unit · ${us[ci].name}`]];
-  if(ci>0) opts.push(["review",`Mix all ${ci+1} units`]);
+  if(S.sel==="weak" && weakWords().length) opts.unshift(["weak","Refresh"]);
+  if(ci>0) opts.push(["review",ci===1?"Mix both units":`Mix all ${ci+1} units`]);
   for(let i=ci-1;i>=0;i--) opts.push([i,`✓ ${us[i].name}`]);
   for(const [v,label] of opts){
     const b=document.createElement("button"); b.className="chip"; b.textContent=label;
-    b.setAttribute("aria-pressed", S.sel===v);
+    b.setAttribute("aria-pressed", !(S.mode==="list" && listView.scope==="level") && S.sel===v);   // the whole-level list isn't one of these
     b.onclick=()=>{ S.sel=v; listView={scope:"unit",f:"all"}; save(); renderTopics(); start(); };
     box.appendChild(b);
   }
@@ -783,23 +871,25 @@ document.addEventListener("click",e=>{ const b=e.target.closest?.("button"); if(
 
 function start(){
   stopListening?.(); stopListening=null;
-  keyHandler=null; if("speechSynthesis" in window) speechSynthesis.cancel();
-  document.querySelectorAll("nav.modes button").forEach(b=>b.setAttribute("aria-selected", b.dataset.mode===S.mode));
+  keyHandler=null; stopVoice(); renderTopics(); renderStats();   // a unit unlocked mid-round shows here, so nothing moves under the finger
+  document.querySelectorAll("nav.modes button").forEach(b=>b.setAttribute("aria-current", b.dataset.mode===S.mode?"page":"false"));
   if(S.mode==="home") S.mode="cards";
   enter(stage);
   ({cards:Cards,quiz:()=>Quiz("quiz"),listen:()=>Quiz("listen"),match:Match,speak:Speak,list:List})[S.mode]();
 }
 
 /* ---------- Start: home & progress ---------- */
+// a day counts when you answered anything, on any level
 function dayStreak(){
-  let n=0, d=new Date(); if(!(S.days[dkey(d)]?.answers)) d.setDate(d.getDate()-1);
-  while(S.days[dkey(d)]?.answers){ n++; d.setDate(d.getDate()-1) }
+  const any = d => Object.values(G.levels).some(l=>l.days?.[dkey(d)]?.answers);
+  let n=0, d=new Date(); if(!any(d)) d.setDate(d.getDate()-1);
+  while(any(d)){ n++; d.setDate(d.getDate()-1) }
   return n;
 }
 function status(w,sc=S.score){ const s=sc[w.id]; return s===undefined?"new": s>=5?"mastered": s>=3?"learned":"learning"; }
 // the word categories, as the stats and the word list name them. "mastered" (5 right) is shown as Confident, "learned" (3 or 4) as Known
 const CATS = [["mastered","Confident","var(--good)","5 right answers"],["learned","Known","color-mix(in srgb,var(--good) 45%,var(--bg))","3 or 4 right"],
-  ["learning","Still learning","var(--accent)","started, under 3"],["new","Not started","var(--line)","never seen yet"]];
+  ["learning","Learning","var(--accent)","started, under 3"],["new","Not started","var(--line)","never seen yet"]];
 const catName = c => CATS.find(x=>x[0]===c)[1];
 const confStars = s => s===undefined ? "" : "●".repeat(s)+"○".repeat(5-s);   // dots: the star is for favourites
 // counts for one level: total, each category, learned (known + confident), remaining (not learned yet), and each confidence step 0 to 5
@@ -810,7 +900,7 @@ function wordStats(lv=G.lv){
 }
 // filters for the word list: a category, learned, remaining, or one confidence step ("s0" to "s5")
 const FILTERS = {all:["All",()=>true], done:["Learned",w=>["learned","mastered"].includes(status(w))], left:["Remaining",w=>["new","learning"].includes(status(w))],
-  mastered:["Confident",w=>status(w)==="mastered"], learned:["Known",w=>status(w)==="learned"], learning:["Still learning",w=>status(w)==="learning"], new:["Not started",w=>status(w)==="new"]};
+  mastered:["Confident",w=>status(w)==="mastered"], learned:["Known",w=>status(w)==="learned"], learning:["Learning",w=>status(w)==="learning"], new:["Not started",w=>status(w)==="new"]};
 const filterFor = f => /^s[0-5]$/.test(f) ? [`Level ${f[1]} ${confStars(+f[1])}`, w=>S.score[w.id]===+f[1]] : FILTERS[f]||FILTERS.all;
 // "your words" panel on the home screen: only this level's counts, never a total across levels
 function myWordsHTML(WN){
@@ -819,16 +909,16 @@ function myWordsHTML(WN){
   const STEP=[[5,"Confident"],[4,"Known"],[3,"Known"],[2,"Learning"],[1,"Learning"],[0,"Learning"]];
   const stepColor=s=>CATS.find(c=>c[0]===(s>=5?"mastered":s>=3?"learned":"learning"))[2];
   return `<section class="psec" id="myWords">
-    <div class="row spread"><h3 class="h2">Your ${WN} in ${esc(name)}</h3><span class="muted">tap a number to see the ${WN}</span></div>
+    <div class="row spread"><h3 class="h2">Your ${WN} in ${esc(name)}</h3><span class="muted">Tap a number to see the ${WN}</span></div>
     <div class="wtiles">
       ${tile("all",st.total,`${WN} in ${esc(name)}`,"total","var(--ink)")}
-      ${tile("done",st.done,"learned","known + confident","var(--good)")}
-      ${tile("mastered",st.mastered,"confident","5 right answers","var(--good)")}
-      ${tile("left",st.left,"remaining","still to learn","var(--accent)")}
+      ${tile("done",st.done,"Learned","known + confident","var(--good)")}
+      ${tile("mastered",st.mastered,"Confident","5 right answers","var(--good)")}
+      ${tile("left",st.left,"Remaining","still to learn","var(--accent)")}
     </div>
     <div class="stack" role="img" aria-label="${CATS.map(c=>`${c[1]} ${st[c[0]]}`).join(", ")}">${CATS.map(c=>st[c[0]]?`<i style="width:${pc(st[c[0]])}%;background:${c[2]}"></i>`:"").join("")}</div>
     <div class="cats">${CATS.map(c=>`<button class="cat" data-wf="${c[0]}"><i style="background:${c[2]}"></i>${c[1]} <b>${st[c[0]]}</b></button>`).join("")}</div>
-    <div class="row spread" style="margin-top:6px"><h3 class="h2">Confidence levels</h3><span class="muted">each right answer moves a word up one level, a wrong one moves it down</span></div>
+    <div class="row spread" style="margin-top:6px"><h3 class="h2">Confidence levels</h3><span class="muted">Each right answer moves a word up one level, a wrong one moves it down</span></div>
     <div class="tbars">${STEP.map(([s,lab])=>`<button class="lvlrow" data-wf="s${s}"><span class="nm"><span class="conf">${confStars(s)}</span> ${lab}</span><span class="track"><i style="width:${pc(st.steps[s])}%;background:${stepColor(s)}"></i></span><span class="n">${st.steps[s]}</span></button>`).join("")}
       <button class="lvlrow" data-wf="new"><span class="nm">Not started</span><span class="track"><i style="width:${pc(st.new)}%;background:color-mix(in srgb,var(--muted) 40%,var(--line))"></i></span><span class="n">${st.new}</span></button></div>
   </section>`;
@@ -841,19 +931,19 @@ function Home(){
   const allDone = ci===us.length-1 && unitDone(u);
   const started = u.words.some(w=>S.score[w.id]!==undefined);
   const t=todayRec(), goal=S.goal, streak=dayStreak();
+  const last=ci===us.length-1, unitGoal=last?`finish ${G.lv==="ABC"?"the Alphabet":LVL[G.lv].name}`:"unlock the next unit";
   const C=2*Math.PI*42;
   const days=[...Array(7)].map((_,k)=>{ const d=new Date(); d.setDate(d.getDate()-6+k); const r=S.days[dkey(d)]||{xp:0,answers:0,learned:0}; return {d,r} });
   const maxA=Math.max(10,...days.map(x=>x.r.answers));
-  const open=us.slice(0,ci+1).flatMap(x=>x.words);
-  const weak=open.filter(w=>status(w)==="learning" && !u.words.includes(w)).sort((a,b)=>S.score[a.id]-S.score[b.id]).slice(0,5);
+  const weak=weakWords();
   // the path shows only a small window: two finished units, this one, and the next three
   const from=Math.max(0,ci-2), to=Math.min(us.length,ci+4);
   const T=TRACK[G.lv], WN=T?.noun||"words", UN=T?.unitNoun?.(u)||WN, lvTitle=T?T.title:G.lv;
-  const MODES=T?T.modes
+  const MODES=T?(UN==="sounds"&&T.modesSound||T.modes)
     : [["cards","Swipe cards","See a word, flip to check"],["quiz","Quiz","Pick the right meaning"],["listen","Listen","Hear a word, find it"],["match","Match pairs","Join words and meanings"],["speak","Speak","Say it, get a score"]];
   // the other tracks: the alphabet and numbers from a word level, or back to your words from a track
   const abcOpen=Object.keys(G.levels.ABC.score).length>0 && !UNITS.ABC.every(x=>unitDone(x,G.levels.ABC.score));
-  const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?["Z",wl] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?["ABC","Z"] : ["Z"];
+  const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?["Z",wl] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?(allDone || Object.keys(G.levels.A2.score).length ? ["A2","ABC","Z"] : ["ABC","Z"]) : ["Z"];
   const feedHTML=k=>{ const ous=UNITS[k], oci=curUnit(k), ou=ous[oci], osc=G.levels[k].score, OT=TRACK[k];
     const ogot=ou.words.filter(w=>(osc[w.id]||0)>=3).length, ostarted=Object.keys(osc).length>0;
     return `<section class="feed" data-lv="${k}">
@@ -866,6 +956,7 @@ function Home(){
     const lab=st==="done"?`Review unit ${x.i+1}: ${x.name}`:st==="now"?`Unit ${x.i+1}: ${x.name}`:`Unit ${x.i+1} is locked`;
     return `<button class="ud ${st}" data-u="${x.i}" ${st==="locked"?"disabled":""} aria-label="${esc(lab)}" title="${esc(lab)}"><span>${st==="done"?ic("check"):st==="locked"?ic("lock"):x.i+1}</span></button>` }).join("");
   const tl=Math.min(t.learned,goal), reached=t.learned>=goal;
+  const sz=us.map(x=>x.words.length), lo=Math.min(...sz), hi=Math.max(...sz);
   const el=$("#homeBody");
   el.innerHTML=`
   <section class="hhero">
@@ -879,9 +970,9 @@ function Home(){
         <div class="pct"><b>${got}/${n}</b><span>learned</span></div>
       </div>
     </div>
-    <p class="lede">${allDone?(T?T.done:`You've learned every unit in ${G.lv}. Keep reviewing, or move on to the next level.`)
-      : got>=need? `Unit done!` : got? `Learn ${left} more ${left===1?one(UN):UN} to unlock the next unit.` : `Just ${n} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
-    ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b>${esc(T.tips[u.topic])}</p>`:""}
+    <p class="lede">${allDone?(T?T.done:G.lv==="A1"?"You've learned every unit in A1. Keep reviewing, or start A2 below.":"You've learned every unit in A2. Keep reviewing so the words stay fresh.")
+      : got>=need? `Unit done!` : got? `Learn ${left} more ${left===1?one(UN):UN} to ${unitGoal}.` : last? `Just ${n} ${UN}. Learn ${need} of them to ${unitGoal}.` : `Just ${n} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
+    ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b> ${esc(T.tips[u.topic])}</p>`:""}
     <div class="hcta"><button class="btn cta" id="goPractice">${started?"Continue":"Start"}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
     <div class="udots">${dots}</div>
     <p class="udcap muted">Unit ${ci+1}${ci?" · tap a finished unit to review it":""}</p>
@@ -893,7 +984,7 @@ function Home(){
   </section>
 
   <section class="panel slim">
-    <div class="trow"><b>Today</b><span class="muted grow1">${t.answers?`${t.answers} answered · `:""}${reached?"Goal reached!":`${tl} of ${goal} new ${WN} learned`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
+    <div class="trow"><b>Today</b><span class="muted grow1 tsum">${t.answers?`${t.answers} answered · `:""}${reached?"Goal reached!":`${tl} of ${goal} new ${WN} learned`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
     <span class="mbar${reached?" ok":""}" role="img" aria-label="Today's goal: ${t.learned} of ${goal} learned"><i style="width:${Math.min(100,t.learned/goal*100)}%"></i></span>
     ${!tl&&t.answers?`<span class="muted" style="font-size:.8rem">A ${one(WN)} counts as learned after 3 right answers.</span>`:""}
   </section>
@@ -913,7 +1004,7 @@ function Home(){
     <div class="progin">
       ${myWordsHTML(WN)}
       <section class="psec">
-        <div class="row spread"><h3 class="h2">Last 7 days</h3><span class="muted">answers per day</span></div>
+        <div class="row spread"><h3 class="h2">Last 7 days</h3><span class="muted">Answers per day</span></div>
         <div>
           <div class="week">${days.map(({d,r})=>`<div class="col7" style="--h:${r.answers/maxA*100}%" title="${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}: ${r.answers} answers, ${r.learned} new ${WN} learned, ${r.xp} points"><em>${r.answers||""}</em><div class="bar ${r.answers?"":"zero"}"></div></div>`).join("")}</div>
           <div class="wkd">${days.map(({d},k)=>`<span class="${k===6?"now":""}">${k===6?"Today":d.toLocaleDateString("en-GB",{weekday:"short"})}</span>`).join("")}</div>
@@ -925,14 +1016,14 @@ function Home(){
         <div class="tiles">
           <div class="tile2"><b>${S.xp}</b><span>points</span></div>
           <div class="tile2"><b>${S.best}</b><span>most right in a row</span></div>
-          <div class="tile2"><b>${streak}</b><span>days in a row</span></div>
+          <div class="tile2"><b>${streak}</b><span>${streak===1?"day":"days"} in a row</span></div>
           <div class="tile2"><b>${pronAvg()}</b><span>speaking score</span></div>
         </div>
       </section>
       <section class="psec">
         <h3 class="h2">How it works</h3>
         <div class="how">
-          <div><b>Small units</b>Each unit has about ${UNIT_MAX} ${WN}. Learn 80% of them and the next unit opens.</div>
+          <div><b>Small units</b>Each unit has ${lo===hi?lo:`${lo} to ${hi}`} ${WN}. Learn 80% of them and the next unit opens.</div>
           <div><b>Known</b>Something counts as known (learned) after 3 right answers. A wrong answer moves it back one step.</div>
           <div><b>Confident</b>After 5 right answers you're confident with it. Come back every day to keep your streak.</div>
         </div>
@@ -948,7 +1039,7 @@ function Home(){
   $("#goPractice").onclick=()=>showPractice(S.lastMode||"cards","unit");
   el.querySelectorAll("[data-golv]").forEach(b=>b.onclick=()=>{ G.chosen=true; setLevel(b.dataset.golv); showHome(); });
   $("#goList").onclick=()=>{ listView={scope:"unit",f:"all"}; showPractice("list","unit"); };
-  $("#goRev") && ($("#goRev").onclick=()=>showPractice("cards","review"));
+  $("#goRev") && ($("#goRev").onclick=()=>showPractice("cards","weak"));
   const pd=$("#prog"); pd.ontoggle=()=>{ progOpen=pd.open; };
 }
 function LevelPick(){
@@ -973,7 +1064,7 @@ function LevelPick(){
 function pronAvg(){ const v=Object.values(S.pron||{}); return v.length? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : "–"; }
 function showHome(){
   stopListening?.(); stopListening=null;
-  if("speechSynthesis" in window) speechSynthesis.cancel();
+  stopVoice();
   keyHandler=null; $("#practiceView").hidden=true; $("#homeView").hidden=false;
   $("#lvBtn").innerHTML=`<b>${lvBadge(G.lv)}</b><span class="vh">Change level (now ${LVL[G.lv].name})</span>${ic("down")}`; $("#lvBtn").hidden=!G.chosen||G.picking;
   Home(); enter($("#homeBody")); window.scrollTo(0,0);
@@ -992,11 +1083,12 @@ function Cards(){
   let deck = pickWords(Math.min(20,pool().length)), i=0, knew=0, again=0;
   function draw(){
     if(i>=deck.length){
-      stage.innerHTML=`<div class="result"><div class="score">✓</div><div class="note">Deck done. Gut gemacht!</div>
+      stage.innerHTML=`<div class="result"><div class="score">✓</div><div class="note">Deck done. Gut gemacht: well done!</div>
         <p class="muted" style="margin:0">${knew} knew it · ${again} still learning</p>
         <button class="btn primary" id="again">Next deck</button></div>`;
-      $("#again").onclick=Cards; keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); Cards()} }; return;
+      $("#again").onclick=start; keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); start()} }; return;
     }
+    stopVoice();
     const w=deck[i]; let flipped=false, gone=false;
     stage.innerHTML=`
       <div class="row spread"><span class="tag">${tagHTML(w.topic)}</span><span class="muted">Card ${i+1} of ${deck.length}${known(w)?" · learned":""}</span></div>
@@ -1004,13 +1096,13 @@ function Cards(){
       <div class="swipe-area">
         ${i+1<deck.length?`<div class="under" aria-hidden="true"></div>`:""}
         <div class="swipe" id="sw">
-          <div class="card" id="card" tabindex="0" role="button" aria-label="Flip card">
+          <div class="card" id="card" tabindex="0" role="button" aria-label="${esc(w.de)}. Tap to flip">
             <div class="card-inner">
-              <div class="face front"><div class="word">${deHTML(w)}</div><div class="muted">${TRACK[G.lv]?.flip||"Tap to see the English"}</div></div>
-              <div class="face back"><div class="meaning">${esc(w.en)}</div><div class="muted">${esc(w.ex||w.de)}</div></div>
+              <div class="face front" aria-hidden="true"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div><div class="muted">${TRACK[G.lv]?.flip||"Tap to see the English"}</div></div>
+              <div class="face back" aria-hidden="true"><div class="meaning">${esc(w.en)}</div><div class="muted">${esc(w.ex||w.de)}</div></div>
             </div>
           </div>
-          <span class="stamp yes" id="stY">Knew it ✓</span><span class="stamp no" id="stN">Again ↺</span>
+          <span class="stamp yes" id="stY" aria-hidden="true">Knew it ✓</span><span class="stamp no" id="stN" aria-hidden="true">Again ↺</span>
         </div>
       </div>
       <div class="swipe-hint">Or swipe the card: right if you knew it, left if not</div>
@@ -1019,7 +1111,7 @@ function Cards(){
       <div class="muted kbdhint">Keys: Space flips, P plays sound, ← or 1 still learning, → or 2 I knew it.</div>`;
     const sb=spkBtn(w); $("#spk").appendChild(sb);
     const sw=$("#sw"), card=$("#card"), stY=$("#stY"), stN=$("#stN");
-    const flip=()=>{ flipped=!flipped; card.classList.toggle("flipped",flipped) };
+    const flip=()=>{ flipped=!flipped; card.classList.toggle("flipped",flipped); card.setAttribute("aria-label", flipped?`${w.en}. Tap to flip back`:`${w.de}. Tap to flip`); };
     const next=ok=>{ bump(w,ok); if(ok){ addXp(2); knew++; } else { again++; deck.push(w); } save(); renderStats(); i++; };
     const pose=(dx,dy)=>{ sw.style.transform=`translate(${dx}px,${dy}px) rotate(${dx/18}deg)`;
       stY.style.opacity=Math.max(0,Math.min(1,dx/90)); stN.style.opacity=Math.max(0,Math.min(1,-dx/90)); };
@@ -1052,6 +1144,7 @@ function Quiz(kind){
   const N=Math.min(10,pool().length); const qs=pickWords(N); let i=0, streak=0, right=0; const log=[];
   let dir = kind==="listen" ? "listen" : "de-en";
   function q(){
+    stopVoice();
     if(i>=N) return done();
     const w=qs[i];
     // a sound card's English names its letters, so reading it would give the answer away: ask by ear instead
@@ -1061,46 +1154,53 @@ function Quiz(kind){
     const opts = shuffle([w, ...distractors(w,3,key)]);
     let prompt;
     const tq=TRACK[G.lv]?.q;
+    const kb=stage.contains(document.activeElement);
     if(mode==="listen") prompt=`<div class="prompt" id="pr"></div><div class="muted" style="text-align:center">${tq?.listen||"Listen, then pick the German word you heard."}</div>`;
-    else if(mode==="de-en") prompt=`<div class="prompt" id="pr"><div class="word">${deHTML(w)}</div></div><div class="muted" style="text-align:center">${tq?.deEn||"What does it mean in English?"}</div>`;
-    else prompt=`<div class="prompt" id="pr"><div class="meaning">${esc(w.en)}</div></div><div class="muted" style="text-align:center">${tq?.enDe||"Which German word is it?"}</div>`;
+    else if(mode==="de-en") prompt=`<div class="prompt" id="pr"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div></div><div class="muted" style="text-align:center">${tq?.deEn||"What does it mean in English?"}</div>`;
+    else prompt=`<div class="prompt" id="pr"><div class="meaning">${esc(enQ(w))}</div></div><div class="muted" style="text-align:center">${tq?.enDe||"Which German word is it?"}</div>`;
     stage.innerHTML=`
       <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">In a row: <b id="stk">${streak}</b></span></div>
       ${prompt}
-      <div class="options">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><kbd>${k+1}</kbd><span>${key==="en"?esc(o.en):deHTML(o)}</span></button>`).join("")}</div>
+      <div class="options">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><kbd>${k+1}</kbd><span>${key==="en"?esc(enQ(o)):deHTML(o)}</span></button>`).join("")}</div>
       <div class="feedback" id="fb"></div>
       <div class="row spread"><span class="tag">${tagHTML(w.topic)}</span><button class="btn primary" id="nx" hidden>Next</button></div>`;
-    const pr=$("#pr");
-    if(mode==="listen"){ const b=spkBtn(w,"big-ear"); pr.appendChild(b); setTimeout(()=>say(sayW(w),b),150); }
-    else if(mode==="de-en" && !hush){ pr.appendChild(spkBtn(w)); }
+    const pr=$("#pr"); showResult();
+    if(kb){ pr.tabIndex=-1; pr.focus({preventScroll:true}); }   // a keyboard user lands on the new question, not on the page
+    if(mode==="listen"){ const b=spkBtn(w,"big-ear"); b.setAttribute("aria-label","Play the sound"); pr.appendChild(b); setTimeout(()=>{ if(b.isConnected && !$("#practiceView").hidden && !document.hidden && !answered) say(sayW(w),b); },150); }
+    else if(mode==="de-en"){ if(hush) pr.insertAdjacentHTML("beforeend",`<span class="speak-ph" aria-hidden="true"></span>`); else pr.appendChild(spkBtn(w)); }   // the speaker's space is kept so the letter doesn't move
     let answered=false;
     const btns=[...stage.querySelectorAll(".opt")];
-    function choose(k){
+    function choose(k, viaKey){
       if(answered) return; answered=true;
       const ok = opts[k].id===w.id;
       btns.forEach((b,j)=>{ b.disabled=true; if(opts[j].id===w.id) b.classList.add("right"); else if(j===k) b.classList.add("wrong"); });
       const fb=$("#fb");
-      if(ok){ streak++; right++; S.best=Math.max(S.best,streak); addXp(10+Math.min(streak,5)*2); fb.className="feedback ok"; fb.textContent=["Richtig!","Super!","Toll!","Genau!","Sehr gut!"][Math.random()*5|0]+(streak>2?`  ${streak} in a row`:""); }
-      else { streak=0; fb.className="feedback no"; fb.innerHTML=`Not quite. ${deHTML(w)} = ${esc(w.en)}`; }
+      if(ok){ streak++; right++; S.best=Math.max(S.best,streak); addXp(10+Math.min(streak,5)*2); fb.className="feedback ok"; fb.textContent=["Richtig! Right.","Super!","Sehr gut! Very good.","Genau! Exactly."][Math.random()*4|0]+(streak>2?`  ${streak} in a row`:""); }
+      else { streak=0; fb.className="feedback no";
+        const ans = w.letter||w.hl ? `It's ${w.letter?`<span lang="de">${esc(w.de)}</span>`:deHTML(w)}: ${esc(w.en)}` : isNum() ? `${deHTML(w)} is ${esc(w.en)}` : `${deHTML(w)} means ${esc(w.en)}`;
+        fb.innerHTML=`Not quite. ${ans}${/[.?!…]$/.test(w.en)?"":"."}`; }
       $("#stk").textContent=streak;
       bump(w,ok); save(); renderStats(); log.push({w,ok});
-      say(sayW(w)); if(hush) pr.appendChild(spkBtn(w));
-      const nx=$("#nx"); nx.hidden=false; nx.focus(); nx.onclick=()=>{i++;q()};
+      say(sayW(w)); if(hush) pr.querySelector(".speak-ph")?.replaceWith(spkBtn(w));
+      announce(fb.textContent);
+      const nx=$("#nx"); nx.hidden=false; nx.onclick=()=>{i++;q()};
+      if(viaKey) nx.focus({preventScroll:true});
+      nx.scrollIntoView({block:"nearest", behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
     }
-    btns.forEach((b,k)=>b.onclick=()=>choose(k));
-    keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(!answered && /^[1-4]$/.test(e.key)) choose(+e.key-1); else if(answered && (e.key==="Enter"||e.key===" ")){e.preventDefault(); i++; q()} else if(e.key==="p" && (answered || !hush)) say(sayW(w)); };
+    btns.forEach((b,k)=>b.onclick=e=>choose(k, e.detail===0));
+    keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(!answered && /^[1-4]$/.test(e.key)) choose(+e.key-1, true); else if(answered && (e.key==="Enter"||e.key===" ")){e.preventDefault(); i++; q()} else if(e.key==="p" && (answered || !hush)) say(sayW(w)); };
   }
   function done(){
     keyHandler=null;
     const pct=right/N;
     stage.innerHTML=`<div class="result">
       <div class="score">${right}/${N}</div>
-      <div class="note">${pct===1?"Perfekt! Every one right.":pct>=.7?"Sehr gut! Keep going.":pct>=.4?"Nicht schlecht. Practise the red ones.":"Übung macht den Meister. Try the flashcards first."}</div>
+      <div class="note">${pct===1?"Perfekt! Every one right.":pct>=.7?"Sehr gut! Very good. Keep going.":pct>=.4?"Nicht schlecht: not bad. Practise the red ones.":"Übung macht den Meister: practice makes perfect. Try the swipe cards first."}</div>
       <button class="btn primary" id="again">Play again</button>
       <div class="review">${log.map(({w,ok})=>`<div><span style="color:var(--${ok?"good":"bad"});font-weight:700">${ok?"✓":"✗"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
-    $("#again").onclick=()=>Quiz(kind);
+    $("#again").onclick=start;
   }
   q();
 }
@@ -1125,7 +1225,7 @@ function pairSets(ws, maxSets=4){
 function Match(){
   const sets=pairSets(pool()), log=[], me=Match.run=(Match.run||0)+1, live=()=>Match.run===me && $("#setmsg");
   let si=0, misses=0, cleanSets=0; const t0=Date.now();
-  stage.innerHTML=`<div class="row spread"><div class="sets" id="sets" aria-label="Sets"></div><span class="muted" id="mt">0 s</span></div>
+  stage.innerHTML=`<div class="row spread"><div class="sets" id="sets" aria-label="Sets"></div><span class="muted" id="mt" aria-hidden="true">0 s</span></div>
     <div class="muted" id="setlbl"></div>
     <div class="pairs"><div class="col" id="cL"></div><div class="col" id="cR"></div></div>
     <div class="setmsg" id="setmsg" role="status"></div>`;
@@ -1133,15 +1233,15 @@ function Match(){
   function play(){
     const ws=sets[si], L=shuffle(ws), R=shuffle(ws); let sel=null, left=ws.length, setMiss=0;
     $("#sets").innerHTML=sets.map((_,k)=>`<i class="${k<si?"ok":k===si?"now":""}"></i>`).join("");
-    $("#setlbl").textContent=`Set ${si+1} of ${sets.length} · ${TRACK[G.lv]?.pairs||"match each German word with its meaning."} Tapping a German word plays it.`;
+    $("#setlbl").textContent=`Set ${si+1} of ${sets.length} · ${G.lv==="ABC"&&pool().every(w=>w.letter)?"match each letter with its sound.":TRACK[G.lv]?.pairs||"match each German word with its meaning."} ${TRACK[G.lv]?.tap||"Tapping a German word plays it."}`;
     $("#setmsg").textContent=""; $("#cL").innerHTML=""; $("#cR").innerHTML="";
-    const mk=(w,side)=>{ const b=document.createElement("button"); b.className="tile "+(side==="L"?"de":"en"); b.innerHTML= side==="L"?deHTML(w):esc(w.en); b.dataset.id=w.id; b.dataset.side=side;
+    const mk=(w,side,k)=>{ const b=document.createElement("button"); b.className="tile "+(side==="L"?"de"+(isLong(w)?" long":""):"en"); b.innerHTML= side==="L"?deHTML(w):esc(enQ(w)); b.dataset.id=w.id; b.dataset.side=side; b.style.gridArea=`${k+1} / ${side==="L"?1:2}`;
       b.onclick=()=>{ if(b.classList.contains("done")||!left) return; if(side==="L") say(sayW(w));
         if(!sel || sel.dataset.side===side){ if(sel) sel.classList.remove("sel"); sel=b; b.classList.add("sel"); return; }
         if(sel.dataset.id===b.dataset.id){ [sel,b].forEach(x=>{x.classList.remove("sel");x.classList.add("done");x.disabled=true}); bump(w,true); addXp(5); save(); log.push(w); left--; sel=null; if(!left) setDone(); }
         else { const a=sel; [a,b].forEach(x=>{x.classList.add("shake"); setTimeout(()=>x.classList.remove("shake"),400)}); a.classList.remove("sel"); sel=null; misses++; setMiss++; }
       }; return b; };
-    L.forEach(w=>$("#cL").appendChild(mk(w,"L"))); R.forEach(w=>$("#cR").appendChild(mk(w,"R")));
+    L.forEach((w,k)=>$("#cL").appendChild(mk(w,"L",k))); R.forEach((w,k)=>$("#cR").appendChild(mk(w,"R",k)));
     function setDone(){
       if(!setMiss && ws.length>1){ cleanSets++; addXp(5); save(); }
       renderStats(); si++;
@@ -1152,13 +1252,13 @@ function Match(){
     }
   }
   function finish(){ clearInterval(timer); if(!live()) return; const s=Math.round((Date.now()-t0)/1000); renderStats();
-    stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei!"}</div>
+    stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei! No mistakes."}</div>
       ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus points for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
-      <button class="btn primary" id="again">Play new sets</button>
+      <button class="btn primary" id="again">Play again</button>
       <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k],"small")));
-    $("#again").onclick=Match; }
+    $("#again").onclick=start; }
   play();
 }
 
@@ -1213,7 +1313,7 @@ function numHeard(s){
   if((k=val("(\\d+)\\s*(?:cent|ct)"))) return {v:k[1]/100, mal};
   return null;
 }
-function grade(s){ return s>=90?["Ausgezeichnet!","good"]: s>=75?["Gut!","good"]: s>=50?["Fast. Listen again and retry.","accent"]:["Nochmal. Listen first, then speak slowly.","bad"]; }
+function grade(s){ return s>=90?["Ausgezeichnet! Excellent.","good"]: s>=75?["Gut! Good.","good"]: s>=50?["Almost there. Listen again and retry.","accent"]:["Nochmal, once more. Listen first, then speak slowly.","bad"]; }
 
 /* where the game is running decides how speaking practice listens */
 const APP = window.wortspielApp?.isApp===true;                 // the desktop app
@@ -1228,21 +1328,22 @@ let asrW=null, asrP=null, asrReady=false, asrJobs=new Map(), asrSeq=0;
 // the checker (a Whisper model) runs in its own worker: the game stays responsive while it thinks, and a failed start leaves nothing behind
 function loadAsr(onPct){
   if(onPct) loadAsr.cb=onPct;
-  if(!asrP) asrP=new Promise((res,rej)=>{
+  if(!asrP){ loadAsr.pct=0; asrP=new Promise((res,rej)=>{
     let w;
     const fail=err=>{ try{ w&&w.terminate() }catch(e){} if(asrW===w){ asrW=null; asrP=null; asrReady=false; }
       asrJobs.forEach(j=>j.rej(err)); asrJobs.clear(); rej(err); };
     try{ w=new Worker(new URL("asr-worker.js",location.href),{type:"module"}); }catch(e){ return fail(e); }
     asrW=w;
     w.onmessage=e=>{ const m=e.data;
-      if(m.type==="progress") loadAsr.cb?.(m.pct);
+      if(m.type==="progress"){ loadAsr.pct=m.pct; loadAsr.cb?.(m.pct); }
       else if(m.type==="ready"){ asrReady=true; try{ localStorage.setItem("wortspielAsr","1") }catch(e){} res(transcribe); }
       else if(m.id==null) fail(new Error(m.message||"The speech checker failed"));
-      else { const j=asrJobs.get(m.id); asrJobs.delete(m.id); if(j){ clearTimeout(j.timer); m.type==="result" ? j.res(m.text) : j.rej(new Error(m.message)); } }
+      // a failed run usually means the model crashed: start it fresh next time instead of keeping a dead checker
+      else { const j=asrJobs.get(m.id); asrJobs.delete(m.id); if(j){ clearTimeout(j.timer); if(m.type==="result") j.res(m.text); else { const err=new Error("The speech checker stopped: "+m.message); j.rej(err); fail(err); } } }
     };
     w.onerror=e=>{ e.preventDefault?.(); fail(new Error(e.message||"The speech checker failed")); };
     w.postMessage({type:"load"});
-  });
+  }); }
   return asrP;
 }
 // sends one recording to the checker and resolves with what it heard
@@ -1305,6 +1406,7 @@ function to16k(chunks, rate){
 const MIC_BLOCKED = FRAMED ? "The microphone is blocked. Inside the claude.ai viewer the page isn't allowed to use it. Open the downloaded game file or the web version in its own browser tab and allow the microphone there."
   : APP ? "The microphone is blocked. Allow Deutsch Wortspiel to use the microphone in your computer's privacy settings, then try again."
   : IOS ? "The microphone is blocked. Allow it when your iPhone asks. If it doesn't ask, turn it on in Settings under Apps, Safari, Microphone, then try again."
+  : STANDALONE ? "The microphone is blocked. Open Chrome, tap ⋮, then Settings › Site settings › Microphone, and allow this site. Then come back and try again."
   : "The microphone is blocked. Allow this page to use the microphone (look for the icon in the address bar), then try again.";
 
 // stops whatever is listening when the screen changes
@@ -1318,22 +1420,28 @@ function Speak(){
   // the checker was downloaded before: start loading it now so the first tap can record straight away
   if(LOCAL && !asrP){ let had=false; try{ had=localStorage.getItem("wortspielAsr")==="1" }catch(e){} if(had) loadAsr().catch(()=>{}); }
   function q(){
+    stopVoice();
     if(i>=N) return done();
-    const w=ws[i]; let tries=0, bestHere=null, rec=null, listening=false, busy="";
+    const w=ws[i]; let tries=0, bestHere=null, rec=null, listening=false, busy="", recAt=0;
     stage.innerHTML=`
-      <div class="row spread"><div class="dots">${ws.map((_,k)=>`<i class="${k<i?(log[k].score==null?"":log[k].score>=75?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">${S.pron[w.id]!=null?`Your best: ${S.pron[w.id]}`:w.letter?"New letter":"New word"}</span></div>
-      <div class="prompt"><div class="word">${deHTML(w)}</div><span id="ref"></span></div>
-      <div class="muted" style="text-align:center">${esc(w.en)} · Listen first, then tap the microphone and say ${w.letter?"the letter's name":"the word"}.</div>
+      <div class="row spread"><div class="dots">${ws.map((_,k)=>`<i class="${k<i?(log[k].score==null?"":log[k].score>=75?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">${S.pron[w.id]!=null?`Your best: ${S.pron[w.id]}`:w.letter?"New letter":w.hl?"New sound":isNum()?"New number":"New word"}</span></div>
+      <div class="prompt"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div><span id="ref"></span></div>
+      <div class="muted" style="text-align:center">${esc(w.en)} · Listen first, then tap the microphone and say ${w.letter?"the letter's name":isNum()?"the number":"the word"}.</div>
       <div class="row" style="justify-content:center"><button class="mic" id="mic" aria-label="Record your voice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg></button></div>
       <div class="pron" id="out" aria-live="polite"><span class="muted" id="hint">Tap the microphone to start.</span></div>
       <div class="row spread"><span class="tag">${tagHTML(w.topic)}</span><div class="row"><button class="btn" id="skip">Skip</button><button class="btn primary" id="nx" disabled>Next</button></div></div>`;
+    showResult();
     const refBtn=spkBtn(w); $("#ref").appendChild(refBtn);
+    refBtn.onclick=e=>{ e.stopPropagation(); if(!listening) say(sayW(w),refBtn); };
     const mic=$("#mic"), out=$("#out");
     stopListening=()=>{ if(rec) try{ rec._quiet=true; rec.abort() }catch(e){}; recordWord.stop?.(); };
     const next=()=>{ if(rec) try{rec.abort()}catch(e){}; recordWord.stop?.(); log.push({w,score:bestHere?bestHere.score:null,heard:bestHere?.heard||""}); i++; q(); };
     $("#nx").onclick=next; $("#skip").onclick=next;
     function handle(alts){
+        if(!alts.some(a=>norm(a.t||"") && !/untertitel|im auftrag des|amara\.org/i.test(a.t))){ out.innerHTML=`<span class="muted">I didn't catch a word. Tap the microphone and try again.</span>`; return; }
         const res=scoreAttempt(w,alts); tries++;
+        if(w.letter){ const h=norm(res.heard), forms=x=>[x.de,x.say,x.name,...x.alt].filter(Boolean).map(norm);
+          const o=!forms(w).includes(h) && WORDS.find(x=>x.letter&&x!==w&&forms(x).includes(h)); if(o) res.score=Math.min(res.score,20); }
         if(!bestHere||res.score>bestHere.score) bestHere=res;
         const [msg,tone]=grade(res.score);
         out.innerHTML=`<div class="pscore" style="--p:${res.score};--c:var(--${tone})"><b>${res.score}</b></div>
@@ -1343,16 +1451,17 @@ function Speak(){
         if(res.score>(S.pron[w.id]??-1)) S.pron[w.id]=res.score;
         if(tries===1){ bump(w,res.score>=75); if(res.score>=75) addXp(res.score>=90?15:10); }
         save(); renderStats(); $("#nx").disabled=false;
+        $("#nx").scrollIntoView({block:"nearest", behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
     }
     // on-device checker: record with the microphone and transcribe on this device with a Whisper model
     async function localListen(){
-      if(busy==="rec"){ recordWord.stop?.(); return; }
+      if(busy==="rec"){ if(Date.now()-recAt>700) recordWord.stop?.(); return; }   // a double tap doesn't end the recording at once
       if(busy) return;                                          // still getting ready, or still checking
-      speechSynthesis.cancel();
+      stopVoice();
       if(!asrReady){                                            // first use: get the checker ready, then ask for a fresh tap
         busy="prep"; mic.classList.add("wait");
-        const fresh=!asrP;
-        out.innerHTML=`<span class="muted">Getting the speech checker ready${fresh?`: <b id="dl">0%</b><br>This happens once and needs internet (about 80 MB${IOS?", Wi-Fi is best":""}). After that it works offline.`:"…"}</span>`;
+        let had=false; try{ had=localStorage.getItem("wortspielAsr")==="1" }catch(e){}
+        out.innerHTML=`<span class="muted">${had?"Starting the speech checker":"Getting the speech checker ready"}: <b id="dl">${asrP?loadAsr.pct||0:0}%</b>${had?"":`<br>This happens once and needs internet (about 80 MB${IOS?", Wi-Fi is best":""}). After that it works offline.`}</span>`;
         try{
           await loadAsr(pc=>{ const d=$("#dl"); if(d) d.textContent=pc+"%"; });
           if(mic.isConnected) out.innerHTML=`<span class="muted">Ready. Tap the microphone and say <b>${esc(sayLabel(w))}</b>.</span>`;
@@ -1365,7 +1474,7 @@ function Speak(){
       }
       let ctx;
       try{ ctx=micStart(); }catch(e){ out.innerHTML=`<span class="muted">This device can't record audio here.</span>`; return; }
-      busy="rec"; listening=true; mic.classList.add("on");
+      busy="rec"; listening=true; recAt=Date.now(); mic.classList.add("on");
       out.innerHTML=`<span class="muted">Listening… say <b>${esc(sayLabel(w))}</b>. It stops when you stop talking.</span>`;
       try{
         const model=await asrP;
@@ -1387,7 +1496,7 @@ function Speak(){
     function listen(){
       if(LOCAL) return localListen();
       if(listening){ try{rec.stop()}catch(e){}; return; }
-      speechSynthesis.cancel();
+      stopVoice();
       rec=new SR(); rec.lang="de-DE"; rec.interimResults=false; rec.maxAlternatives=5; rec.continuous=false;
       listening=true; mic.classList.add("on"); out.innerHTML=`<span class="muted">Listening… say <b>${esc(sayLabel(w))}</b></span>`;
       let got=false, watchdog=0; const me=rec;
@@ -1415,20 +1524,22 @@ function Speak(){
         out.innerHTML=`<span class="muted">${m}</span>`;
       };
       rec.onend=()=>{ clearTimeout(watchdog); if(rec!==me) return; listening=false; mic.classList.remove("on"); if(!got) out.innerHTML=`<span class="muted">I didn't catch that. Tap the microphone and try again.</span>`; };
-      try{ rec.start() }catch(e){ clearTimeout(watchdog); listening=false; mic.classList.remove("on") }
+      try{ rec.start() }catch(e){ clearTimeout(watchdog); listening=false; mic.classList.remove("on"); out.innerHTML=`<span class="muted">Speech recognition couldn't start. Tap the microphone to try again.</span>`; }
     }
     mic.onclick=listen;
-    keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key===" "){e.preventDefault(); listen()} else if(e.key==="p") say(sayW(w),refBtn); else if(e.key==="Enter" && !$("#nx").disabled) next(); };
+    if(LOCAL && asrP && !asrReady) localListen();   // still downloading from an earlier word: keep showing how far it got
+    keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key===" "){e.preventDefault(); listen()} else if(e.key==="p" && !listening) say(sayW(w),refBtn); else if(e.key==="Enter" && !$("#nx").disabled) next(); };
   }
   function done(){
     keyHandler=null;
     const said=log.filter(x=>x.score!=null), avg=said.length?Math.round(said.reduce((a,b)=>a+b.score,0)/said.length):null;
-    stage.innerHTML=`<div class="result"><div class="score">${avg??"–"}</div><div class="note">${avg==null?"You skipped every word. Try saying a few next round.":`Average score over ${said.length} word${said.length>1?"s":""}. ${grade(avg)[0]}`}</div>
-      <button class="btn primary" id="again">Speak 10 more</button>
+    const WN=TRACK[G.lv]?.unitNoun?.({words:log.map(x=>x.w)})||TRACK[G.lv]?.noun||"words";
+    stage.innerHTML=`<div class="result"><div class="score">${avg??"–"}</div><div class="note">${avg==null?"You skipped them all. Try saying a few next round.":`Average score over ${said.length} ${said.length===1?one(WN):WN}. ${grade(avg)[0]}`}</div>
+      <button class="btn primary" id="again">Play again</button>
       <div class="review">${log.map(({w,score,heard})=>`<div><span class="pchip" style="--c:${score==null?"var(--line)":`var(--${grade(score)[1]})`}">${score??"–"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${heard?`heard “${esc(heard)}”`:"skipped"}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
-    $("#again").onclick=Speak;
+    $("#again").onclick=start;
   }
   q();
 }
@@ -1446,7 +1557,7 @@ function List(){
     <div class="row spread"><label class="muted onlystar"><input type="checkbox" id="onlyStar"><span>Only starred <span id="starN">${WN}</span></span></label><span class="muted" id="cnt"></span></div>
     <div class="list" id="lst"></div>`;
   const chips=()=>{
-    const ci=curUnit(), ul=S.sel==="review"&&ci>0?`Units 1 to ${ci+1}`:typeof S.sel==="number"&&S.sel<ci?UNITS[G.lv][S.sel].name:"This unit";
+    const ci=curUnit(), ul=S.sel==="weak"?"Refresh words":S.sel==="review"&&ci>0?`Units 1 to ${ci+1}`:typeof S.sel==="number"&&S.sel<ci?UNITS[G.lv][S.sel].name:"This unit";
     $("#scope").innerHTML=[["unit",esc(ul)],["level",`All ${LVL[G.lv].name} ${WN}`]].map(([v,l])=>`<button class="cat" data-s="${v}" aria-pressed="${listView.scope===v}">${l}</button>`).join("");
     // All, Learned and Remaining up front; the four categories wait behind "More filters"
     const main=["all","done","left"], more=CATS.map(c=>c[0]); if(![...main,...more].includes(listView.f)) main.push(listView.f);
@@ -1454,26 +1565,37 @@ function List(){
     const btn=f=>{ const [l,fn]=filterFor(f), c=CATS.find(x=>x[0]===f);
       return `<button class="cat" data-f="${f}" aria-pressed="${listView.f===f}">${c?`<i style="background:${c[2]}"></i>`:""}${l} <b>${base.filter(fn).length}</b></button>` };
     $("#filt").innerHTML=main.map(btn).join("")+`<details class="rvd morefilt"${wasOpen||more.includes(listView.f)?" open":""}><summary>More filters${ic("down")}</summary><div class="cats">${more.map(btn).join("")}</div></details>`;
-    $("#scope").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.scope=b.dataset.s; chips(); draw(); });
+    $("#scope").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.scope=b.dataset.s; renderTopics(); chips(); draw(); });
     $("#filt").querySelectorAll("button").forEach(b=>b.onclick=()=>{ listView.f=b.dataset.f; chips(); draw(); });
   };
-  const draw=()=>{
-    const q=$("#q").value.trim().toLowerCase(), only=$("#onlyStar").checked, fn=filterFor(listView.f)[1];
-    const items=(listView.scope==="level"?WORDS:pool()).filter(w=>fn(w) && (!q||w.de.toLowerCase().includes(q)||w.en.toLowerCase().includes(q)) && (!only||S.stars[w.id]));
-    const IN=noun(); $("#starN").textContent=IN; $("#cnt").textContent=`${items.length} ${items.length===1?one(IN):IN}`;
-    const box=$("#lst"); box.innerHTML="";
-    if(!items.length){ box.innerHTML=`<p class="muted">No ${IN} here${q?" match that search":" yet"}.</p>`; return }
-    for(const w of items){
+  // friends type on English keyboards: madchen, strasse and maedchen all find das Mädchen
+  const fold = s => s.toLowerCase().replace(/ß/g,"ss").replace(/ä/g,"a").replace(/ö/g,"o").replace(/ü/g,"u");
+  const row=w=>{
       const r=document.createElement("div"), s=S.score[w.id]; r.className="li";
       r.innerHTML=`<span></span><span class="de">${deHTML(w)}${s!==undefined?` <span class="conf" style="color:var(--${s>=3?"good":"muted"})" title="${catName(status(w))}, level ${s} of 5">${confStars(s)}</span>`:""}</span><span class="en">${esc(w.en)}</span>`;
       r.firstChild.appendChild(spkBtn(w,"small"));
       const st=document.createElement("button"); st.className="star"; st.setAttribute("aria-label","Star "+w.de);
       const mark=()=>{ const on=!!S.stars[w.id]; st.classList.toggle("on",on); st.textContent=on?"★":"☆"; st.setAttribute("aria-pressed",on); };
       st.onclick=()=>{ S.stars[w.id]=!S.stars[w.id]; if(!S.stars[w.id]) delete S.stars[w.id]; save(); mark(); }; mark();
-      r.appendChild(st); box.appendChild(r);
-    }
+      r.appendChild(st); return r;
   };
-  $("#q").oninput=draw; $("#onlyStar").onchange=draw; chips(); draw();
+  const draw=()=>{
+    // ue only folds as a fallback, so Feuer still finds Feuer
+    const q=fold($("#q").value.trim()), q2=q.replace(/ae/g,"a").replace(/oe/g,"o").replace(/ue/g,"u"), only=$("#onlyStar").checked, fn=filterFor(listView.f)[1];
+    const base=listView.scope==="level"?WORDS:pool();
+    const items=base.filter(w=>fn(w) && (!q || fold(w.de).includes(q) || fold(w.de).includes(q2) || w.en.toLowerCase().includes(q)) && (!only||S.stars[w.id]));
+    const IN=noun(); $("#starN").textContent=IN; $("#cnt").textContent=`${items.length} ${items.length===1?one(IN):IN}`;
+    const box=$("#lst"); box.innerHTML="";
+    if(!items.length){ box.innerHTML = only && !q && !base.some(w=>S.stars[w.id]) ? `<p class="muted">No starred ${IN} yet. Tap ☆ next to a ${one(IN)} to keep it here.</p>`
+      : `<p class="muted">No ${IN} here${q?" match that search":" yet"}.</p>`; return }
+    // a whole level is over a thousand rows: build them a screenful at a time so a slower phone doesn't freeze
+    const run=draw.run=(draw.run||0)+1; let k=0;
+    const more=()=>{ if(run!==draw.run||!box.isConnected) return; const f=document.createDocumentFragment();
+      for(const w of items.slice(k,k+150)) f.appendChild(row(w)); box.appendChild(f); k+=150; if(k<items.length) requestAnimationFrame(more); };
+    more();
+  };
+  let drawT=0;
+  $("#q").oninput=()=>{ clearTimeout(drawT); drawT=setTimeout(draw,150); }; $("#onlyStar").onchange=draw; chips(); draw();
 }
 
 $("#backHome").insertAdjacentHTML("afterbegin",ic("back"));

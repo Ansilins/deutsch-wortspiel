@@ -41,7 +41,8 @@ head = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Learn German A1 and A2 words in small units: flashcards, quizzes, listening, matching and pronunciation practice.">
-<meta name="theme-color" content="#1f2c27">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f1">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f2c27">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
