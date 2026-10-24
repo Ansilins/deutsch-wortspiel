@@ -1,5 +1,5 @@
 // Keeps the game working offline. The build fills in VERSION, VENDOR_VERSION and SHELL.
-const VERSION = "db644cb80f03";
+const VERSION = "d68d24da5b66";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "asr-worker.js", "fonts/bricolage-grotesque-latin-500-normal.woff2", "fonts/bricolage-grotesque-latin-700-normal.woff2", "fonts/bricolage-grotesque-latin-800-normal.woff2", "fonts/atkinson-hyperlegible-latin-400-normal.woff2", "fonts/atkinson-hyperlegible-latin-700-normal.woff2", "fonts/kalam-latin-400-normal.woff2", "fonts/kalam-latin-700-normal.woff2", "icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/favicon-32.png"];
 const SHELL_CACHE = "wortspiel-shell-" + VERSION;
 // the speech checker's engine: large, so it is saved only once someone uses speaking practice, and kept until it changes

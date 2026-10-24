@@ -68,8 +68,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .pknown{text-align:right;line-height:1.1}
 .pknown b{font-family:var(--f-display);font-weight:800;font-size:1.1rem;font-variant-numeric:tabular-nums}
 .pknown span{display:block;font-size:.7rem;color:var(--muted)}
-.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
-.progress i{display:block;height:100%;background:var(--accent);width:0;border-radius:99px;transition:width .4s}
+.progress{position:relative;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress i{position:absolute;inset:0 auto 0 0;background:var(--accent);width:0;border-radius:99px;transition:width .4s}
+/* the light part: right answers on the way to learned (3 make one learned) */
+.progress #pSoft{background:color-mix(in srgb,var(--accent) 45%,transparent)}
 .progress-label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.82rem;color:var(--muted);margin-top:5px}
 #pTxt{text-wrap:balance}
 .pts{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;color:var(--accent-text);font-weight:700}
@@ -200,7 +202,8 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:9}
 .ring .rbg{stroke:var(--line)}
-.ring .rfg{stroke:var(--accent);stroke-linecap:round;animation:ringin .6s ease-out both}
+.ring .rfg,.ring .rsoft{stroke:var(--accent);stroke-linecap:round;animation:ringin .6s ease-out both}
+.ring .rsoft{stroke:color-mix(in srgb,var(--accent) 45%,transparent)}
 @keyframes ringin{from{stroke-dashoffset:var(--c)}}
 .ring .pct{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
 .ring .pct b{font-family:var(--f-display);font-size:1.35rem;line-height:1;font-variant-numeric:tabular-nums}
@@ -367,6 +370,9 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 .result{text-align:center;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;justify-items:center;padding:10px 0}
 .result .score{font-family:var(--f-display);font-weight:800;font-size:3.4rem;line-height:1;color:var(--accent-text);animation:okpop .4s ease-out}
 .result .note{font-family:var(--f-hand);font-size:1.4rem}
+.uprog{margin:0;font-size:.95rem}.uprog .muted{display:block;font-size:.85rem}
+.rbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.rbtns .ic{width:18px;height:18px;margin:-2px -4px 0 4px}
 .review{width:100%;text-align:left;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
 .review div{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
 .review div>span{min-width:0;overflow-wrap:anywhere}.opt>span{min-width:0;overflow-wrap:anywhere}
@@ -384,7 +390,8 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 #onlyStar{width:20px;height:20px;margin:0}
 .morefilt[open]{flex-basis:100%}   /* closed, "More filters" fits next to the chips on a small phone */
 .morefilt .cats{margin-top:4px}
-@media (max-width:520px){.li{grid-template-columns:auto 1fr auto}.li .en{grid-column:2}.li .star{grid-row:1/3;grid-column:3}}
+/* phones: the word and its meaning sit together beside the speaker */
+@media (max-width:520px){.li{grid-template-columns:auto 1fr auto;gap:0 12px;padding:8px 2px}.li>span:first-child{grid-row:1/3}.li .de{align-self:end}.li .en{grid-column:2;align-self:start}.li .star{grid-row:1/3;grid-column:3}}
 
 .below{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 16px}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
@@ -395,7 +402,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 .voice-warn p{margin:0;flex:1 1 14rem}.voice-warn details{order:3;flex-basis:100%}
 .voice-warn summary{cursor:pointer;color:var(--accent-text);font-weight:700;min-height:44px;display:flex;align-items:center}
 .speed{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:.8rem;color:var(--muted)}
-.soundhint{margin-right:8px}
+.soundhint{flex-basis:100%;margin-bottom:2px}
 .speed button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:2px 13px;font-size:.8rem;min-height:44px}
 .speed button[aria-pressed="true"]{background:var(--soft);color:var(--accent-text);border-color:var(--accent);font-weight:700}
 .pop{animation:pop .4s}
@@ -434,7 +441,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
     <div class="pknown"><b id="sKnown">0</b><span>learned</span></div>
   </header>
   <div>
-    <div class="progress" aria-hidden="true"><i id="pBar"></i></div>
+    <div class="progress" aria-hidden="true"><i id="pSoft"></i><i id="pBar"></i></div>
     <div class="progress-label"><span id="pTxt"></span><span class="pts" title="Points"><b id="sXp">0</b> points<span class="vh">, most right answers in a row: <b id="sStreak">0</b></span></span></div>
   </div>
 
@@ -640,6 +647,9 @@ function makeUnits(ws){
 const UNITS={ABC:makeUnits(ALL.ABC), A1:makeUnits(ALL.A1), A2:makeUnits(ALL.A2), Z:makeUnits(ALL.Z)};
 const unitNeed = u => Math.ceil(u.words.length*0.8);
 const unitLearned = (u,sc=S.score) => u.words.filter(w=>(sc[w.id]||0)>=3).length;
+// right answers count before a word is learned: 3 per word, so a first good round shows on the bar
+const unitSteps = (u,sc=S.score) => u.words.reduce((a,w)=>a+Math.min(sc[w.id]||0,3),0);
+const onWay = (u,sc=S.score) => u.words.filter(w=>(sc[w.id]||0)>0 && (sc[w.id]||0)<3).length;
 const unitDone = (u,sc) => unitLearned(u,sc) >= unitNeed(u);
 function firstOpenUnit(lv){ const sc=G.levels[lv].score, us=UNITS[lv]; const i=us.findIndex(u=>!unitDone(u,sc)); return i<0? us.length-1 : i; }
 // a unit, once reached, stays open: a wrong answer in a review lowers that word's score but never locks units again
@@ -799,12 +809,27 @@ function distractors(w,n,key){
   const out=[]; for(const x of [...same,...any]){ if(out.length>=n) break; if(!out.some(o=>o[key]===x[key])) out.push(x) }
   return out;
 }
+// the end of every round: where the unit stands, then the next game in the usual order
+const NEXT_GAME = {cards:"quiz",quiz:"listen",listen:"match",match:"speak",speak:"cards"};
+let roundUnit=0;   // the unit when this round started, so its result can say it was finished
+function resultFoot(again="Play again"){
+  const us=UNITS[G.lv], ci=curUnit();
+  if(ci>roundUnit) return `<p class="uprog"><b>Unit complete: ${esc(us[roundUnit].name)}!</b> Next up: ${esc(us[ci].name)}.</p>
+    <div class="rbtns"><button class="btn" id="again">${again}</button><button class="btn primary" id="nextGame" data-go="unit">Start ${esc(us[ci].name)}${ic("chev")}</button></div>`;
+  const u=us[typeof S.sel==="number"&&S.sel<ci?S.sel:ci], n=u.words.length, k=unitLearned(u), ow=onWay(u);
+  const UN=TRACK[G.lv]?.unitNoun?.(u)||TRACK[G.lv]?.noun||"words", nx=NEXT_GAME[S.mode];
+  return `<p class="uprog">${k>=n?`All ${n} ${UN} in this unit learned.`:`<b>${k} of ${n} learned</b> in this unit${ow?` · ${ow} on the way`:""}`}${!k&&ow?`<span class="muted">Each counts as learned after 3 right answers.</span>`:""}</p>
+    <div class="rbtns"><button class="btn" id="again">${again}</button>${nx?`<button class="btn primary" id="nextGame">Next: ${$(`nav.modes [data-mode="${nx}"] span`).textContent}${ic("chev")}</button>`:""}</div>`;
+}
+function wireResult(){ $("#again").onclick=start; const b=$("#nextGame");
+  // a new unit starts with its cards
+  if(b) b.onclick=()=>{ if(b.dataset.go){ S.mode="cards"; S.sel="unit"; } else S.mode=NEXT_GAME[S.mode]; save(); start(); }; }
 function renderStats(){
   // reviewing a finished unit shows that unit; the last unit's goal is finishing the level
   const us=UNITS[G.lv], ci=curUnit(), rv=typeof S.sel==="number" && S.sel<ci, u=us[rv?S.sel:ci], k=unitLearned(u), need=unitNeed(u),
     goal=u.i===us.length-1?`finish ${G.lv==="ABC"?"the Alphabet":LVL[G.lv].name}`:"unlock the next unit";
   $("#sXp").textContent=S.xp; $("#sStreak").textContent=S.best; $("#sKnown").textContent=`${k}/${u.words.length}`;
-  $("#pBar").style.width = (k/u.words.length*100)+"%";
+  $("#pBar").style.width = (k/u.words.length*100)+"%"; $("#pSoft").style.width = (unitSteps(u)/(3*u.words.length)*100)+"%";
   $("#pLevel").textContent = `${rv?"Review\u00a0· ":""}Unit\u00a0${u.i+1}\u00a0· ${u.name}`;   // no-break spaces keep "Unit 7 ·" on one line
   $("#pTxt").textContent = rv ? "Reviewing a finished unit" : k>=need ? "Unit done!" : `Learn ${need-k} more to ${goal}`;
 }
@@ -837,7 +862,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest?.("button"); if(
 
 function start(){
   stopListening?.(); stopListening=null;
-  keyHandler=null; stopVoice(); renderTopics(); renderStats();   // a unit unlocked mid-round shows here, so nothing moves under the finger
+  keyHandler=null; stopVoice(); renderTopics(); renderStats(); roundUnit=curUnit();   // a unit unlocked mid-round shows here, so nothing moves under the finger
   document.querySelectorAll("nav.modes button").forEach(b=>b.setAttribute("aria-current", b.dataset.mode===S.mode?"page":"false"));
   if(S.mode==="home") S.mode="cards";
   enter(stage);
@@ -893,7 +918,7 @@ let progOpen=false;   // "Your progress" stays open while you move around this s
 function Home(){
   keyHandler=null;
   if(!G.chosen || G.picking) return LevelPick();
-  const us=UNITS[G.lv], ci=curUnit(), u=us[ci], need=unitNeed(u), got=unitLearned(u), n=u.words.length, left=need-got;
+  const us=UNITS[G.lv], ci=curUnit(), u=us[ci], need=unitNeed(u), got=unitLearned(u), n=u.words.length, left=need-got, ow=onWay(u), soft=unitSteps(u)/(3*n);
   const allDone = ci===us.length-1 && unitDone(u);
   const started = u.words.some(w=>S.score[w.id]!==undefined);
   const t=todayRec(), goal=S.goal, streak=dayStreak();
@@ -932,12 +957,12 @@ function Home(){
         <h2 class="hhead">${allDone?`${LVL[G.lv].name} complete!`:esc(u.name)}</h2>
       </div>
       <div class="ring" role="img" aria-label="${got} of ${n} ${UN} in this unit learned">
-        <svg viewBox="0 0 100 100"><circle class="rbg" cx="50" cy="50" r="42"/>${got?`<circle class="rfg" cx="50" cy="50" r="42" style="--c:${C.toFixed(1)};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-got/n)).toFixed(1)}"/>`:""}</svg>
+        <svg viewBox="0 0 100 100"><circle class="rbg" cx="50" cy="50" r="42"/>${soft>got/n?`<circle class="rsoft" cx="50" cy="50" r="42" style="--c:${C.toFixed(1)};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-soft)).toFixed(1)}"/>`:""}${got?`<circle class="rfg" cx="50" cy="50" r="42" style="--c:${C.toFixed(1)};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-got/n)).toFixed(1)}"/>`:""}</svg>
         <div class="pct"><b>${got}/${n}</b><span>learned</span></div>
       </div>
     </div>
     <p class="lede">${allDone?(T?T.done:G.lv==="A1"?"You've learned every unit in A1. Keep reviewing, or start A2 below.":"You've learned every unit in A2. Keep reviewing so the words stay fresh.")
-      : got>=need? `Unit done!` : got? `Learn ${left} more ${left===1?one(UN):UN} to ${unitGoal}.` : last? `Just ${n} ${UN}. Learn ${need} of them to ${unitGoal}.` : `Just ${n} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
+      : got>=need? `Unit done!` : got? `Learn ${left} more ${left===1?one(UN):UN} to ${unitGoal}.` : ow? `${ow} ${ow===1?one(UN):UN} on the way. Each counts as learned after 3 right answers.` : last? `Just ${n} ${UN}. Learn ${need} of them to ${unitGoal}.` : `Just ${n} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
     ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b> ${esc(T.tips[u.topic])}</p>`:""}
     <div class="hcta"><button class="btn cta" id="goPractice">${started?"Continue":"Start"}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
     <div class="udots">${dots}</div>
@@ -1051,8 +1076,8 @@ function Cards(){
     if(i>=deck.length){
       stage.innerHTML=`<div class="result"><div class="score">✓</div><div class="note">Deck done. Gut gemacht: well done!</div>
         <p class="muted" style="margin:0">${knew} knew it · ${again} still learning</p>
-        <button class="btn primary" id="again">Next deck</button></div>`;
-      $("#again").onclick=start; keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); start()} }; return;
+        ${resultFoot("Next deck")}</div>`;
+      wireResult(); keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); start()} }; return;
     }
     stopVoice();
     const w=deck[i]; let flipped=false, gone=false;
@@ -1125,7 +1150,7 @@ function Quiz(kind){
     else if(mode==="de-en") prompt=`<div class="prompt" id="pr"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div></div><div class="muted" style="text-align:center">${tq?.deEn||"What does it mean in English?"}</div>`;
     else prompt=`<div class="prompt" id="pr"><div class="meaning">${esc(enQ(w))}</div></div><div class="muted" style="text-align:center">${tq?.enDe||"Which German word is it?"}</div>`;
     stage.innerHTML=`
-      <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">In a row: <b id="stk">${streak}</b></span></div>
+      <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted" id="stkw"${streak<2?" hidden":""}>In a row: <b id="stk">${streak}</b></span></div>
       ${prompt}
       <div class="options">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><kbd>${k+1}</kbd><span>${key==="en"?esc(enQ(o)):deHTML(o)}</span></button>`).join("")}</div>
       <div class="feedback" id="fb"></div>
@@ -1145,7 +1170,7 @@ function Quiz(kind){
       else { streak=0; fb.className="feedback no";
         const ans = w.letter||w.hl ? `It's ${w.letter?`<span lang="de">${esc(w.de)}</span>`:deHTML(w)}: ${esc(w.en)}` : isNum() ? `${deHTML(w)} is ${esc(w.en)}` : `${deHTML(w)} means ${esc(w.en)}`;
         fb.innerHTML=`Not quite. ${ans}${/[.?!…]$/.test(w.en)?"":"."}`; }
-      $("#stk").textContent=streak;
+      $("#stk").textContent=streak; $("#stkw").hidden=streak<2;
       bump(w,ok); save(); renderStats(); log.push({w,ok});
       say(sayW(w)); if(hush) pr.querySelector(".speak-ph")?.replaceWith(spkBtn(w));
       announce(fb.textContent);
@@ -1162,11 +1187,11 @@ function Quiz(kind){
     stage.innerHTML=`<div class="result">
       <div class="score">${right}/${N}</div>
       <div class="note">${pct===1?"Perfekt! Every one right.":pct>=.7?"Sehr gut! Very good. Keep going.":pct>=.4?"Nicht schlecht: not bad. Practise the red ones.":"Übung macht den Meister: practice makes perfect. Try the swipe cards first."}</div>
-      <button class="btn primary" id="again">Play again</button>
+      ${resultFoot()}
       <div class="review">${log.map(({w,ok})=>`<div><span style="color:var(--${ok?"good":"bad"});font-weight:700">${ok?"✓":"✗"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
-    $("#again").onclick=start;
+    wireResult();
   }
   q();
 }
@@ -1220,11 +1245,11 @@ function Match(){
   function finish(){ clearInterval(timer); if(!live()) return; const s=Math.round((Date.now()-t0)/1000); renderStats();
     stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei! No mistakes."}</div>
       ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus points for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
-      <button class="btn primary" id="again">Play again</button>
+      ${resultFoot()}
       <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k],"small")));
-    $("#again").onclick=start; }
+    wireResult(); }
   play();
 }
 
@@ -1501,11 +1526,11 @@ function Speak(){
     const said=log.filter(x=>x.score!=null), avg=said.length?Math.round(said.reduce((a,b)=>a+b.score,0)/said.length):null;
     const WN=TRACK[G.lv]?.unitNoun?.({words:log.map(x=>x.w)})||TRACK[G.lv]?.noun||"words";
     stage.innerHTML=`<div class="result"><div class="score">${avg??"–"}</div><div class="note">${avg==null?"You skipped them all. Try saying a few next round.":`Average score over ${said.length} ${said.length===1?one(WN):WN}. ${grade(avg)[0]}`}</div>
-      <button class="btn primary" id="again">Play again</button>
+      ${resultFoot()}
       <div class="review">${log.map(({w,score,heard})=>`<div><span class="pchip" style="--c:${score==null?"var(--line)":`var(--${grade(score)[1]})`}">${score??"–"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${heard?`heard “${esc(heard)}”`:"skipped"}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
-    $("#again").onclick=start;
+    wireResult();
   }
   q();
 }
