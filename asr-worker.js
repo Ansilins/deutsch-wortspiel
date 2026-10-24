@@ -8,14 +8,16 @@ async function load() {
   T.env.useBrowserCache = true;
   T.env.backends.onnx.wasm.wasmPaths = new URL("./vendor/", self.location.href).href;
   T.env.backends.onnx.wasm.numThreads = 1;
-  const files = {};
+  const files = {}; let shown = 0;
   asr = await T.pipeline("automatic-speech-recognition", "Xenova/whisper-base", {
     dtype: "q8", device: "wasm",
     progress_callback: p => {
       if (p.status !== "progress" || !p.total) return;
       files[p.file] = [p.loaded, p.total];
       const v = Object.values(files), got = v.reduce((a, x) => a + x[0], 0), all = v.reduce((a, x) => a + x[1], 0);
-      postMessage({ type: "progress", pct: Math.floor(got / all * 100) });
+      // small files finish before the big ones start, so count against the whole download and only ever go up
+      const pct = Math.min(99, Math.floor(got / Math.max(all, 78e6) * 100));
+      if (pct > shown) { shown = pct; postMessage({ type: "progress", pct }); }
     },
   });
 }
