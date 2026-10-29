@@ -68,8 +68,10 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid
 .pknown{text-align:right;line-height:1.1}
 .pknown b{font-family:var(--f-display);font-weight:800;font-size:1.1rem;font-variant-numeric:tabular-nums}
 .pknown span{display:block;font-size:.7rem;color:var(--muted)}
-.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
-.progress i{display:block;height:100%;background:var(--accent);width:0;border-radius:99px;transition:width .4s}
+.progress{position:relative;height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.progress i{position:absolute;inset:0 auto 0 0;background:var(--accent);width:0;border-radius:99px;transition:width .4s}
+/* the light part: right answers on the way to learned (3 make one learned) */
+.progress #pSoft{background:color-mix(in srgb,var(--accent) 45%,transparent)}
 .progress-label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.82rem;color:var(--muted);margin-top:5px}
 #pTxt{text-wrap:balance}
 .pts{display:inline-flex;align-items:center;gap:3px;white-space:nowrap;color:var(--accent-text);font-weight:700}
@@ -200,7 +202,8 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:9}
 .ring .rbg{stroke:var(--line)}
-.ring .rfg{stroke:var(--accent);stroke-linecap:round;animation:ringin .6s ease-out both}
+.ring .rfg,.ring .rsoft{stroke:var(--accent);stroke-linecap:round;animation:ringin .6s ease-out both}
+.ring .rsoft{stroke:color-mix(in srgb,var(--accent) 45%,transparent)}
 @keyframes ringin{from{stroke-dashoffset:var(--c)}}
 .ring .pct{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
 .ring .pct b{font-family:var(--f-display);font-size:1.35rem;line-height:1;font-variant-numeric:tabular-nums}
@@ -367,6 +370,9 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 .result{text-align:center;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;justify-items:center;padding:10px 0}
 .result .score{font-family:var(--f-display);font-weight:800;font-size:3.4rem;line-height:1;color:var(--accent-text);animation:okpop .4s ease-out}
 .result .note{font-family:var(--f-hand);font-size:1.4rem}
+.uprog{margin:0;font-size:.95rem}.uprog .muted{display:block;font-size:.85rem}
+.rbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.rbtns .ic{width:18px;height:18px;margin:-2px -4px 0 4px}
 .review{width:100%;text-align:left;display:grid;grid-template-columns:minmax(0,1fr);gap:4px}
 .review div{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:6px 0}
 .review div>span{min-width:0;overflow-wrap:anywhere}.opt>span{min-width:0;overflow-wrap:anywhere}
@@ -384,7 +390,8 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 #onlyStar{width:20px;height:20px;margin:0}
 .morefilt[open]{flex-basis:100%}   /* closed, "More filters" fits next to the chips on a small phone */
 .morefilt .cats{margin-top:4px}
-@media (max-width:520px){.li{grid-template-columns:auto 1fr auto}.li .en{grid-column:2}.li .star{grid-row:1/3;grid-column:3}}
+/* phones: the word and its meaning sit together beside the speaker */
+@media (max-width:520px){.li{grid-template-columns:auto 1fr auto;gap:0 12px;padding:8px 2px}.li>span:first-child{grid-row:1/3}.li .de{align-self:end}.li .en{grid-column:2;align-self:start}.li .star{grid-row:1/3;grid-column:3}}
 
 .below{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 16px}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
@@ -395,7 +402,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 .voice-warn p{margin:0;flex:1 1 14rem}.voice-warn details{order:3;flex-basis:100%}
 .voice-warn summary{cursor:pointer;color:var(--accent-text);font-weight:700;min-height:44px;display:flex;align-items:center}
 .speed{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:.8rem;color:var(--muted)}
-.soundhint{margin-right:8px}
+.soundhint{flex-basis:100%;margin-bottom:2px}
 .speed button{border:1px solid var(--line2);background:var(--surface);border-radius:99px;padding:2px 13px;font-size:.8rem;min-height:44px}
 .speed button[aria-pressed="true"]{background:var(--soft);color:var(--accent-text);border-color:var(--accent);font-weight:700}
 .pop{animation:pop .4s}
@@ -417,12 +424,153 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
   .wrap,.stage{gap:8px}
   .swipe-area,.swipe-area .card,.swipe-area .card-inner{min-height:160px}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.burst i{display:none}}
+/* ---------- lessons: the guided path ---------- */
+/* the home path: one unit at a time, a winding row of round lesson buttons */
+.tright{display:flex;align-items:center;gap:8px}
+.schip{display:inline-flex;align-items:center;gap:3px;min-height:44px;padding:0 10px;border-radius:99px;font-family:var(--f-display);font-weight:800;color:var(--muted)}
+.schip .ic{width:22px;height:22px}
+.schip.on{color:#e8590c}.schip.on .ic{fill:#ff922b;stroke:#e8590c}
+.udone{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:8px 12px;min-height:52px;font-size:.92rem}
+.udone .ok{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--good);color:var(--surface);flex:none}
+.udone .ok .ic{width:16px;height:16px;stroke-width:3}
+.udone .grow1{flex:1;min-width:0}
+.udone .go{color:var(--accent-text);font-weight:700;white-space:nowrap}
+.ubanner{position:relative;background:var(--accent);color:var(--accent-ink);border-radius:22px;padding:18px;display:grid;gap:12px;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 72%,#000)}
+.ubanner .ey{font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.ubanner h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.6rem,6.4vw,2.2rem);line-height:1.04;letter-spacing:-.02em;margin:0;overflow-wrap:anywhere;text-wrap:balance}
+.ubanner p{margin:0;font-size:.95rem}
+.ubtns{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.btn.start{flex:1 1 220px;min-height:56px;border:0;border-radius:16px;background:var(--surface);color:var(--accent-text);font-family:var(--f-display);font-weight:800;font-size:1.15rem;box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 55%,#000);display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.start:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 55%,#000)}
+.ubanner .btn.link{color:inherit}
+.path{list-style:none;margin:0;padding:50px 0 6px;display:grid;justify-items:center;gap:24px}
+.path li:has(.pbub):not(:first-child){margin-top:34px}
+.path li{position:relative;transform:translateX(var(--x,0px))}
+.pn{position:relative;width:76px;height:70px;border-radius:50%;border:0;padding:0;display:grid;place-items:center;background:var(--line2);color:var(--muted);box-shadow:0 7px 0 color-mix(in srgb,var(--line2) 70%,#000)}
+.pn .ic{width:32px;height:32px;stroke-width:2.6}
+.pn.done{background:var(--accent);color:var(--accent-ink);box-shadow:0 7px 0 color-mix(in srgb,var(--accent) 65%,#000)}
+.pn.done .ic{stroke-width:3.2}
+.pn.now{background:var(--accent);color:var(--accent-ink);box-shadow:0 7px 0 color-mix(in srgb,var(--accent) 65%,#000),0 0 0 9px var(--soft)}
+.pn.now .ic{fill:currentColor;stroke:none}
+.pn:disabled{cursor:default}
+.pn:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 65%,#000)}
+.pbub{position:absolute;bottom:calc(100% + 14px);left:50%;transform:translateX(-50%);background:var(--surface);color:var(--accent-text);border:2px solid var(--line2);border-radius:12px;padding:4px 12px;font-family:var(--f-display);font-weight:800;font-size:.95rem;white-space:nowrap;pointer-events:none;animation:bob 1.8s ease-in-out infinite}
+.pbub::after{content:"";position:absolute;top:100%;left:50%;margin-left:-7px;border:7px solid transparent;border-top-color:var(--line2)}
+@keyframes bob{50%{transform:translate(-50%,-4px)}}
+.pcap{position:absolute;top:50%;left:calc(100% + 14px);transform:translateY(-50%);font-size:.82rem;color:var(--muted);white-space:nowrap}
+.pcap.l{left:auto;right:calc(100% + 14px)}
+.unext{display:flex;align-items:center;gap:10px;border:2px dashed var(--line2);border-radius:16px;padding:10px 14px;color:var(--muted);font-size:.92rem}
+.unext .ic{width:18px;height:18px}
+/* the lesson screen: progress and hearts on top, one exercise, a big button at the bottom */
+.lwrap{max-width:640px;margin:0 auto;min-height:100vh;min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);
+  padding:calc(8px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 0 max(16px,env(safe-area-inset-left,0px))}
+.lhead{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;min-height:52px}
+.lx{width:44px;height:44px;border:0;background:none;border-radius:12px;display:grid;place-items:center;color:var(--muted);padding:0}
+.lx .ic{width:26px;height:26px;stroke-width:2.6}
+.lbar{height:16px;border-radius:99px;background:var(--line);overflow:hidden}
+.lbar i{display:block;height:100%;width:0;border-radius:99px;background:var(--good);transition:width .4s ease-out;box-shadow:inset 0 4px 0 rgba(255,255,255,.28)}
+.hearts{display:inline-flex;align-items:center;gap:3px;font-family:var(--f-display);font-weight:800;font-size:1.15rem;color:var(--bad);min-width:52px;justify-content:flex-end;font-variant-numeric:tabular-nums}
+.hearts .ic{width:26px;height:26px;fill:currentColor;stroke:none}
+.hearts.lost{animation:shake .35s}
+.lbody{display:grid;grid-template-columns:minmax(0,1fr);align-content:start;gap:18px;padding:16px 0 28px}
+.lq{font-family:var(--f-display);font-weight:800;font-size:clamp(1.3rem,5.4vw,1.7rem);line-height:1.15;letter-spacing:-.01em;margin:0;text-wrap:balance}
+.lq b{color:var(--accent-text)}
+.lprompt{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;text-align:center;padding:6px 0}
+.lprompt .emo{font-size:3.4rem;line-height:1}
+.lopts{display:grid;gap:10px}
+.lopt{display:flex;align-items:center;gap:12px;min-height:62px;padding:12px 16px;border:2px solid var(--line2);border-bottom-width:5px;border-radius:16px;background:var(--surface);font-size:1.12rem;text-align:left;-webkit-user-select:none;user-select:none}
+.lopt>span{min-width:0;overflow-wrap:anywhere;-webkit-hyphens:auto;hyphens:auto}
+.lopt kbd{display:none;font-family:var(--f-body);font-size:.75rem;border:1px solid var(--line2);border-radius:6px;padding:1px 7px;color:var(--muted);flex:none}
+@media (hover:hover) and (pointer:fine){.lopt kbd{display:inline-block}.lopt:hover:not(:disabled){background:var(--soft)}}
+.lopt[aria-pressed="true"]{border-color:var(--accent-text);background:var(--soft)}
+.lopt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 15%,var(--surface));animation:okpop .3s ease-out}
+.lopt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--surface));animation:shake .25s}
+.lopt:disabled{cursor:default;color:inherit}
+.lopt.de{font-family:var(--f-display);font-weight:700;font-size:1.25rem}
+.lpics{grid-template-columns:repeat(2,minmax(0,1fr))}
+.lpics .lopt{flex-direction:column;justify-content:center;gap:4px;min-height:132px;text-align:center;font-size:1rem;position:relative}
+.lpics .lopt kbd{position:absolute;top:8px;left:8px}
+.lpics .emo{font-size:3.3rem;line-height:1.1}
+.larts{grid-template-columns:repeat(3,minmax(0,1fr))}
+.larts .lopt{justify-content:center;font-family:var(--f-display);font-weight:800;font-size:1.4rem}
+.lintro{display:grid;justify-items:center;gap:8px;text-align:center;padding:22px 16px 20px;border:2px solid var(--line);border-bottom-width:5px;border-radius:22px;background:var(--surface)}
+.lnew{font-size:.76rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-text);background:var(--soft);border-radius:99px;padding:3px 12px}
+.lintro .emo{font-size:4.4rem;line-height:1.1}
+.lintro .row{justify-content:center}
+.ltip{margin:0;font-size:.95rem;background:var(--soft);border-radius:14px;padding:10px 14px;text-align:left}
+.ltip.big{font-size:1.05rem;line-height:1.5}
+.slow{display:inline-grid;place-items:center;width:56px;height:56px;border-radius:50%;border:2px solid var(--line2);background:var(--surface);font-size:1.6rem;line-height:1;padding:0}
+.lslots{min-height:66px;border-bottom:2px solid var(--line2);display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:center;padding:6px 0 10px}
+.lslots .pre{font-family:var(--f-display);font-weight:800;font-size:1.45rem;margin-right:8px}
+.lbank{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.ltile{min-width:46px;height:54px;padding:0 12px;border:2px solid var(--line2);border-bottom-width:5px;border-radius:12px;background:var(--surface);font-family:var(--f-display);font-weight:700;font-size:1.4rem;line-height:1}
+.ltile.used{background:var(--line);border-color:var(--line);color:transparent;cursor:default}
+.lslots .ltile{animation:rise .15s ease-out}
+.lfoot{text-align:left;font-size:1rem;color:var(--ink);position:sticky;bottom:0;z-index:5;margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:14px max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px));
+  border-top:2px solid var(--line);background:var(--bg);display:grid;gap:12px;transition:background-color .15s}
+.lfoot.ok{background:color-mix(in srgb,var(--good) 17%,var(--bg));border-color:transparent}
+.lfoot.no{background:color-mix(in srgb,var(--bad) 14%,var(--bg));border-color:transparent}
+.lfb{display:flex;gap:12px;align-items:center;min-width:0;animation:rise .2s ease-out}
+.lfb .mascot{width:52px;height:52px}
+.lfb>div{display:grid;gap:1px;min-width:0;overflow-wrap:anywhere}
+.lfb b{font-family:var(--f-display);font-weight:800;font-size:1.3rem;line-height:1.2}
+.lfoot.ok .lfb b{color:var(--good)} .lfoot.no .lfb b{color:var(--bad)}
+.lfb .combo{display:inline-flex;align-items:center;gap:2px;font-weight:700;color:#e8590c;font-size:.9rem}
+.lfb .combo .ic{width:16px;height:16px;fill:#ff922b;stroke:#e8590c}
+.lgo{width:100%;min-height:56px;border-radius:16px;border:0;font-family:var(--f-display);font-weight:800;font-size:1.15rem;letter-spacing:.01em;background:var(--good);color:var(--surface);box-shadow:0 4px 0 color-mix(in srgb,var(--good) 65%,#000)}
+.lgo:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 color-mix(in srgb,var(--good) 65%,#000)}
+.lgo:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
+.lfoot.no .lgo{background:var(--bad);box-shadow:0 4px 0 color-mix(in srgb,var(--bad) 65%,#000)}
+.lgo2{justify-self:center;border:0;background:none;color:var(--muted);font-weight:700;min-height:44px;padding:0 12px;text-decoration:underline;text-underline-offset:3px}
+.lspeak{display:grid;justify-items:center;gap:14px}
+/* the friendly speech-bubble mascot */
+.mascot{display:block;width:120px;height:120px;flex:none}
+.mascot.jump{animation:jump .9s ease-out 2}
+@keyframes jump{30%{transform:translateY(-14px) rotate(-4deg)}60%{transform:translateY(0) rotate(3deg)}}
+/* big screens inside the lesson: lesson complete, streak, out of hearts, welcome */
+.lend{display:grid;justify-items:center;align-content:center;text-align:center;gap:14px;padding:4vh 0 20px;min-height:100%}
+.lend h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.9rem,7.4vw,2.5rem);line-height:1.05;letter-spacing:-.02em;margin:0;color:var(--accent-text);text-wrap:balance}
+.lend p{margin:0;max-width:30em}
+.lstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;max-width:420px}
+.lstat{border:2px solid var(--c);border-radius:16px;overflow:hidden;background:var(--surface);animation:rise .3s ease-out both}
+.lstat:nth-child(2){animation-delay:.12s}.lstat:nth-child(3){animation-delay:.24s}
+.lstat span{display:flex;align-items:center;justify-content:center;gap:3px;background:var(--c);color:var(--ci);font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 2px}
+.lstat b{display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--f-display);font-size:1.45rem;padding:8px 4px;font-variant-numeric:tabular-nums}
+.lgoal{width:100%;max-width:420px;display:grid;gap:6px;text-align:left;font-size:.92rem}
+.flame{width:130px;height:130px;color:#e8590c;animation:starin .5s ease-out both}
+.flame .ic{width:100%;height:100%;fill:#ff922b;stroke:#e8590c;stroke-width:1.2}
+.bignum{font-family:var(--f-display);font-weight:800;font-size:4.2rem;line-height:1;color:#e8590c;font-variant-numeric:tabular-nums}
+.week7{display:flex;gap:8px;justify-content:center}
+.week7 span{display:grid;justify-items:center;gap:4px;font-size:.75rem;color:var(--muted)}
+.week7 i{width:30px;height:30px;border-radius:50%;background:var(--line);display:grid;place-items:center;color:#fff}
+.week7 i.on{background:#ff922b}
+.week7 .ic{width:16px;height:16px;stroke-width:3}
+.lsheet-bg{position:fixed;inset:0;z-index:80;background:rgba(10,15,20,.5);display:grid;align-items:end;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.lsheet{background:var(--surface);border-radius:22px 22px 0 0;padding:22px 18px calc(18px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;justify-items:center;max-width:640px;width:100%;margin:0 auto;text-align:center;animation:toastin2 .25s ease-out}
+@keyframes toastin2{from{transform:translateY(40px)}}
+.lsheet h3{font-family:var(--f-display);font-weight:800;font-size:1.4rem;margin:0}
+.lsheet .lgo{max-width:420px}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:70}
+.confetti i{position:absolute;top:-16px;width:9px;height:15px;border-radius:2px;opacity:0;animation:fall 1.8s ease-in forwards}
+@keyframes fall{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:.9;transform:translate(var(--dx),105vh) rotate(var(--r))}}
+/* welcome: the first screens for someone new */
+.ob{display:grid;justify-items:center;text-align:center;gap:16px;padding:6vh 0 10px}
+.ob h2{font-family:var(--f-display);font-weight:800;font-size:clamp(1.9rem,7.6vw,2.6rem);line-height:1.05;letter-spacing:-.025em;margin:0;text-wrap:balance}
+.ob .lede{margin:0 auto}
+.ob .lopts{width:100%;max-width:460px;text-align:left}
+.ob .lopt{min-height:72px}
+.ob .lopt .emo{font-size:2rem;line-height:1;flex:none;width:44px;text-align:center}
+.ob .lopt small{display:block;font-size:.85rem;color:var(--muted);font-family:var(--f-body);font-weight:400}
+.ob .lgo{max-width:460px}
+@media (max-height:700px){.lbody{gap:12px;padding:8px 0 16px}.lpics .lopt{min-height:104px}.lpics .emo{font-size:2.6rem}.lopt{min-height:54px}.lintro .emo{font-size:3.4rem}.lend{padding-top:2vh;gap:10px}.mascot{width:96px;height:96px}}
+@media (max-width:359px){.lpics .lopt{min-height:110px}.ltile{min-width:40px;padding:0 9px;font-size:1.25rem}.pcap{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.burst i{display:none}.confetti{display:none}}
 </style>
 
 <div class="xclip">
 <div id="homeView" class="hwrap">
-  <div class="topbar"><span class="logo">Deutsch Wortspiel</span><button class="lvbtn" id="lvBtn" title="Change level" hidden></button></div>
+  <div class="topbar"><span class="logo">Deutsch Wortspiel</span><div class="tright"><span class="schip" id="sChip" hidden></span><button class="lvbtn" id="lvBtn" title="Change level" hidden></button></div></div>
   <div id="homeBody" class="home"></div>
   <footer>Word lists: minddory.com A1/A2. Your progress stays in this browser.</footer>
 </div>
@@ -434,7 +582,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
     <div class="pknown"><b id="sKnown">0</b><span>learned</span></div>
   </header>
   <div>
-    <div class="progress" aria-hidden="true"><i id="pBar"></i></div>
+    <div class="progress" aria-hidden="true"><i id="pSoft"></i><i id="pBar"></i></div>
     <div class="progress-label"><span id="pTxt"></span><span class="pts" title="Points"><b id="sXp">0</b> points<span class="vh">, most right answers in a row: <b id="sStreak">0</b></span></span></div>
   </div>
 
@@ -463,6 +611,13 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
     </div>
   </div>
   <footer>Word lists: minddory.com A1/A2. Your progress stays in this browser.</footer>
+</div>
+
+<div class="lwrap" id="lessonView" hidden>
+  <header class="lhead"><button class="lx" id="lClose" aria-label="Quit the lesson"></button><div class="lbar" role="progressbar" aria-label="Lesson progress" aria-valuemin="0" aria-valuemax="100" id="lBarW"><i id="lBar"></i></div><span class="hearts" id="lHearts"></span></header>
+  <main class="lbody" id="lBody"></main>
+  <footer class="lfoot" id="lFoot"><div class="lfb" id="lFb" hidden></div><button class="lgo" id="lGo" disabled>Check</button></footer>
+  <div id="lsr" class="vh" role="status" aria-live="polite"></div>
 </div>
 </div>
 
@@ -640,6 +795,9 @@ function makeUnits(ws){
 const UNITS={ABC:makeUnits(ALL.ABC), A1:makeUnits(ALL.A1), A2:makeUnits(ALL.A2), Z:makeUnits(ALL.Z)};
 const unitNeed = u => Math.ceil(u.words.length*0.8);
 const unitLearned = (u,sc=S.score) => u.words.filter(w=>(sc[w.id]||0)>=3).length;
+// right answers count before a word is learned: 3 per word, so a first good round shows on the bar
+const unitSteps = (u,sc=S.score) => u.words.reduce((a,w)=>a+Math.min(sc[w.id]||0,3),0);
+const onWay = (u,sc=S.score) => u.words.filter(w=>(sc[w.id]||0)>0 && (sc[w.id]||0)<3).length;
 const unitDone = (u,sc) => unitLearned(u,sc) >= unitNeed(u);
 function firstOpenUnit(lv){ const sc=G.levels[lv].score, us=UNITS[lv]; const i=us.findIndex(u=>!unitDone(u,sc)); return i<0? us.length-1 : i; }
 // a unit, once reached, stays open: a wrong answer in a review lowers that word's score but never locks units again
@@ -663,7 +821,11 @@ const ICONS = {cards:'<rect x="3" y="7" width="13" height="14" rx="2.5"/><path d
   back:'<path d="M15 18l-6-6 6-6"/>', chev:'<path d="M9 18l6-6-6-6"/>', down:'<path d="M6 9l6 6 6-6"/>',
   star:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/>',
   flame:'<path d="M12 21c-3.9 0-6.8-2.6-6.8-6.3 0-2.9 1.9-5 3.4-6.3.3 1.7 1.2 2.9 2.4 3.4C11 8.3 12.2 5.3 14.6 3c.3 2.9 1.9 4.4 3.1 6.1a7.5 7.5 0 0 1 1.1 5.6C18.8 18.4 15.9 21 12 21z"/>',
-  lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>'};
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2.5"/><path d="M8.5 11V8a3.5 3.5 0 0 1 7 0v3"/>', check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  heart:'<path d="M12 20.5s-7.6-4.6-9.4-9.3C1.3 7.8 3.5 4.5 7 4.5c2 0 3.5 1.1 5 3 1.5-1.9 3-3 5-3 3.5 0 5.7 3.3 4.4 6.7-1.8 4.7-9.4 9.3-9.4 9.3z"/>',
+  close:'<path d="M6 6l12 12M18 6L6 18"/>', play:'<path d="M8 5.5v13l10.5-6.5z"/>',
+  trophy:'<path d="M8 4h8v5.5a4 4 0 0 1-8 0zM8 6.5H5a3 3 0 0 0 3.4 3.8M16 6.5h3a3 3 0 0 1-3.4 3.8M12 13.5v3.5M8.5 20.5h7M10 17h4v3.5h-4z"/>',
+  bolt:'<path d="M13 2.5L4.5 13.5H11l-1 8 8.5-11H12z"/>', clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>', target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/>'};
 const ic = n => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
 
 /* ---------- saved progress (per browser) ---------- */
@@ -733,14 +895,14 @@ function stopVoice(){
   document.querySelectorAll(".speak.playing").forEach(b=>b.classList.remove("playing"));
 }
 if(PHONE_IOS) document.getElementById("soundHint").hidden=false;
-function say(text, btn){
+function say(text, btn, rate){
   if(!("speechSynthesis" in window)) return;
   const busy = speechSynthesis.speaking || speechSynthesis.pending || !!say.t || Date.now()-(say.c||0)<60;
   clearTimeout(say.t); say.t=0;
   if(busy){ speechSynthesis.cancel(); say.c=Date.now(); }
   if(speechSynthesis.paused) speechSynthesis.resume();
   const u = new SpeechSynthesisUtterance(text.replace(/[?!]/g,"").replace(/-$/,""));
-  u.lang="de-DE"; if(deVoice) u.voice=deVoice; u.rate=S.rate;
+  u.lang="de-DE"; if(deVoice) u.voice=deVoice; u.rate=rate||S.rate;
   say.u = u;                                                   // Safari forgets unreferenced utterances and never ends them
   document.querySelectorAll(".speak.playing").forEach(b=>b.classList.remove("playing"));
   if(btn){ btn.classList.add("playing"); u.onend=u.onerror=()=>{ if(say.u===u||!say.u) btn.classList.remove("playing"); }; }
@@ -799,12 +961,27 @@ function distractors(w,n,key){
   const out=[]; for(const x of [...same,...any]){ if(out.length>=n) break; if(!out.some(o=>o[key]===x[key])) out.push(x) }
   return out;
 }
+// the end of every round: where the unit stands, then the next game in the usual order
+const NEXT_GAME = {cards:"quiz",quiz:"listen",listen:"match",match:"speak",speak:"cards"};
+let roundUnit=0;   // the unit when this round started, so its result can say it was finished
+function resultFoot(again="Play again"){
+  const us=UNITS[G.lv], ci=curUnit();
+  if(ci>roundUnit) return `<p class="uprog"><b>Unit complete: ${esc(us[roundUnit].name)}!</b> Next up: ${esc(us[ci].name)}.</p>
+    <div class="rbtns"><button class="btn" id="again">${again}</button><button class="btn primary" id="nextGame" data-go="unit">Start ${esc(us[ci].name)}${ic("chev")}</button></div>`;
+  const u=us[typeof S.sel==="number"&&S.sel<ci?S.sel:ci], n=u.words.length, k=unitLearned(u), ow=onWay(u);
+  const UN=TRACK[G.lv]?.unitNoun?.(u)||TRACK[G.lv]?.noun||"words", nx=NEXT_GAME[S.mode];
+  return `<p class="uprog">${k>=n?`All ${n} ${UN} in this unit learned.`:`<b>${k} of ${n} learned</b> in this unit${ow?` · ${ow} on the way`:""}`}${!k&&ow?`<span class="muted">Each counts as learned after 3 right answers.</span>`:""}</p>
+    <div class="rbtns"><button class="btn" id="again">${again}</button>${nx?`<button class="btn primary" id="nextGame">Next: ${$(`nav.modes [data-mode="${nx}"] span`).textContent}${ic("chev")}</button>`:""}</div>`;
+}
+function wireResult(){ $("#again").onclick=start; const b=$("#nextGame");
+  // a new unit starts with its cards
+  if(b) b.onclick=()=>{ if(b.dataset.go){ S.mode="cards"; S.sel="unit"; } else S.mode=NEXT_GAME[S.mode]; save(); start(); }; }
 function renderStats(){
   // reviewing a finished unit shows that unit; the last unit's goal is finishing the level
   const us=UNITS[G.lv], ci=curUnit(), rv=typeof S.sel==="number" && S.sel<ci, u=us[rv?S.sel:ci], k=unitLearned(u), need=unitNeed(u),
     goal=u.i===us.length-1?`finish ${G.lv==="ABC"?"the Alphabet":LVL[G.lv].name}`:"unlock the next unit";
   $("#sXp").textContent=S.xp; $("#sStreak").textContent=S.best; $("#sKnown").textContent=`${k}/${u.words.length}`;
-  $("#pBar").style.width = (k/u.words.length*100)+"%";
+  $("#pBar").style.width = (k/u.words.length*100)+"%"; $("#pSoft").style.width = (unitSteps(u)/(3*u.words.length)*100)+"%";
   $("#pLevel").textContent = `${rv?"Review\u00a0· ":""}Unit\u00a0${u.i+1}\u00a0· ${u.name}`;   // no-break spaces keep "Unit 7 ·" on one line
   $("#pTxt").textContent = rv ? "Reviewing a finished unit" : k>=need ? "Unit done!" : `Learn ${need-k} more to ${goal}`;
 }
@@ -837,7 +1014,7 @@ document.addEventListener("click",e=>{ const b=e.target.closest?.("button"); if(
 
 function start(){
   stopListening?.(); stopListening=null;
-  keyHandler=null; stopVoice(); renderTopics(); renderStats();   // a unit unlocked mid-round shows here, so nothing moves under the finger
+  keyHandler=null; stopVoice(); renderTopics(); renderStats(); roundUnit=curUnit();   // a unit unlocked mid-round shows here, so nothing moves under the finger
   document.querySelectorAll("nav.modes button").forEach(b=>b.setAttribute("aria-current", b.dataset.mode===S.mode?"page":"false"));
   if(S.mode==="home") S.mode="cards";
   enter(stage);
@@ -892,18 +1069,15 @@ function myWordsHTML(WN){
 let progOpen=false;   // "Your progress" stays open while you move around this session
 function Home(){
   keyHandler=null;
+  if(!G.chosen && !G.picking && !ME.welcomed) return Welcome();
   if(!G.chosen || G.picking) return LevelPick();
-  const us=UNITS[G.lv], ci=curUnit(), u=us[ci], need=unitNeed(u), got=unitLearned(u), n=u.words.length, left=need-got;
-  const allDone = ci===us.length-1 && unitDone(u);
+  const us=UNITS[G.lv], ci=curUnit(), u=us[ci], n=u.words.length;
+  const allDone = ci===us.length-1 && (unitDone(u) || lessonsDone(u)>=unitLessons(u).length);
   const started = u.words.some(w=>S.score[w.id]!==undefined);
-  const t=todayRec(), goal=S.goal, streak=dayStreak();
-  const last=ci===us.length-1, unitGoal=last?`finish ${G.lv==="ABC"?"the Alphabet":LVL[G.lv].name}`:"unlock the next unit";
-  const C=2*Math.PI*42;
+  const goal=ME.goal, streak=dayStreak();
   const days=[...Array(7)].map((_,k)=>{ const d=new Date(); d.setDate(d.getDate()-6+k); const r=S.days[dkey(d)]||{xp:0,answers:0,learned:0}; return {d,r} });
   const maxA=Math.max(10,...days.map(x=>x.r.answers));
   const weak=weakWords();
-  // the path shows only a small window: two finished units, this one, and the next three
-  const from=Math.max(0,ci-2), to=Math.min(us.length,ci+4);
   const T=TRACK[G.lv], WN=T?.noun||"words", UN=T?.unitNoun?.(u)||WN, lvTitle=T?T.title:G.lv;
   const MODES=T?(UN==="sounds"&&T.modesSound||T.modes)
     : [["cards","Swipe cards","See a word, flip to check"],["quiz","Quiz","Pick the right meaning"],["listen","Listen","Hear a word, find it"],["match","Match pairs","Join words and meanings"],["speak","Speak","Say it, get a score"]];
@@ -918,41 +1092,34 @@ function Home(){
         <button class="feedgo" id="go-${k}" data-golv="${k}">${OT?(ostarted?OT.feed.keep:OT.feed.go):ostarted?`Back to ${k}`:`Start ${k}`}</button></div>
       ${ic("chev")}
     </section>`; };
-  const dots=us.slice(from,to).map(x=>{ const st=x.i<ci||unitDone(x)?"done":x.i===ci?"now":"locked";
-    const lab=st==="done"?`Review unit ${x.i+1}: ${x.name}`:st==="now"?`Unit ${x.i+1}: ${x.name}`:`Unit ${x.i+1} is locked`;
-    return `<button class="ud ${st}" data-u="${x.i}" ${st==="locked"?"disabled":""} aria-label="${esc(lab)}" title="${esc(lab)}"><span>${st==="done"?ic("check"):st==="locked"?ic("lock"):x.i+1}</span></button>` }).join("");
-  const tl=Math.min(t.learned,goal), reached=t.learned>=goal;
+  // the lesson path: done, the next one (with a bubble), then locked; the unit review is the trophy at the end
+  const ls=unitLessons(u), ldone=allDone?ls.length:lessonsDone(u), nl=Math.min(ldone,ls.length-1), ZIG=[0,48,72,48,0,-48,-72,-48];
+  const nodes=ls.map((L,k)=>{ const st=k<ldone?"done":k===nl?"now":"locked", x=ZIG[k%ZIG.length], name=L.review?"Unit review":`Lesson ${k+1}`;
+    return `<li style="--x:${x}px">${st==="now"?`<span class="pbub">${ldone||started?"Next":"Start"}</span>`:""}<button class="pn ${st}" data-l="${k}" ${st==="locked"?"disabled":""} aria-label="${name}${st==="done"?", done. Tap to practise again":st==="locked"?", locked":""}">${ic(L.review?"trophy":st==="done"?"check":st==="now"?"play":"lock")}</button><span class="pcap${x>=0?" l":""}" aria-hidden="true">${name}</span></li>`; }).join("");
+  const tl=Math.min(todayLessons(),goal), reached=todayLessons()>=goal;
   const sz=us.map(x=>x.words.length), lo=Math.min(...sz), hi=Math.max(...sz);
   const el=$("#homeBody");
   el.innerHTML=`
-  <section class="hhero">
-    <div class="htop">
-      <div class="hhero-txt">
-        <span class="eyebrow">${lvTitle} · Unit ${ci+1}</span>
-        <h2 class="hhead">${allDone?`${LVL[G.lv].name} complete!`:esc(u.name)}</h2>
-      </div>
-      <div class="ring" role="img" aria-label="${got} of ${n} ${UN} in this unit learned">
-        <svg viewBox="0 0 100 100"><circle class="rbg" cx="50" cy="50" r="42"/>${got?`<circle class="rfg" cx="50" cy="50" r="42" style="--c:${C.toFixed(1)};stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-got/n)).toFixed(1)}"/>`:""}</svg>
-        <div class="pct"><b>${got}/${n}</b><span>learned</span></div>
-      </div>
-    </div>
-    <p class="lede">${allDone?(T?T.done:G.lv==="A1"?"You've learned every unit in A1. Keep reviewing, or start A2 below.":"You've learned every unit in A2. Keep reviewing so the words stay fresh.")
-      : got>=need? `Unit done!` : got? `Learn ${left} more ${left===1?one(UN):UN} to ${unitGoal}.` : last? `Just ${n} ${UN}. Learn ${need} of them to ${unitGoal}.` : `Just ${n} ${UN}. Learn ${need} of them and the next unit unlocks.`}</p>
-    ${T?.tips[u.topic]?`<p class="tip"><b>Tip</b> ${esc(T.tips[u.topic])}</p>`:""}
-    <div class="hcta"><button class="btn cta" id="goPractice">${started?"Continue":"Start"}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
-    <div class="udots">${dots}</div>
-    <p class="udcap muted">Unit ${ci+1}${ci?" · tap a finished unit to review it":""}</p>
+  ${ci>0?`<button class="udone" data-u="${ci-1}"><span class="ok">${ic("check")}</span><span class="grow1">Unit ${ci} · ${esc(us[ci-1].name)}</span><span class="go">Practise</span></button>`:""}
+  <section class="ubanner">
+    <span class="ey">${lvTitle} · Unit ${ci+1}</span>
+    <h2>${allDone?`${LVL[G.lv].name} complete!`:esc(u.name)}</h2>
+    <p>${allDone?(T?T.done:G.lv==="A1"?"You've learned every unit in A1. Keep practising, or start A2 below.":"You've learned every unit in A2. Keep practising so the words stay fresh.")
+      : `${ls.length} short ${ls.length===1?"lesson":"lessons"} · ${n} ${UN}`}</p>
+    <div class="ubtns"><button class="btn start" id="goLesson">${allDone?"Practise again":ls[nl].review?"Start the unit review":`Start lesson ${nl+1}`}${ic("chev")}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
   </section>
+  ${T?.tips[u.topic]&&!allDone?`<p class="tip"><b>Tip</b> ${esc(T.tips[u.topic])}</p>`:""}
+  <ol class="path" aria-label="Lessons in this unit">${nodes}</ol>
+  ${ci<us.length-1?`<div class="unext">${ic("lock")}<span>Next: Unit ${ci+2} · ${esc(us[ci+1].name)}</span></div>`:""}
 
   <section class="sec">
-    <h3 class="h2">Pick a game</h3>
+    <div class="row spread"><h3 class="h2">Extra practice</h3><button class="btn link" id="goPractice">All games</button></div>
     <div class="modecards">${MODES.map(([m,en,d])=>`<button class="modecard" data-m="${m}"><span class="mi">${ic(m)}</span><b>${en}</b><span class="d">${d}</span></button>`).join("")}</div>
   </section>
 
   <section class="panel slim">
-    <div class="trow"><b>Today</b><span class="muted grow1 tsum">${t.answers?`${t.answers} answered · `:""}${reached?"Goal reached!":`${tl} of ${goal} new ${WN} learned`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
-    <span class="mbar${reached?" ok":""}" role="img" aria-label="Today's goal: ${t.learned} of ${goal} learned"><i style="width:${Math.min(100,t.learned/goal*100)}%"></i></span>
-    ${!tl&&t.answers?`<span class="muted" style="font-size:.8rem">A ${one(WN)} counts as learned after 3 right answers.</span>`:""}
+    <div class="trow"><b>Daily goal</b><span class="muted grow1 tsum">${reached?"Reached! Well done.":`${tl} of ${goal} ${goal===1?"lesson":"lessons"} today`}</span>${streak?`<span class="streak">${ic("flame")}${streak} day${streak>1?"s":""} in a row</span>`:""}</div>
+    <span class="mbar${reached?" ok":""}" role="img" aria-label="Today's goal: ${tl} of ${goal} lessons"><i style="width:${Math.min(100,tl/goal*100)}%"></i></span>
   </section>
 
   ${weak.length?`<section class="panel slim">
@@ -975,7 +1142,7 @@ function Home(){
           <div class="week">${days.map(({d,r})=>`<div class="col7" style="--h:${r.answers/maxA*100}%" title="${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"short"})}: ${r.answers} answers, ${r.learned} new ${WN} learned, ${r.xp} points"><em>${r.answers||""}</em><div class="bar ${r.answers?"":"zero"}"></div></div>`).join("")}</div>
           <div class="wkd">${days.map(({d},k)=>`<span class="${k===6?"now":""}">${k===6?"Today":d.toLocaleDateString("en-GB",{weekday:"short"})}</span>`).join("")}</div>
         </div>
-        <div class="goal-pick"><span class="muted">Daily goal, new ${WN}:</span>${[5,10,15,20].map(g=>`<button data-g="${g}" aria-pressed="${g===goal}">${g}</button>`).join("")}</div>
+        <div class="goal-pick"><span class="muted">Daily goal, lessons a day:</span>${[1,2,3,5].map(g=>`<button data-g="${g}" aria-pressed="${g===goal}">${g}</button>`).join("")}</div>
       </section>
       <section class="psec">
         <h3 class="h2">Records</h3>
@@ -989,7 +1156,7 @@ function Home(){
       <section class="psec">
         <h3 class="h2">How it works</h3>
         <div class="how">
-          <div><b>Small units</b>Each unit has ${lo===hi?lo:`${lo} to ${hi}`} ${WN}. Learn 80% of them and the next unit opens.</div>
+          <div><b>Small lessons</b>Each unit has ${lo===hi?lo:`${lo} to ${hi}`} ${WN}. Each is split into short lessons: finish them (or learn 80% in the games) and the next unit opens.</div>
           <div><b>Known</b>Something counts as known (learned) after 3 right answers. A wrong answer moves it back one step.</div>
           <div><b>Confident</b>After 5 right answers you're confident with it. Come back every day to keep your streak.</div>
         </div>
@@ -997,9 +1164,10 @@ function Home(){
     </div>
   </details>`;
   el.querySelectorAll("[data-wf]").forEach(b=>b.onclick=()=>{ listView={scope:"level",f:b.dataset.wf}; showPractice("list"); });
-  el.querySelectorAll(".goal-pick button").forEach(b=>b.onclick=()=>{ S.goal=+b.dataset.g; save(); Home(); });
-  el.querySelectorAll(".ud.done").forEach(b=>b.onclick=()=>showPractice("cards",+b.dataset.u));
-  el.querySelectorAll(".ud.now").forEach(b=>b.onclick=()=>showPractice(S.lastMode||"cards","unit"));
+  el.querySelectorAll(".goal-pick button").forEach(b=>b.onclick=()=>{ ME.goal=+b.dataset.g; saveMe(); Home(); });
+  el.querySelectorAll(".udone").forEach(b=>b.onclick=()=>showPractice("cards",+b.dataset.u));
+  el.querySelectorAll(".pn:not(:disabled)").forEach(b=>b.onclick=()=>startLesson(ls[+b.dataset.l]));
+  $("#goLesson").onclick=()=>startLesson(ls[nl]);
   el.querySelectorAll(".modecard").forEach(b=>b.onclick=()=>showPractice(b.dataset.m,"unit"));
   const rv=$("#rv"); if(rv) weak.forEach(w=>{ const d=document.createElement("div"); d.innerHTML=`<span></span><span><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span><span class="rvt">${tagHTML(w.topic)}</span>`; d.firstChild.appendChild(spkBtn(w,"small")); rv.appendChild(d) });
   $("#goPractice").onclick=()=>showPractice(S.lastMode||"cards","unit");
@@ -1032,6 +1200,8 @@ function showHome(){
   stopListening?.(); stopListening=null;
   stopVoice();
   keyHandler=null; $("#practiceView").hidden=true; $("#homeView").hidden=false;
+  const sn=dayStreak(), sc=$("#sChip"); sc.hidden=!G.chosen||G.picking; sc.className="schip"+(answeredToday()?" on":"");
+  sc.innerHTML=`${ic("flame")}<span>${sn}</span><span class="vh"> day${sn===1?"":"s"} in a row${answeredToday()?"":", practise today to keep it"}</span>`; sc.title=`${sn} day streak`;
   $("#lvBtn").innerHTML=`<b>${lvBadge(G.lv)}</b><span class="vh">Change level (now ${LVL[G.lv].name})</span>${ic("down")}`; $("#lvBtn").hidden=!G.chosen||G.picking;
   Home(); enter($("#homeBody")); window.scrollTo(0,0);
 }
@@ -1051,8 +1221,8 @@ function Cards(){
     if(i>=deck.length){
       stage.innerHTML=`<div class="result"><div class="score">✓</div><div class="note">Deck done. Gut gemacht: well done!</div>
         <p class="muted" style="margin:0">${knew} knew it · ${again} still learning</p>
-        <button class="btn primary" id="again">Next deck</button></div>`;
-      $("#again").onclick=start; keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); start()} }; return;
+        ${resultFoot("Next deck")}</div>`;
+      wireResult(); keyHandler=e=>{ if((e.key==="Enter"||e.key===" ") && e.target.closest("button,a,[role=button]")) return; if(e.key==="Enter"||e.key===" "||e.key==="ArrowRight"){e.preventDefault(); start()} }; return;
     }
     stopVoice();
     const w=deck[i]; let flipped=false, gone=false;
@@ -1125,7 +1295,7 @@ function Quiz(kind){
     else if(mode==="de-en") prompt=`<div class="prompt" id="pr"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div></div><div class="muted" style="text-align:center">${tq?.deEn||"What does it mean in English?"}</div>`;
     else prompt=`<div class="prompt" id="pr"><div class="meaning">${esc(enQ(w))}</div></div><div class="muted" style="text-align:center">${tq?.enDe||"Which German word is it?"}</div>`;
     stage.innerHTML=`
-      <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted">In a row: <b id="stk">${streak}</b></span></div>
+      <div class="row spread"><div class="dots">${qs.map((_,k)=>`<i class="${k<i?(log[k].ok?"ok":"no"):k===i?"now":""}"></i>`).join("")}</div><span class="muted" id="stkw"${streak<2?" hidden":""}>In a row: <b id="stk">${streak}</b></span></div>
       ${prompt}
       <div class="options">${opts.map((o,k)=>`<button class="opt" data-k="${k}"><kbd>${k+1}</kbd><span>${key==="en"?esc(enQ(o)):deHTML(o)}</span></button>`).join("")}</div>
       <div class="feedback" id="fb"></div>
@@ -1145,7 +1315,7 @@ function Quiz(kind){
       else { streak=0; fb.className="feedback no";
         const ans = w.letter||w.hl ? `It's ${w.letter?`<span lang="de">${esc(w.de)}</span>`:deHTML(w)}: ${esc(w.en)}` : isNum() ? `${deHTML(w)} is ${esc(w.en)}` : `${deHTML(w)} means ${esc(w.en)}`;
         fb.innerHTML=`Not quite. ${ans}${/[.?!…]$/.test(w.en)?"":"."}`; }
-      $("#stk").textContent=streak;
+      $("#stk").textContent=streak; $("#stkw").hidden=streak<2;
       bump(w,ok); save(); renderStats(); log.push({w,ok});
       say(sayW(w)); if(hush) pr.querySelector(".speak-ph")?.replaceWith(spkBtn(w));
       announce(fb.textContent);
@@ -1162,11 +1332,11 @@ function Quiz(kind){
     stage.innerHTML=`<div class="result">
       <div class="score">${right}/${N}</div>
       <div class="note">${pct===1?"Perfekt! Every one right.":pct>=.7?"Sehr gut! Very good. Keep going.":pct>=.4?"Nicht schlecht: not bad. Practise the red ones.":"Übung macht den Meister: practice makes perfect. Try the swipe cards first."}</div>
-      <button class="btn primary" id="again">Play again</button>
+      ${resultFoot()}
       <div class="review">${log.map(({w,ok})=>`<div><span style="color:var(--${ok?"good":"bad"});font-weight:700">${ok?"✓":"✗"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
-    $("#again").onclick=start;
+    wireResult();
   }
   q();
 }
@@ -1220,11 +1390,11 @@ function Match(){
   function finish(){ clearInterval(timer); if(!live()) return; const s=Math.round((Date.now()-t0)/1000); renderStats();
     stage.innerHTML=`<div class="result"><div class="score">${s} s</div><div class="note">${sets.length} set${sets.length>1?"s":""} · ${log.length} pairs · ${misses?`${misses} mistake${misses>1?"s":""}. Try for zero!`:"Fehlerfrei! No mistakes."}</div>
       ${cleanSets?`<p class="muted" style="margin:0">+${cleanSets*5} bonus points for ${cleanSets} set${cleanSets>1?"s":""} with no mistakes</p>`:""}
-      <button class="btn primary" id="again">Play again</button>
+      ${resultFoot()}
       <div class="review">${log.map(w=>`<div><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${esc(w.en)}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k],"small")));
-    $("#again").onclick=start; }
+    wireResult(); }
   play();
 }
 
@@ -1501,11 +1671,11 @@ function Speak(){
     const said=log.filter(x=>x.score!=null), avg=said.length?Math.round(said.reduce((a,b)=>a+b.score,0)/said.length):null;
     const WN=TRACK[G.lv]?.unitNoun?.({words:log.map(x=>x.w)})||TRACK[G.lv]?.noun||"words";
     stage.innerHTML=`<div class="result"><div class="score">${avg??"–"}</div><div class="note">${avg==null?"You skipped them all. Try saying a few next round.":`Average score over ${said.length} ${said.length===1?one(WN):WN}. ${grade(avg)[0]}`}</div>
-      <button class="btn primary" id="again">Play again</button>
+      ${resultFoot()}
       <div class="review">${log.map(({w,score,heard})=>`<div><span class="pchip" style="--c:${score==null?"var(--line)":`var(--${grade(score)[1]})`}">${score??"–"}</span><span style="flex:1"><b>${deHTML(w)}</b> <span class="muted">${heard?`heard “${esc(heard)}”`:"skipped"}</span></span></div>`).join("")}</div></div>`;
     showResult();
     stage.querySelectorAll(".review > div").forEach((d,k)=>d.appendChild(spkBtn(log[k].w,"small")));
-    $("#again").onclick=start;
+    wireResult();
   }
   q();
 }
@@ -1562,6 +1732,369 @@ function List(){
   };
   let drawT=0;
   $("#q").oninput=()=>{ clearTimeout(drawT); drawT=setTimeout(draw,150); }; $("#onlyStar").onchange=draw; chips(); draw();
+}
+
+/* ---------- Lessons: the guided path, one small lesson at a time ---------- */
+// each unit is split into lessons of about 4 words. A lesson first shows each new word, then asks about it in different ways.
+// the unit ends with a short review of all its words; finishing it opens the next unit
+const LESSON_WORDS=4, HEARTS=5;
+const PATH = store.get("wortspielPath") || {};   // lessons finished per level and unit, {A1:{"3":2}}; kept out of the "wortspiel" save
+const ME = Object.assign({goal:1, days:{}}, store.get("wortspielMe")||{});   // daily goal in lessons, lessons per day, welcome seen
+const saveMe = ()=>store.set("wortspielMe",ME);
+function unitLessons(u){
+  const n=Math.ceil(u.words.length/LESSON_WORDS), size=Math.ceil(u.words.length/n);
+  const ls=[...Array(n)].map((_,k)=>({u, k, words:u.words.slice(k*size,(k+1)*size)}));
+  if(n>1) ls.push({u, k:n, words:u.words, review:true});
+  return ls;
+}
+// a unit finished by playing the games counts as finished on the path too
+function lessonsDone(u, lv=G.lv){ const n=unitLessons(u).length; return u.i<curUnit(lv) ? n : Math.min(PATH[lv]?.[u.i]||0, n); }
+function nextLesson(lv=G.lv){ const u=UNITS[lv][curUnit(lv)], ls=unitLessons(u); return ls[Math.min(lessonsDone(u,lv), ls.length-1)]; }
+const todayLessons = ()=> ME.days[dkey(Date.now())]||0;
+const answeredToday = ()=> Object.values(G.levels).some(l=>l.days?.[dkey(Date.now())]?.answers);
+
+// pictures for words that have an obvious one; keyed by the German, so the word lists stay as they are
+const EMO = {"der Apfel":"🍎","die Banane":"🍌","das Bier":"🍺","das Brot":"🍞","die Butter":"🧈","das Ei":"🥚","das Eis":"🍦","die Erdbeere":"🍓","der Fisch":"🐟",
+  "die Flasche":"🍾","das Fleisch":"🥩","das Gemüse":"🥦","das Glas":"🥃","das Hähnchen":"🍗","der Kaffee":"☕","der Käse":"🧀","der Kuchen":"🍰","die Milch":"🥛","das Obst":"🍉",
+  "die Orange":"🍊","der Saft":"🧃","der Salat":"🥗","das Salz":"🧂","der Tee":"🍵","das Wasser":"💧","die Zitrone":"🍋",
+  "die Biene":"🐝","der Elefant":"🐘","der Hase":"🐇","das Huhn":"🐔","der Hund":"🐕","die Katze":"🐈","die Kuh":"🐄","die Maus":"🐭","der Vogel":"🐦","das Tier":"🐾",
+  "der Arm":"💪","das Auge":"👁️","das Bein":"🦵","der Fuß":"🦶","die Hand":"✋","der Mund":"👄","die Nase":"👃","das Ohr":"👂","der Zahn":"🦷","das Herz":"❤️",
+  "die Bluse":"👚","die Handschuhe":"🧤","die Handtasche":"👜","die Mütze":"🧢","der Schal":"🧣","die Stiefel":"👢","die Tasche":"🎒","das Kleid":"👗","der Mantel":"🧥",
+  "die Hose":"👖","das Hemd":"👔","der Schuh":"👞","die Schuhe":"👟","der Hut":"🎩","die Socken":"🧦","die Krawatte":"👔","die Brille":"👓","der Rucksack":"🎒",
+  "das Bett":"🛏️","die Dusche":"🚿","das Fenster":"🪟","der Fernseher":"📺","das Messer":"🔪","der Löffel":"🥄","die Gabel":"🍴","der Garten":"🪴","das Haus":"🏠",
+  "die Küche":"🍳","die Lampe":"💡","das Sofa":"🛋️","der Stuhl":"🪑","der Teller":"🍽️","die Tür":"🚪","die Zahnbürste":"🪥","das Badezimmer":"🛁",
+  "der Schlüssel":"🔑","der Kühlschrank":"🧊","die Treppe":"🪜","die Kerze":"🕯️","das Handtuch":"🧻",
+  "blau":"🔵","braun":"🟤","gelb":"🟡","grün":"🟢","lila":"🟣","rot":"🔴","schwarz":"⚫","weiß":"⚪","die Farbe":"🎨",
+  "der Baum":"🌳","das Blatt":"🍃","die Blume":"🌸","der Regen":"🌧️","der Schnee":"❄️","die Sonne":"☀️","der Wald":"🌲","der Wind":"💨","der Fluss":"🏞️",
+  "der Berg":"⛰️","das Meer":"🌊","der Strand":"🏖️","der Stern":"⭐","die Wolke":"☁️","die Insel":"🏝️","die Rose":"🌹",
+  "das Auto":"🚗","der Bus":"🚌","der Euro":"💶","das Geld":"💰","das Hotel":"🏨","links":"⬅️","rechts":"➡️","geradeaus":"⬆️","die Polizei":"👮","die Stadt":"🏙️",
+  "das Taxi":"🚕","die U-Bahn":"🚇","der Zug":"🚆","das Fahrrad":"🚲","das Flugzeug":"✈️","das Motorrad":"🏍️","der Flughafen":"🛫","das Krankenhaus":"🏥","die Kirche":"⛪",
+  "die Post":"📮","der Supermarkt":"🛒","das Kino":"🎬","der Koffer":"🧳","das Ticket":"🎫","die Fahrkarte":"🎟️",
+  "das Baby":"👶","die Familie":"👪","die Frau":"👩","der Mann":"👨","das Kind":"🧒","das Mädchen":"👧","die Großmutter":"👵","der Großvater":"👴",
+  "die Liebe":"💕","der Weihnachtsmann":"🎅","der Arzt":"🧑‍⚕️",
+  "der Fußball":"⚽","die Kamera":"📷","der Ski":"🎿","das Tennis":"🎾","das Video":"📹","die Gitarre":"🎸","der Computer":"💻","das Handy":"📱","der Ball":"🏐",
+  "das Geschenk":"🎁","der Geburtstag":"🎂","die Party":"🎉","das Foto":"🖼️","die Musik":"🎵","die Zeitung":"📰","der Brief":"✉️",
+  "das Buch":"📖","die E-Mail":"📧","die Frage":"❓","die Schule":"🏫","das Telefon":"☎️","das Papier":"📄","der Stift":"🖊️","der Kalender":"📅",
+  "die Nacht":"🌙","die Uhr":"🕐","der Winter":"⛄","der Sommer":"😎",
+  "hallo":"👋","danke":"🙏","ja":"👍","nein":"👎",
+  "das Schwein":"🐷","das Pferd":"🐴","das Schaf":"🐑","die Ente":"🦆","der Löwe":"🦁","der Affe":"🐒",
+  "der Reis":"🍚","die Suppe":"🍲","die Nudeln":"🍝","das Brötchen":"🥐","die Schokolade":"🍫","der Wein":"🍷","die Birne":"🍐",
+  "das Fieber":"🤒","die Tablette":"💊","das Pflaster":"🩹"};
+const pic = w => G.lv==="ABC" ? null : EMO[w.de]||null;   // the alphabet's sound words are about the sound, not the thing
+const canBuild = w => !isTrack() && /^[A-Za-zÄÖÜäöüß]{3,9}$/.test(w.base) && new Set(w.base.toLowerCase()).size>1;
+// speaking inside a lesson only where the browser recognises speech itself: the on-device checker would need a big download first
+const canSpeak = ()=> !!SR && !LOCAL && !FRAMED && Date.now()>(ME.noSpeak||0);
+
+// a soft chime for a right answer and a low buzz for a wrong one (no files: two short tones)
+let sfxCtx=null;
+function sfx(ok){
+  try{ sfxCtx ||= new (window.AudioContext||window.webkitAudioContext)(); if(sfxCtx.state==="suspended") sfxCtx.resume();
+    const t=sfxCtx.currentTime;
+    (ok?[[784,0],[1047,.09]]:[[196,0],[165,.11]]).forEach(([f,d])=>{ const o=sfxCtx.createOscillator(), g=sfxCtx.createGain();
+      o.type=ok?"sine":"triangle"; o.frequency.value=f; g.gain.setValueAtTime(0,t+d); g.gain.linearRampToValueAtTime(ok?.09:.07,t+d+.015); g.gain.exponentialRampToValueAtTime(.0005,t+d+.28);
+      o.connect(g); g.connect(sfxCtx.destination); o.start(t+d); o.stop(t+d+.3); });
+  }catch(e){}
+  if(!ok) navigator.vibrate?.(60);
+}
+// the mascot: a friendly speech bubble in the level's colour. happy, cheer (eyes closed with joy) or oops
+function mascot(mood="happy", cls=""){
+  const eyes = mood==="cheer" ? `<path d="M19 27q4-5 8 0M37 27q4-5 8 0" fill="none" stroke="var(--accent-ink)" stroke-width="3.2" stroke-linecap="round"/>`
+    : `<circle cx="23" cy="26" r="3.8" fill="var(--accent-ink)"/><circle cx="41" cy="26" r="3.8" fill="var(--accent-ink)"/>`;
+  const mouth = mood==="oops" ? `<path d="M26 39q6-4 12 0" fill="none" stroke="var(--accent-ink)" stroke-width="3.2" stroke-linecap="round"/>`
+    : `<path d="M22 34q10 9 20 0" fill="${mood==="cheer"?"var(--accent-ink)":"none"}" stroke="var(--accent-ink)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return `<svg class="mascot ${cls}" viewBox="0 0 64 64" aria-hidden="true"><path d="M13 7h38a9 9 0 0 1 9 9v25a9 9 0 0 1-9 9H31l-12 10V50h-6a9 9 0 0 1-9-9V16a9 9 0 0 1 9-9z" fill="var(--accent)"/>
+    <ellipse cx="16" cy="35" rx="3.5" ry="2.2" fill="#ff8fa3" opacity=".55"/><ellipse cx="48" cy="35" rx="3.5" ry="2.2" fill="#ff8fa3" opacity=".55"/>${eyes}${mouth}</svg>`;
+}
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c=document.createElement("div"); c.className="confetti"; c.setAttribute("aria-hidden","true");
+  const cols=["#ff922b","#f2c94c","#4dabf7","#69db7c","#b197fc","#ff8fa3"];
+  c.innerHTML=[...Array(36)].map(()=>`<i style="left:${Math.random()*100}%;background:${cols[Math.random()*cols.length|0]};--dx:${(Math.random()*160-80)|0}px;--r:${(Math.random()*720-360)|0}deg;animation-delay:${(Math.random()*.5).toFixed(2)}s"></i>`).join("");
+  document.body.appendChild(c); setTimeout(()=>c.remove(),2600);
+}
+
+// the plan for one lesson: new words are shown first, then recognised right away, then asked in harder ways
+function planLesson(L){
+  const ws=L.words, steps=[], T=TRACK[G.lv];
+  const hardTypes = w => { const o=["pickDe","listen"]; if(canBuild(w)) o.push("build"); if(w.art) o.push("article"); if(pic(w)) o.push("picture"); return shuffle(o); };
+  let last="";
+  const hard = w => { const o=hardTypes(w); const t=o.find(x=>x!==last)||o[0]; last=t; return {t,w}; };
+  if(L.review){
+    const pick=shuffle(ws).slice(0,9);
+    pick.forEach(w=>steps.push(hard(w)));
+    if(ws.length>=3) steps.splice(4,0,{t:"pairs",ws:shuffle(ws).slice(0,5)});
+  } else {
+    if(L.k===0 && T?.tips[L.u.topic]) steps.push({t:"tip",text:T.tips[L.u.topic]});
+    ws.forEach((w,k)=>{
+      if((S.score[w.id]||0)<2) steps.push({t:"intro",w});
+      steps.push({t:pic(w)&&Math.random()<.6?"picture":"pickEn", w, soft:true});   // straight after seeing it: no effect on the word's score
+      if(k>0) steps.push({t:k%2?"listen":"pickDe", w:ws[k-1]});
+    });
+    if(ws.length>=3) steps.push({t:"pairs",ws});
+    shuffle(ws).forEach(w=>steps.push(hard(w)));
+    if(canSpeak() && ws.length){ const k=steps.length-1-(Math.random()*Math.min(ws.length,3)|0); steps[k]={t:"speak",w:steps[k].w}; }
+  }
+  // a sound card's English names its letters, so it's asked by ear (the same rule as the quiz)
+  return steps.map(s=>s.w?.hl && ["pickEn","pickDe","picture"].includes(s.t) ? {...s,t:"listen"} : s);
+}
+
+let LS=null;   // the lesson being played
+function startLesson(L){
+  stopListening?.(); stopListening=null; stopVoice();
+  LS={L, lv:G.lv, steps:planLesson(L), i:0, hearts:HEARTS, xp:0, right:0, tries:0, combo:0, bar:0, t0:Date.now(), hadToday:answeredToday(), streak0:dayStreak()};
+  $("#homeView").hidden=true; $("#practiceView").hidden=true; $("#lessonView").hidden=false; window.scrollTo(0,0);
+  $("#lHearts").hidden=false; $("#lBarW").hidden=false; hearts(); nextStep();
+}
+function hearts(lost){ const h=$("#lHearts"); h.innerHTML=`${ic("heart")}<span>${LS.hearts}</span><span class="vh"> hearts left</span>`;
+  if(lost){ h.classList.remove("lost"); void h.offsetWidth; h.classList.add("lost"); } }
+function lbar(){ LS.bar=Math.max(LS.bar, LS.i/LS.steps.length); $("#lBar").style.width=(LS.bar*100)+"%"; $("#lBarW").setAttribute("aria-valuenow",Math.round(LS.bar*100)); }
+function lannounce(t){ const r=$("#lsr"); r.textContent=""; setTimeout(()=>{ r.textContent=t; },60); }
+// the bottom bar: Check (until you pick something), then green or red feedback with Continue
+function foot(state, {label="Check", fb="", on=null, enabled=true}={}){
+  const f=$("#lFoot"), b=$("#lGo"), x=$("#lFb"); $("#lBack")?.remove();
+  f.className="lfoot"+(state==="ok"||state==="no"?" "+state:""); x.innerHTML=fb; x.hidden=!fb;
+  b.textContent=label; b.disabled=!enabled; b.onclick=on;
+}
+function lessonKeys(){
+  keyHandler=e=>{
+    if(e.key==="Escape") return quitLesson();
+    if(e.key==="Enter"){ const b=$("#lGo"); if(e.target.closest("button") && e.target!==b) return; if(!b.disabled){ e.preventDefault(); b.click(); } return; }
+    if(/^[1-9]$/.test(e.key)){ const o=$("#lBody").querySelectorAll("[data-k]")[+e.key-1]; if(o && !o.disabled) o.click(); }
+  };
+}
+function nextStep(){
+  stopVoice(); stopListening?.(); stopListening=null;
+  if(LS.i>=LS.steps.length) return lessonDone();
+  lbar(); const st=LS.steps[LS.i], body=$("#lBody");
+  body.innerHTML=""; enter(body); window.scrollTo(0,0); foot("idle",{enabled:false}); lessonKeys();
+  EX[st.t](st, body);
+}
+const advance = ()=>{ if(LS.hearts<=0) return outOfHearts(); LS.i++; nextStep(); };
+const PRAISE=[["Richtig!","Correct"],["Super!","Great"],["Sehr gut!","Very good"],["Genau!","Exactly"],["Toll!","Brilliant"],["Prima!","Nice one"]];
+// marks an answer: points, hearts, the word's score, and a wrong one comes back at the end of the lesson
+function mark(st, ok, answerHTML){
+  const w=st.w; LS.tries++;
+  if(ok){ LS.right++; LS.combo++; LS.xp+=10; addXp(10); }
+  else { LS.combo=0; LS.hearts--; hearts(true); LS.steps.push({...st, soft:false, again:true}); }
+  if(w && !st.soft){ bump(w,ok); }
+  save(); sfx(ok);
+  if(w) setTimeout(()=>{ if(LS && LS.steps[LS.i]===st) say(sayW(w)); },ok?280:420);
+  const [de,en]=PRAISE[Math.random()*PRAISE.length|0];
+  if(ok) foot("ok",{fb:`${mascot("cheer")}<div><b>${de}</b><span class="muted">${en}${w?` · ${deHTML(w)} = ${esc(w.en)}`:""}</span>${LS.combo>=3?`<span class="combo">${ic("flame")}${LS.combo} in a row</span>`:""}</div>`, label:"Continue", on:advance});
+  else foot("no",{fb:`${mascot("oops")}<div><b>Not quite</b><span>Right answer: ${answerHTML}</span>${LS.hearts>0?`<span class="muted">It comes back once more at the end.</span>`:""}</div>`, label:"Got it", on:advance});
+  lannounce((ok?de+" ":"Not quite. Right answer: ")+(ok?"":$("#lFb span")?.textContent||""));
+  $("#lGo").focus({preventScroll:true});
+}
+const optLabel = (o,key)=> key==="en" ? esc(enQ(o)) : deHTML(o);
+// a question with answer buttons: pick one, then Check
+function choice(body, st, {q, prompt="", opts, key, cls="", isRight, answer, sayPick=false, after=null}){
+  body.innerHTML=`<h2 class="lq">${q}</h2>${prompt}<div class="lopts ${cls}">${opts.map((o,k)=>`<button class="lopt${key==="de"?" de":""}" data-k="${k}" aria-pressed="false"><kbd>${k+1}</kbd>${o.html||`<span>${optLabel(o,key)}</span>`}</button>`).join("")}</div>`;
+  const btns=[...body.querySelectorAll(".lopt")]; let sel=-1;
+  LS.cur={opts,isRight};   // the question on screen (the tests read it to answer)
+  btns.forEach((b,k)=>b.onclick=()=>{ sel=k; btns.forEach((x,j)=>x.setAttribute("aria-pressed",j===k)); if(sayPick && opts[k].de) say(sayW(opts[k]));
+    foot("idle",{enabled:true, on:check}); });
+  function check(){ if(sel<0) return; const ok=isRight(opts[sel]);
+    btns.forEach((b,j)=>{ b.disabled=true; if(isRight(opts[j])) b.classList.add("right"); else if(j===sel) b.classList.add("wrong"); });
+    after?.(); mark(st, ok, answer); }
+}
+const speaker = (w,cls="") => { const s=document.createElement("span"); s.appendChild(spkBtn(w,cls)); return s; };
+const EX = {
+  tip(st, body){
+    body.innerHTML=`<h2 class="lq">Before you start</h2><div class="lintro"><span class="lnew">Tip</span>${mascot("happy")}<p class="ltip big">${esc(st.text)}</p></div>`;
+    foot("idle",{label:"Continue", on:advance});
+  },
+  // a new word: picture, word, sound and meaning together. Nothing to answer yet
+  intro(st, body){
+    const w=st.w, e=pic(w), what=w.letter?"New letter":w.hl?"New sound":isNum()?"New number":"New word";
+    body.innerHTML=`<h2 class="lq">${w.letter?"Meet this letter":w.hl?"Listen to this sound":isNum()?"Learn this number":"Learn this word"}</h2>
+      <div class="lintro"><span class="lnew">${what}</span>${e?`<div class="emo" aria-hidden="true">${e}</div>`:""}
+        <div class="word${isLong(w)?" long":""}">${deHTML(w)}</div><div class="row" id="isp"></div>
+        <div class="meaning">${esc(w.letter?(w.ex||w.en):w.en)}</div></div>
+      ${w.art?`<p class="ltip"><b class="g-${w.art}">${w.art}</b> ${{der:"goes with masculine words",die:"goes with feminine words",das:"goes with neuter words"}[w.art]}. Learn each word together with its <b class="g-${w.art}">${w.art}</b>.</p>`:""}`;
+    const b=spkBtn(w); $("#isp").appendChild(b);
+    setTimeout(()=>{ if(b.isConnected && !document.hidden) say(sayW(w),b); },350);
+    foot("idle",{label:"Continue", on:advance});
+  },
+  pickEn(st, body){
+    const w=st.w, tq=TRACK[G.lv]?.q, hush=G.lv==="ABC";   // in the alphabet the sound is the answer, so it plays after you pick
+    choice(body, st, {q:tq?.deEn||"What does this mean?", key:"en", opts:shuffle([w,...distractors(w,2,"en")]),
+      prompt:`<div class="lprompt"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div><span id="psp"></span></div>`,
+      isRight:o=>o.id===w.id, answer:`${esc(w.en)}`});
+    if(!hush){ const b=spkBtn(w); $("#psp").appendChild(b); setTimeout(()=>{ if(b.isConnected) say(sayW(w),b); },300); }
+  },
+  pickDe(st, body){
+    const w=st.w, tq=TRACK[G.lv]?.q, e=pic(w);
+    choice(body, st, {q:tq?.enDe?`${tq.enDe}`:`Which one means <b>${esc(enQ(w))}</b>?`, key:"de", sayPick:true, opts:shuffle([w,...distractors(w,2,"de")]),
+      prompt:tq?`<div class="lprompt"><div class="meaning">${esc(enQ(w))}</div></div>`:e?`<div class="lprompt"><span class="emo" aria-hidden="true">${e}</span></div>`:"",
+      isRight:o=>o.id===w.id, answer:deHTML(w)});
+  },
+  listen(st, body){
+    const w=st.w, key=isNum()?"en":"de";
+    choice(body, st, {q:TRACK[G.lv]?.q.listen||"What do you hear?", key, opts:shuffle([w,...distractors(w,3,key)]),
+      prompt:`<div class="lprompt" id="lp"></div>`, isRight:o=>o.id===w.id, answer:`${deHTML(w)}${key==="en"?"":` (${esc(w.en)})`}`});
+    const b=spkBtn(w,"big-ear"); b.setAttribute("aria-label","Play the sound again");
+    const s=document.createElement("button"); s.className="slow"; s.textContent="🐢"; s.setAttribute("aria-label","Play it slowly"); s.onclick=()=>say(sayW(w),null,0.55);
+    $("#lp").append(b,s); setTimeout(()=>{ if(b.isConnected && !document.hidden) say(sayW(w),b); },300);
+  },
+  // tap the picture that goes with the German word
+  picture(st, body){
+    const w=st.w;
+    const others=shuffle(WORDS.filter(x=>pic(x) && x.id!==w.id && pic(x)!==pic(w) && !sameMeaning(x,w))).sort((a,b)=>(b.topic===w.topic)-(a.topic===w.topic));
+    const ds=[]; for(const x of others){ if(ds.length>=3) break; if(!ds.some(d=>pic(d)===pic(x))) ds.push(x); }
+    if(ds.length<2) return EX.pickEn({...st,t:"pickEn"}, body);
+    const opts=shuffle([w,...ds]).map(o=>({...o, html:`<span class="emo" aria-hidden="true">${pic(o)}</span><span>${esc(enQ(o))}</span>`}));
+    choice(body, st, {q:`Which one is <b>${deInner(w)}</b>?`, key:"en", cls:"lpics", opts, prompt:`<div class="lprompt" id="psp"></div>`, isRight:o=>o.id===w.id, answer:`${pic(w)} ${esc(w.en)}`});
+    const b=spkBtn(w); $("#psp").appendChild(b); setTimeout(()=>{ if(b.isConnected) say(sayW(w),b); },300);
+  },
+  // der, die or das?
+  article(st, body){
+    const w=st.w, e=pic(w);
+    choice(body, st, {q:"Pick the right word for “the”", key:"x", cls:"larts", opts:["der","die","das"].map(a=>({id:a, html:`<span>${a}</span>`})),
+      prompt:`<div class="lprompt">${e?`<span class="emo" aria-hidden="true">${e}</span>`:""}<div><div class="word${isLong(w)?" long":""}"><span lang="de">___ ${esc(w.base)}</span></div><div class="muted">${esc(w.en)}</div></div></div>`,
+      isRight:o=>o.id===w.art, answer:deHTML(w),
+      after:()=>{ body.querySelector(".lprompt .word").innerHTML=deHTML(w); }});
+  },
+  // spell the word with letter tiles
+  build(st, body){
+    const w=st.w, e=pic(w), letters=[...w.base], extra="aeinrstlhmogku".split("").filter(c=>!w.base.toLowerCase().includes(c));
+    const tiles=shuffle([...letters, ...shuffle(extra).slice(0,2)].map((c,id)=>({c,id})));
+    body.innerHTML=`<h2 class="lq">Spell <b>${esc(enQ(w))}</b> in German</h2>
+      <div class="lprompt">${e?`<span class="emo" aria-hidden="true">${e}</span>`:""}<span id="psp"></span></div>
+      <div class="lslots" id="slots" aria-label="Your answer">${w.art?`<span class="pre g-${w.art}" lang="de">${w.art}</span>`:""}</div>
+      <div class="lbank" id="bank">${tiles.map((t,k)=>`<button class="ltile" data-t="${k}" lang="de">${esc(t.c)}</button>`).join("")}</div>`;
+    const b=spkBtn(w); b.setAttribute("aria-label","Hear the word"); $("#psp").appendChild(b);
+    const slots=$("#slots"), placed=[];
+    const sync=()=>foot("idle",{enabled:placed.length>0, on:check});
+    body.querySelectorAll("#bank .ltile").forEach(bt=>bt.onclick=()=>{ if(bt.classList.contains("used")) return; const k=+bt.dataset.t;
+      bt.classList.add("used"); bt.disabled=true; placed.push(k);
+      const s=document.createElement("button"); s.className="ltile"; s.lang="de"; s.textContent=tiles[k].c; s.setAttribute("aria-label","Remove "+tiles[k].c);
+      s.onclick=()=>{ if(s.dataset.locked) return; placed.splice(placed.indexOf(k),1); s.remove(); bt.classList.remove("used"); bt.disabled=false; sync(); };
+      slots.appendChild(s); sync(); });
+    function check(){ const got=placed.map(k=>tiles[k].c).join(""), ok=got===w.base;
+      body.querySelectorAll(".ltile").forEach(x=>{ x.disabled=true; x.dataset.locked=1; });
+      slots.style.borderColor=`var(--${ok?"good":"bad"})`; mark(st, ok, deHTML(w)); }
+  },
+  // join German words and meanings; a wrong pair only shakes
+  pairs(st, body){
+    const ws=st.ws, L=shuffle(ws), R=shuffle(ws); let sel=null, left=ws.length;
+    body.innerHTML=`<h2 class="lq">Tap the matching pairs</h2><div class="pairs"><div class="col" id="cL"></div><div class="col" id="cR"></div></div>`;
+    const mk=(w,side,k)=>{ const b=document.createElement("button"); b.className="tile "+(side==="L"?"de"+(isLong(w)?" long":""):"en"); b.innerHTML=side==="L"?deHTML(w):esc(enQ(w));
+      b.dataset.id=w.id; b.dataset.side=side; b.style.gridArea=`${k+1} / ${side==="L"?1:2}`;
+      b.onclick=()=>{ if(b.classList.contains("done")||!left) return; if(side==="L") say(sayW(w));
+        if(!sel || sel.dataset.side===side){ sel?.classList.remove("sel"); sel=b; b.classList.add("sel"); return; }
+        if(sel.dataset.id===b.dataset.id){ [sel,b].forEach(x=>{ x.classList.remove("sel"); x.classList.add("done"); x.disabled=true; }); sel=null; left--;
+          if(!left){ LS.xp+=10; addXp(10); save(); sfx(true); foot("ok",{fb:`${mascot("cheer")}<div><b>All pairs matched!</b><span class="muted">Alle Paare richtig</span></div>`, label:"Continue", on:advance}); $("#lGo").focus({preventScroll:true}); } }
+        else { const a=sel; [a,b].forEach(x=>{ x.classList.add("shake"); setTimeout(()=>x.classList.remove("shake"),400); }); a.classList.remove("sel"); sel=null; navigator.vibrate?.(40); }
+      }; return b; };
+    L.forEach((w,k)=>$("#cL").appendChild(mk(w,"L",k))); R.forEach((w,k)=>$("#cR").appendChild(mk(w,"R",k)));
+    foot("idle",{label:"Continue", enabled:false});
+  },
+  // say it out loud; a low score never costs a heart
+  speak(st, body){
+    const w=st.w; let tries=0, rec=null, listening=false;
+    body.innerHTML=`<h2 class="lq">Say it out loud</h2>
+      <div class="lprompt"><div class="word${isLong(w)?" long":""}">${deHTML(w)}</div><span id="psp"></span></div>
+      <div class="muted" style="text-align:center">${esc(w.en)}</div>
+      <div class="lspeak"><button class="mic" id="lmic" aria-label="Tap and say the word"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg></button>
+        <div class="pron" id="lout" aria-live="polite"><span class="muted">Listen first, then tap the microphone.</span></div>
+        <button class="lgo2" id="noSpeak">Can't speak now</button></div>`;
+    const b=spkBtn(w); $("#psp").appendChild(b); setTimeout(()=>{ if(b.isConnected) say(sayW(w),b); },300);
+    const skip=()=>{ stopListening?.(); LS.i++; nextStep(); };
+    foot("idle",{label:"Skip", on:skip});
+    $("#noSpeak").onclick=()=>{ ME.noSpeak=Date.now()+3600e3; saveMe(); LS.steps=LS.steps.filter((s,k)=>k<=LS.i||s.t!=="speak"); skip(); };
+    const mic=$("#lmic"), out=$("#lout");
+    stopListening=()=>{ if(rec) try{ rec._quiet=true; rec.abort(); }catch(e){} };
+    mic.onclick=()=>{
+      if(listening){ try{ rec.stop(); }catch(e){} return; }
+      stopVoice(); rec=new SR(); rec.lang="de-DE"; rec.interimResults=false; rec.maxAlternatives=5; const me=rec;
+      listening=true; mic.classList.add("on"); out.innerHTML=`<span class="muted">Listening… say <b>${esc(sayLabel(w))}</b></span>`;
+      rec.onresult=e=>{ const res=scoreAttempt(w,[...e.results[0]].map(a=>({t:a.transcript,c:a.confidence}))); tries++;
+        S.pron=S.pron||{}; if(res.score>(S.pron[w.id]??-1)) S.pron[w.id]=res.score;
+        const [msg,tone]=grade(res.score);
+        out.innerHTML=`<div class="pscore" style="--p:${res.score};--c:var(--${tone})"><b>${res.score}</b></div><div class="pinfo"><div class="pmsg" style="color:var(--${tone})">${msg}</div><div class="muted">I heard: <b style="color:var(--ink)">${esc(res.heard||"(nothing clear)")}</b></div></div>`;
+        if(res.score>=60){ LS.tries++; LS.right++; LS.combo++; LS.xp+=10; addXp(10); bump(w,true); save(); sfx(true);
+          foot("ok",{fb:`${mascot("cheer")}<div><b>${res.score>=90?"Ausgezeichnet!":"Gut gesagt!"}</b><span class="muted">${res.score>=90?"Excellent":"Well said"}</span></div>`, label:"Continue", on:advance}); mic.disabled=true; $("#noSpeak").hidden=true; }
+        else { save(); if(tries>=2) foot("idle",{label:"Continue", on:skip}); }
+      };
+      rec.onerror=e=>{ if(me._quiet) return; out.innerHTML=`<span class="muted">${e.error==="not-allowed"?MIC_BLOCKED:e.error==="no-speech"?"I didn't hear anything. Tap the microphone and speak a little louder.":"That didn't work. Tap the microphone to try again, or skip."}</span>`; };
+      rec.onend=()=>{ if(rec===me){ listening=false; mic.classList.remove("on"); } };
+      try{ rec.start(); }catch(e){ listening=false; mic.classList.remove("on"); }
+    };
+  },
+};
+function quitLesson(){
+  if($("#lHearts").hidden) return exitLesson();   // the end screens have nothing to lose
+  if($(".lsheet-bg")) return;
+  const m=document.createElement("div"); m.className="lsheet-bg";
+  m.innerHTML=`<div class="lsheet" role="dialog" aria-modal="true" aria-labelledby="qh">${mascot("oops")}<h3 id="qh">Wait, don't go yet!</h3><p class="muted" style="margin:0">You're doing well. If you stop now, this lesson starts again next time.</p>
+    <button class="lgo" id="qKeep">Keep learning</button><button class="lgo2" id="qEnd">End lesson</button></div>`;
+  document.body.appendChild(m); const kh=keyHandler; keyHandler=e=>{ if(e.key==="Escape"){ m.remove(); keyHandler=kh; } };
+  $("#qKeep").onclick=()=>{ m.remove(); keyHandler=kh; }; $("#qEnd").onclick=()=>{ m.remove(); exitLesson(); };
+  m.onclick=e=>{ if(e.target===m){ m.remove(); keyHandler=kh; } }; $("#qKeep").focus({preventScroll:true});
+}
+function exitLesson(){ stopListening?.(); stopListening=null; stopVoice(); LS=null; $("#lessonView").hidden=true; showHome(); }
+function endScreen(html){ stopVoice(); keyHandler=null; $("#lHearts").hidden=true; $("#lBarW").hidden=true; const body=$("#lBody"); body.innerHTML=`<div class="lend">${html}</div>`; enter(body); window.scrollTo(0,0); lessonKeys(); }
+function outOfHearts(){
+  const L=LS.L;
+  endScreen(`${mascot("oops")}<h2>Out of hearts</h2><p>No problem: mistakes are how everyone learns. The words will feel easier the second time.</p>`);
+  foot("idle",{label:"Try again", on:()=>startLesson(L)});
+  $("#lFoot").insertAdjacentHTML("beforeend",`<button class="lgo2" id="lBack">Back to the path</button>`); $("#lBack").onclick=exitLesson;
+}
+function lessonDone(){
+  const {L, lv}=LS, u=L.u, ls=unitLessons(u), lastLesson=L.k===ls.length-1, us=UNITS[lv];
+  const p=PATH[lv] ||= {}; p[u.i]=Math.max(p[u.i]||0, L.k+1); store.set("wortspielPath",PATH);
+  // the unit review opens the next unit, even when a few words still need practice (they show up in "needs a quick refresh")
+  if(lastLesson && u.i<us.length-1){ REACHED[lv]=Math.max(REACHED[lv]||0,u.i+1); store.set("wortspielReached",REACHED); }
+  const unitNow=curUnit(lv); lastUnit=unitNow;
+  const perfect=LS.tries>0 && LS.right===LS.tries, bonus=perfect?10:5; LS.xp+=bonus; addXp(bonus); save();
+  const dk=dkey(Date.now()); ME.days[dk]=(ME.days[dk]||0)+1; for(const k of Object.keys(ME.days)) if(Date.now()-new Date(k).getTime()>60*864e5) delete ME.days[k]; saveMe();
+  const secs=Math.round((Date.now()-LS.t0)/1000), acc=LS.tries?Math.round(LS.right/LS.tries*100):100, done=todayLessons(), goal=ME.goal;
+  const unitFinished=unitNow>u.i || (lastLesson && u.i===us.length-1);
+  const title = lastLesson && u.i===us.length-1 ? `${LVL[lv].name} complete!` : unitFinished ? "Unit complete!" : perfect ? "Perfect lesson!" : "Lesson complete!";
+  const sub = lastLesson && u.i===us.length-1 ? (TRACK[lv]?.done || "You've finished every unit in this level.") : unitFinished ? `You finished ${esc(u.name)}. Next up: ${esc(us[unitNow].name)}.` : `${ls.length-L.k-1} more ${ls.length-L.k-1===1?"lesson":"lessons"} to finish ${esc(u.name)}.`;
+  endScreen(`${mascot("cheer","jump")}<h2>${title}</h2><p>${sub}</p>
+    <div class="lstats">
+      <div class="lstat" style="--c:#f2b705;--ci:#2a1f00"><span>${ic("bolt")}Points</span><b>+${LS.xp}</b></div>
+      <div class="lstat" style="--c:var(--good);--ci:var(--surface)"><span>${ic("target")}Correct</span><b>${acc}%</b></div>
+      <div class="lstat" style="--c:#4c8df6;--ci:#fff"><span>${ic("clock")}Time</span><b>${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")}</b></div>
+    </div>
+    <div class="lgoal"><div class="row spread"><b>Daily goal</b><span class="muted">${done>=goal?"Reached!":`${done} of ${goal} ${goal===1?"lesson":"lessons"}`}</span></div><span class="mbar${done>=goal?" ok":""}"><i style="width:${Math.min(100,done/goal*100)}%"></i></span></div>`);
+  confetti();
+  const streak=dayStreak(), newDay=!LS.hadToday && streak>0;
+  foot("idle",{label:"Continue", on:()=>newDay?streakScreen(streak):exitLesson()});
+  $("#lGo").focus({preventScroll:true});
+}
+function streakScreen(n){
+  const days=[...Array(7)].map((_,k)=>{ const d=new Date(); d.setDate(d.getDate()-6+k); return {d, on:Object.values(G.levels).some(l=>l.days?.[dkey(d)]?.answers)}; });
+  endScreen(`<div class="flame" aria-hidden="true">${ic("flame")}</div><div class="bignum">${n}</div><h2>${n===1?"day streak started!":"day streak!"}</h2>
+    <div class="week7">${days.map(({d,on},k)=>`<span><i class="${on?"on":""}">${on?ic("check"):""}</i>${k===6?"Today":d.toLocaleDateString("en-GB",{weekday:"short"})}</span>`).join("")}</div>
+    <p class="muted">${n===1?"Come back tomorrow to keep it going.":"Keep it up! A lesson a day keeps your streak alive."}</p>`);
+  foot("idle",{label:"Continue", on:exitLesson}); $("#lGo").focus({preventScroll:true});
+}
+$("#lClose").innerHTML=ic("close"); $("#lClose").onclick=quitLesson;
+
+/* ---------- Welcome: the first screens for someone new ---------- */
+function Welcome(step=0){
+  const el=$("#homeBody");
+  if(step===0){
+    el.innerHTML=`<section class="ob">${mascot("cheer","jump")}<h2>Hallo! Let's learn German.</h2>
+      <p class="lede">Short, easy lessons. A few minutes a day. No experience needed.</p>
+      <button class="lgo" id="ob1">Get started</button><button class="lgo2" id="obPick">I'll choose where to start</button></section>`;
+    $("#ob1").onclick=()=>Welcome(1); $("#obPick").onclick=()=>{ ME.welcomed=true; saveMe(); LevelPick(); };
+  } else if(step===1){
+    const OPTS=[["ABC","🌱","I'm brand new","Start with the letters and their sounds"],["A1","👋","I know a little","Start with my first words"],["A2","💬","I know the basics","More everyday words"]];
+    el.innerHTML=`<section class="ob">${mascot()}<h2>How much German do you know?</h2>
+      <div class="lopts">${OPTS.map(([k,e,t,d])=>`<button class="lopt" data-start="${k}"><span class="emo" aria-hidden="true">${e}</span><span><b>${t}</b><small>${d}</small></span></button>`).join("")}</div></section>`;
+    el.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>{ Welcome.lv=b.dataset.start; Welcome(2); });
+  } else {
+    const GOALS=[[1,"Easy","1 lesson a day · about 3 min"],[2,"Regular","2 lessons · about 6 min"],[3,"Serious","3 lessons · about 10 min"],[5,"Intense","5 lessons · about 15 min"]];
+    el.innerHTML=`<section class="ob">${mascot()}<h2>Pick a daily goal</h2><p class="lede">You can change it any time.</p>
+      <div class="lopts">${GOALS.map(([g,t,d])=>`<button class="lopt" data-g="${g}" aria-pressed="${g===1}"><span class="emo" aria-hidden="true">${{1:"🌱",2:"🙂",3:"💪",5:"🔥"}[g]}</span><span><b>${t}</b><small>${d}</small></span></button>`).join("")}</div>
+      <button class="lgo" id="obGo">Start my first lesson</button></section>`;
+    let g=1; el.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{ g=+b.dataset.g; el.querySelectorAll("[data-g]").forEach(x=>x.setAttribute("aria-pressed",x===b)); });
+    $("#obGo").onclick=()=>{ ME.goal=g; ME.welcomed=true; saveMe(); G.chosen=true; G.picking=false; setLevel(Welcome.lv||"A1"); startLesson(nextLesson()); };
+  }
+  enter(el); window.scrollTo(0,0);
 }
 
 $("#backHome").insertAdjacentHTML("afterbegin",ic("back"));
