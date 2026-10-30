@@ -541,6 +541,10 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 .lsent{flex-wrap:nowrap;justify-content:flex-start;align-items:flex-end;gap:10px}.lsent .mascot{width:76px;height:76px}
 .sbub{flex:1;border:2px solid var(--line2);border-radius:16px;padding:12px 14px;font-size:1.2rem;font-weight:600;text-align:left;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .sbub #psp:empty{display:none}
+.sbub #psp{display:flex;gap:8px}.sbub .slow{width:46px;height:46px;font-size:1.3rem}.sbub .gen{flex-basis:100%;font-size:.95rem;font-weight:500}
+.gw{font:inherit;color:inherit;background:none;border:0;padding:0;border-bottom:2px dotted var(--line2);cursor:pointer}.gw.on{border-bottom-color:var(--accent);color:var(--accent-text)}
+.gloss{margin:-6px 0 0;min-height:1.5em;font-size:1rem;text-align:left}
+.gap{display:inline-block;min-width:3.2em;border-bottom:3px solid var(--accent);text-align:center}.gap.on{border-color:var(--good);color:var(--good)}
 .hello{display:flex;align-items:center;gap:10px;margin:0}.hello .mascot{width:56px;height:56px}.hello>span{line-height:1.35;font-size:.95rem}.hello b{display:block;font-family:var(--f-display);font-size:1.3rem}
 .ltile.used{background:var(--line);border-color:var(--line);color:transparent;cursor:default}
 .lslots .ltile{animation:rise .15s ease-out}
@@ -2056,17 +2060,38 @@ function sentsFor(ws){
   const known=k=>mine.has(k) || (S.score[byDe.get(k)?.id]||0)>=1, part=x=>x[2].filter(known).length/x[2].length;
   return shuffle(SENTS.filter(x=>x[2].some(k=>mine.has(k)))).sort((a,b)=>part(b)-part(a));
 }
+// what a word in a sentence means: little words from this list, then the word list itself, then the sentence's own words by their stem
+const GLOSS={ich:"I",du:"you",er:"he",sie:"she / they",es:"it",wir:"we",bin:"am",bist:"are",ist:"is",sind:"are",habe:"have",hast:"have",hat:"has",
+  der:"the",die:"the",das:"the / that",den:"the",ein:"a",eine:"a",einen:"a",mein:"my",meine:"my",und:"and",oder:"or",nicht:"not",sehr:"very",auch:"too / also",
+  zu:"to",in:"in",nach:"to (a place)",kein:"no / not a",hier:"here",jetzt:"now",heute:"today",morgen:"tomorrow",tut:"does",weh:"hurt (tut weh = hurts)",dich:"you",zwei:"two",drei:"three",sechs:"six",zehn:"ten",zwanzig:"twenty",
+  jahre:"years",hause:"home (zu Hause = at home)",herr:"Mr",frau:"Mrs / woman",gute:"good",guten:"good",bitte:"please",danke:"thank you",
+  auf:"(auf Wiedersehen = goodbye)",wiedersehen:"(auf Wiedersehen = goodbye)",mag:"like",schläft:"is sleeping",hände:"hands",offen:"open",gras:"grass",kostet:"costs",heißt:"is called",
+  kommst:"come",kommt:"comes",katzen:"cats",wohne:"live",wohnst:"live",musik:"music",liebe:"love",anna:"Anna (a name)",max:"Max (a name)",paul:"Paul (a name)",müller:"Müller (a surname)",schmidt:"Schmidt (a surname)",berlin:"Berlin (a city)",essen:"food"};
+function glossFor(tok, keys, prev=""){
+  const t=tok.toLowerCase(), list=ALL.A1, bare=w=>(w.base||w.de).replace(/\?$/,"").toLowerCase();
+  if(t==="morgen" && /^gute/i.test(prev)) return "morning";
+  if(GLOSS[t]) return GLOSS[t];
+  const noun=prev && tok[0]!==t[0], same=list.filter(w=>bare(w)===t);   // a capital in the middle of a sentence means a noun: das Essen, not essen
+  const hit=same.find(w=>!!w.art===noun) || same[0] || keys.map(k=>list.find(w=>w.de===k)).find(w=>{ if(!w) return false; const b=bare(w); let n=0; while(n<b.length && b[n]===t[n]) n++; return n>=3 && n>=Math.min(b.length,t.length)-2; });
+  return hit ? hit.en : "";
+}
+// a sentence where this word appears as it's written in the list, so it can be the gap
+function gapFor(w){
+  if(TRACK[G.lv] || !w.base) return null;
+  const b=w.base.toLowerCase(), ok=SENTS.filter(x=>x[2].includes(w.de) && x[0].replace(/[.,!?]/g,"").split(/\s+/).some(t=>t.toLowerCase()===b));
+  return ok.length ? ok[Math.random()*ok.length|0] : null;
+}
 // the plan for one lesson: new words are shown first, then recognised right away, then asked in harder ways
 function planLesson(L){
   const ws=L.words, steps=[], T=TRACK[G.lv];
-  const hardTypes = w => { const o=["pickDe","listen"]; if(canBuild(w)) o.push("build"); if(w.art) o.push("article"); if(pic(w)) o.push("picture"); return shuffle(o); };
+  const hardTypes = w => { const o=["pickDe","listen"]; if(canBuild(w)) o.push("build"); if(w.art) o.push("article"); if(pic(w)) o.push("picture"); if(gapFor(w)) o.push("gap"); return shuffle(o); };
   let last="";
   const hard = w => { const o=hardTypes(w); const t=o.find(x=>x!==last)||o[0]; last=t; return {t,w}; };
   if(L.review || L.practice){
     const pick=shuffle(ws).slice(0,9);
     pick.forEach(w=>steps.push(hard(w)));
     if(ws.length>=3) steps.splice(4,0,{t:"pairs",ws:shuffle(ws).slice(0,5)});
-    sentsFor(ws).slice(0,2).forEach((x,k)=>steps.splice(k?steps.length:Math.min(7,steps.length),0,{t:"sentence",s:x,to:k?"de":"en"}));
+    sentsFor(ws).slice(0,3).forEach((x,k)=>steps.splice(k?steps.length:Math.min(7,steps.length),0,{t:"sentence",s:x,to:k?"de":"en",ear:k===2}));
   } else {
     if(L.k===0 && tipFor(L.u)) steps.push({t:"tip",text:tipFor(L.u)});
     ws.forEach((w,k)=>{
@@ -2226,18 +2251,36 @@ const EX = {
       body.querySelectorAll(".ltile").forEach(x=>{ x.disabled=true; x.dataset.locked=1; });
       slots.style.borderColor=`var(--${ok?"good":"bad"})`; mark(st, ok, deHTML(w)); }
   },
+  // a sentence with one word missing: pick it
+  gap(st, body){
+    const w=st.w, x=st.s||(st.s=gapFor(w)); if(!x) return EX.pickDe({...st,t:"pickDe"}, body);
+    const b=w.base.toLowerCase(), toks=x[0].split(/\s+/), at=toks.findIndex(t=>t.replace(/[.,!?]/g,"").toLowerCase()===b);
+    const same=WORDS.filter(o=>o.id!==w.id && o.base && !o.base.includes(" ") && o.base.toLowerCase()!==b && !sameMeaning(o,w) && !!o.art===!!w.art);
+    const ds=shuffle(same.filter(o=>o.topic===w.topic)).concat(shuffle(same)).filter((o,k,a)=>a.findIndex(y=>y.base===o.base)===k).slice(0,2);
+    const opts=shuffle([w,...ds]).map(o=>({...o, html:`<span lang="de">${esc(o.base)}</span>`}));
+    const line=k=>toks.map((t,j)=>j===at?(k?`<b class="gap on">${esc(toks[at])}</b>`:`<b class="gap">____</b>${esc(t.replace(/^[^.,!?]+/,""))}`):esc(t)).join(" ");
+    choice(body, st, {q:"Fill in the missing word", key:"de", cls:"lgap", opts, sayPick:false,
+      prompt:`<div class="lprompt lsent">${mascot("happy")}<div class="sbub"><span lang="de" id="gl">${line(0)}</span><span class="muted gen">${esc(x[1])}</span></div></div>`,
+      isRight:o=>o.id===w.id, answer:`<span lang="de">${line(1)}</span>`, after:()=>{ $("#gl").innerHTML=line(1); setTimeout(()=>{ if(LS && LS.steps[LS.i]===st) say(x[0]); },700); }});
+  },
   // put a whole sentence together from word tiles: German to English, or (in reviews) English to German
   sentence(st, body){
     const [de,en]=st.s, toDe=st.to==="de", from=toDe?en:de, target=toDe?de:en;
     const words=t=>t.replace(/[.,!?]/g,"").split(/\s+/).filter(Boolean), want=words(target), low=x=>x.toLowerCase();
-    const pool=[...new Set(SENTS.flatMap(x=>words(x[toDe?0:1])))].filter(x=>!want.some(y=>low(y)===low(x)));
+    const pool=[...new Set(SENTS.flatMap(x=>words(x[toDe?0:1]).slice(1)))]   // not first words, so no extra capital gives the answer away.filter(x=>!want.some(y=>low(y)===low(x)));
     const tiles=shuffle([...want, ...shuffle(pool).slice(0,want.length>4?3:2)]);
-    body.innerHTML=`<h2 class="lq">${toDe?"Write this in German":"What does this sentence mean?"}</h2>
-      <div class="lprompt lsent">${mascot("happy")}<div class="sbub"><span id="psp"></span><span${toDe?"":' lang="de"'}>${esc(from)}</span></div></div>
+    const ear=st.ear, toks=from.split(/\s+/), keys=st.s[2];
+    const shown=toDe ? `<span>${esc(from)}</span>` : `<span lang="de" class="gws">${toks.map((t,j)=>{ const g=glossFor(t.replace(/[.,!?]/g,""),keys,toks[j-1]||""); return g?`<button class="gw" data-g="${esc(g)}">${esc(t)}</button>`:`<span>${esc(t)}</span>`; }).join(" ")}</span>`;
+    body.innerHTML=`<h2 class="lq">${ear?"Listen and build what you hear":toDe?"Write this in German":"What does this sentence mean?"}</h2>
+      <div class="lprompt lsent">${mascot("happy")}<div class="sbub"><span id="psp"></span>${ear?`<span class="muted">Tap to hear it again</span>`:shown}</div></div>
+      ${toDe?"":`<p class="gloss" id="gloss" aria-live="polite"><span class="muted">Tap a word you don't know.</span></p>`}
       <div class="lslots words" id="slots" aria-label="Your answer"></div>
       <div class="lbank" id="bank">${tiles.map((t,k)=>`<button class="ltile wtile" data-t="${k}"${toDe?' lang="de"':""}>${esc(t)}</button>`).join("")}</div>`;
-    if(!toDe){ const b=spkBtn({de}); b.setAttribute("aria-label","Hear the sentence"); $("#psp").appendChild(b);
+    if(!toDe || ear){ const b=spkBtn({de}); b.setAttribute("aria-label","Hear the sentence"); $("#psp").appendChild(b);
+      if(ear){ const sl=document.createElement("button"); sl.className="slow"; sl.textContent="🐢"; sl.setAttribute("aria-label","Play it slowly"); sl.onclick=()=>say(de,null,0.55); $("#psp").appendChild(sl); }
       setTimeout(()=>{ if(b.isConnected && !document.hidden) say(de,b); },350); }
+    body.querySelectorAll(".gw").forEach(g=>g.onclick=()=>{ body.querySelectorAll(".gw").forEach(x=>x.classList.toggle("on",x===g)); say(g.textContent.replace(/[.,!?]/g,""));
+      $("#gloss").innerHTML=`<b lang="de">${esc(g.textContent.replace(/[.,!?]/g,""))}</b> = ${esc(g.dataset.g)}`; });
     const slots=$("#slots"), placed=[];
     const sync=()=>foot("idle",{enabled:placed.length>0, on:check});
     body.querySelectorAll("#bank .ltile").forEach(bt=>bt.onclick=()=>{ if(bt.classList.contains("used")) return; const k=+bt.dataset.t;
