@@ -7,7 +7,7 @@ SRC = os.path.join(ROOT, "src")
 read = lambda p: open(os.path.join(ROOT, p), encoding="utf-8").read()
 
 t = read("src/template.html")
-for key, f in (("A1", "a1-words.json"), ("A2", "a2-words.json")):
+for key, f in (("A1", "a1-words.json"), ("A2", "a2-words.json"), ("B1", "b1-words.json")):
     words = read("src/" + f)
     json.loads(words)
     marker = f"/*{key}WORDS*/[]"
@@ -40,7 +40,7 @@ head = """<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Learn German A1 and A2 words in small units: flashcards, quizzes, listening, matching and pronunciation practice.">
+<meta name="description" content="Learn German A1, A2 and B1 words in small units: flashcards, quizzes, listening, matching and pronunciation practice.">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f6f1">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f2c27">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -76,7 +76,7 @@ open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8").write(html)
 icons = ["icons/apple-touch-icon.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png", "icons/favicon-32.png"]
 manifest = {
     "name": "Deutsch Wortspiel", "short_name": "Wortspiel",
-    "description": "Learn German A1 and A2 words in small units.",
+    "description": "Learn German A1, A2 and B1 words in small units.",
     "id": "./", "start_url": "./", "scope": "./", "display": "standalone", "lang": "en",
     "background_color": "#1f2c27", "theme_color": "#1f2c27",
     "icons": [
