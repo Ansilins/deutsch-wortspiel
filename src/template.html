@@ -20,6 +20,7 @@
 [data-lv="Z"]{--a-l:#0e7c72;--ai-l:#fff;--at-l:#0b6b63;--a-d:#5cd6c6;--ai-d:#052421}
 [data-lv="A1"]{--a-l:#e0a100;--ai-l:#2a1f00;--at-l:#8a5a00;--a-d:#f2c94c;--ai-d:#2a1f00}
 [data-lv="A2"]{--a-l:#2e62d6;--ai-l:#fff;--at-l:#2552c0;--a-d:#93b4ff;--ai-d:#0b1b40}
+[data-lv="B1"]{--a-l:#c8325f;--ai-l:#fff;--at-l:#a8264f;--a-d:#ff9ab8;--ai-d:#3d0a1c}
 :root,[data-lv]{--accent:var(--a-l);--accent-ink:var(--ai-l);--accent-text:var(--at-l);--soft:color-mix(in srgb,var(--accent) 13%,var(--surface))}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#1f2c27; --grid:#28382f; --surface:#263630; --ink:#eef1ea; --muted:#a9b8ae; --line:#34463e; --line2:#46594f;
@@ -315,7 +316,7 @@ nav.modes button[aria-current="page"]{background:var(--accent);color:var(--accen
 @media (max-width:560px){.how{grid-template-columns:1fr}}
 .how div{border-left:3px solid var(--accent);padding:2px 0 2px 10px;font-size:.88rem}
 .how b{display:block;font-family:var(--f-display)}
-/* level picker: a numbered path from the first letters to A2 */
+/* level picker: a numbered path from the first letters to B1 */
 .pick{display:grid;gap:14px;padding-block:4px 6px}
 .pickh{font-family:var(--f-display);font-weight:800;font-size:clamp(1.8rem,6.5vw,2.4rem);line-height:1.05;letter-spacing:-.025em;margin:0;text-wrap:balance}
 .pick .btn.back{justify-self:start}
@@ -600,7 +601,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
 <div id="homeView" class="hwrap">
   <div class="topbar"><span class="logo">Deutsch Wortspiel</span><div class="tright"><span class="schip" id="sChip" hidden></span><button class="lvbtn" id="lvBtn" title="Change level" hidden></button></div></div>
   <div id="homeBody" class="home"></div>
-  <footer>Word lists: minddory.com A1/A2. Your progress stays in this browser.</footer>
+  <footer>Word lists: minddory.com A1/A2, Goethe-Zertifikat B1 list. Your progress stays in this browser.</footer>
 </div>
 
 <div class="wrap" id="practiceView" hidden>
@@ -638,7 +639,7 @@ footer{font-size:.76rem;color:var(--muted);text-align:center;padding-top:4px}
       <button data-rate="0.9" aria-pressed="true">normal</button>
     </div>
   </div>
-  <footer>Word lists: minddory.com A1/A2. Your progress stays in this browser.</footer>
+  <footer>Word lists: minddory.com A1/A2, Goethe-Zertifikat B1 list. Your progress stays in this browser.</footer>
 </div>
 
 <div class="lwrap" id="lessonView" hidden>
@@ -775,10 +776,11 @@ const ABC_TIPS = {
   "Tricky letters":"These letters look English but sound different. Listen to each one a few times.",
   "Word endings":"At the end of a word, b, d and g go hard: they sound like p, t and k. Only -ig is different: it ends like ich, as in richtig.",
 };
-const RAW = {ABC:LETTERS, A1:/*A1WORDS*/[], A2:/*A2WORDS*/[], Z:NUMBERS};
+const RAW = {ABC:LETTERS, A1:/*A1WORDS*/[], A2:/*A2WORDS*/[], B1:/*B1WORDS*/[], Z:NUMBERS};
 // the order is the learning path: letters, numbers, then the word levels
 const LVL = {ABC:{name:"Alphabet",badge:"ABC",en:"Letters and sounds"}, Z:{name:"Zahlen",badge:"123",en:"Numbers"},
-  A1:{name:"A1",title:"Beginner",en:"Your first words"}, A2:{name:"A2",title:"Elementary",en:"More everyday words"}};
+  A1:{name:"A1",title:"Beginner",en:"Your first words"}, A2:{name:"A2",title:"Elementary",en:"More everyday words"},
+  B1:{name:"B1",title:"Intermediate",en:"Words for work, news and opinions"}};
 const lvBadge = k => LVL[k].badge || k;
 const isNum = (lv=G.lv) => lv==="Z";
 // the two practice tracks next to the word levels: what they call their cards and how their games are worded
@@ -807,11 +809,11 @@ const build = raw => raw.map(([de,en,topic,x],id)=>{
     say:o.say||null, alt:o.alt||[], ex:o.ex||null, hl:o.hl||null, letter:!!x && typeof x==="object" && [...de].length===1,
     name:o.ex?o.ex.split(" · ")[0]:null};
 });
-const ALL = {ABC:build(RAW.ABC), A1:build(RAW.A1), A2:build(RAW.A2), Z:build(RAW.Z)};
+const ALL = {ABC:build(RAW.ABC), A1:build(RAW.A1), A2:build(RAW.A2), B1:build(RAW.B1), Z:build(RAW.Z)};
 let WORDS = ALL.A1, TOPICS = [];
 /* ---------- units: each level is split into small chunks ---------- */
 const UNIT_MAX=12;
-const ORDER=["Phrases","Numbers","People & Family","Food & Drink","Colours","Body","Clothes","Home","Animals","Time & Calendar","Nature & Weather","Town & Travel","Shopping & Money","School & Work","Free Time","Health","Feelings","Question Words","Describing Words","Verbs","Little Words"];
+const ORDER=["Phrases","Numbers","People & Family","Food & Drink","Colours","Body","Clothes","Home","Animals","Time & Calendar","Nature & Weather","Town & Travel","Shopping & Money","School & Work","Free Time","Health","Feelings","Question Words","Society","Media & Tech","Describing Words","Verbs","Little Words"];
 /* Sentences for lessons: [German, English, the list words it practises]. A sentence comes up in a lesson that teaches one of its words */
 const SENTS = [
   ["Hallo, ich bin Anna.","Hello, I am Anna.",["hallo","ich"]],
@@ -955,16 +957,41 @@ const WORD_TIPS = {
   "Verbs":"The dictionary form ends in -en, and the ending changes with the person: ich lerne, du lernst, er lernt.",
   "Little Words":"der, die and das all mean the. ein and eine mean a. Little words are used all the time, so they're worth it.",
 };
-const tipFor = u => TRACK[G.lv] ? TRACK[G.lv].tips[u.topic] : WORD_TIPS[u.topic];
-function makeUnits(ws){
+// B1 tips: a step up in grammar for each topic (the A1/A2 tip is used where B1 has none)
+const B1_TIPS = {
+  "Phrases":"Sie is the polite you, du the friendly one. siezen means saying Sie, duzen means saying du.",
+  "Numbers":"Percentages: 20 % is zwanzig Prozent. Average is der Durchschnitt.",
+  "People & Family":"Many job and people words have a woman's form ending in -in: der Lehrer, die Lehrerin.",
+  "Food & Drink":"To be polite when you order, use ich hätte gern or ich möchte: Ich hätte gern die Suppe.",
+  "Body":"With body parts, German often uses sich and the: Ich wasche mir die Hände (I wash my hands).",
+  "Clothes":"anziehen is to put on, ausziehen to take off and sich umziehen to get changed.",
+  "Home":"Separable verbs split: einziehen becomes Wir ziehen nächste Woche ein.",
+  "Time & Calendar":"seit plus the present tense says how long: Ich wohne seit zwei Jahren hier.",
+  "Nature & Weather":"Weather verbs use es: es blitzt, es donnert, es hagelt.",
+  "Town & Travel":"Where to uses the accusative and where at uses the dative: in die Stadt (into town), in der Stadt (in town).",
+  "Shopping & Money":"To compare prices, add -er: billig, billiger. Then say als: billiger als das andere.",
+  "School & Work":"weil sends the verb to the end: Ich lerne Deutsch, weil ich hier arbeite.",
+  "Free Time":"To say what you like doing, add gern: Ich wandere gern.",
+  "Health":"To say what you have, use haben: Ich habe Schnupfen, Ich habe Fieber.",
+  "Feelings":"Many feeling verbs use sich: sich freuen, sich ärgern, sich langweilen.",
+  "Society":"Words ending in -ung, -heit, -keit and -ion are always die: die Meinung, die Freiheit, die Integration.",
+  "Media & Tech":"Lots of tech verbs come from English and get a German ending: klicken, chatten, downloaden.",
+  "Describing Words":"un- often makes the opposite: wichtig, unwichtig. -los means without: sinnlos.",
+  "Verbs":"In the past, most verbs use haben, but movement verbs use sein: Ich bin gefahren.",
+  "Little Words":"obwohl, weil, dass and ob all send the verb to the end of the sentence.",
+};
+const tipFor = u => TRACK[G.lv] ? TRACK[G.lv].tips[u.topic] : (G.lv==="B1" && B1_TIPS[u.topic]) || WORD_TIPS[u.topic];
+// even: share a topic's words out evenly (B1), so no unit is left with 2 words. A1/A2 keep their old cut, because saved lessons are counted per unit
+function makeUnits(ws, even=false){
   const topics=[...new Set(ws.map(w=>w.topic))].sort((a,b)=>(ORDER.indexOf(a)+1||99)-(ORDER.indexOf(b)+1||99));
   const queues=topics.map(tp=>{ const g=ws.filter(w=>w.topic===tp), parts=Math.ceil(g.length/UNIT_MAX), size=Math.ceil(g.length/parts);
-    return [...Array(parts)].map((_,p)=>({topic:tp, name:parts>1?`${tp} ${p+1}`:tp, words:g.slice(p*size,(p+1)*size)})) });
+    const cut=p=>even?Math.round(p*g.length/parts):p*size;
+    return [...Array(parts)].map((_,p)=>({topic:tp, name:parts>1?`${tp} ${p+1}`:tp, words:g.slice(cut(p),cut(p+1))})) });
   const units=[]; // take one chunk from each topic in turn, so units mix topics instead of ending on 8 units of little words
   while(queues.some(q=>q.length)) for(const q of queues) if(q.length) units.push(q.shift());
   return units.map((u,i)=>({...u,i}));
 }
-const UNITS={ABC:makeUnits(ALL.ABC), A1:makeUnits(ALL.A1), A2:makeUnits(ALL.A2), Z:makeUnits(ALL.Z)};
+const UNITS={ABC:makeUnits(ALL.ABC), A1:makeUnits(ALL.A1), A2:makeUnits(ALL.A2), B1:makeUnits(ALL.B1,true), Z:makeUnits(ALL.Z)};
 const unitNeed = u => Math.ceil(u.words.length*0.8);
 const unitLearned = (u,sc=S.score) => u.words.filter(w=>(sc[w.id]||0)>=3).length;
 // right answers count before a word is learned: 3 per word, so a first good round shows on the bar
@@ -1027,7 +1054,7 @@ const known = w => (S.score[w.id]||0) >= 3;
 function bump(w,ok){ const wasAll=levelDone(), s=S.score[w.id]||0, n= ok? Math.min(5,s+1) : Math.max(0,s-1); S.score[w.id]=n;
   const r=todayRec(); r.answers++; if(s<3&&n>=3) r.learned++; if(s>=3&&n<3) r.learned=Math.max(0,r.learned-1);
   const before=lastUnit; lastUnit=curUnit(); if(lastUnit>before) unitToast(UNITS[G.lv][before], UNITS[G.lv][lastUnit]);
-  if(!wasAll && levelDone()) toast(`<b>${LVL[G.lv].name} complete!</b> ${{ABC:"Next up: numbers in Zahlen.",Z:"Next up: your first words in A1.",A1:"Next up: A2.",A2:"You've finished every level."}[G.lv]}`); }
+  if(!wasAll && levelDone()) toast(`<b>${LVL[G.lv].name} complete!</b> ${{ABC:"Next up: numbers in Zahlen.",Z:"Next up: your first words in A1.",A1:"Next up: A2.",A2:"Next up: B1.",B1:"You've finished every level."}[G.lv]}`); }
 // the last unit has nothing to unlock, so finishing it is finishing the level
 const levelDone=()=>{ const us=UNITS[G.lv]; return curUnit()===us.length-1 && unitDone(us[us.length-1]); };
 let lastUnit=0;
@@ -1255,7 +1282,7 @@ function Home(){
     : [["cards","Swipe cards","See a word, flip to check"],["quiz","Quiz","Pick the right meaning"],["listen","Listen","Hear a word, find it"],["match","Match pairs","Join words and meanings"],["speak","Speak","Say it, get a score"]];
   // the other tracks: the alphabet and numbers from a word level, or back to your words from a track
   const abcOpen=Object.keys(G.levels.ABC.score).length>0 && !UNITS.ABC.every(x=>unitDone(x,G.levels.ABC.score));
-  const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?["Z",wl] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?(allDone || Object.keys(G.levels.A2.score).length ? ["A2","ABC","Z"] : ["ABC","Z"]) : ["Z"];
+  const wl=G.wordLv||"A1", feeds=G.lv==="ABC"?["Z",wl] : T?(abcOpen?["ABC",wl]:[wl]) : G.lv==="A1"?(allDone || Object.keys(G.levels.A2.score).length ? ["A2","ABC","Z"] : ["ABC","Z"]) : G.lv==="A2"?(allDone || Object.keys(G.levels.B1.score).length ? ["B1","Z"] : ["Z"]) : ["Z"];
   const feedHTML=k=>{ const ous=UNITS[k], oci=curUnit(k), ou=ous[oci], osc=G.levels[k].score, OT=TRACK[k];
     const ogot=ou.words.filter(w=>(osc[w.id]||0)>=3).length, ostarted=Object.keys(osc).length>0;
     return `<section class="feed" data-lv="${k}">
@@ -1279,7 +1306,7 @@ function Home(){
   <section class="ubanner">
     <span class="ey">${lvTitle} · Unit ${ci+1}</span>
     <h2>${allDone?`${LVL[G.lv].name} complete!`:esc(u.name)}</h2>
-    <p>${allDone?(T?T.done:G.lv==="A1"?"You've learned every unit in A1. Keep practising, or start A2 below.":"You've learned every unit in A2. Keep practising so the words stay fresh.")
+    <p>${allDone?(T?T.done:G.lv==="A1"?"You've learned every unit in A1. Keep practising, or start A2 below.":G.lv==="A2"?"You've learned every unit in A2. Keep practising, or start B1 below.":"You've learned every unit in B1. Keep practising so the words stay fresh.")
       : `${ls.length} short ${ls.length===1?"lesson":"lessons"} · ${n} ${UN}`}</p>
     <div class="ubtns"><button class="btn start" id="goLesson">${allDone?"Practise again":ls[nl].review?"Start the unit review":`Start lesson ${nl+1}`}${ic("chev")}</button><button class="btn link" id="goList">See the ${n} ${UN}</button></div>
   </section>
@@ -2013,7 +2040,7 @@ const BADGES=[["first","🎉","First lesson","Finish a lesson",m=>m.total>=1],["
   ["w25","🌱","Growing","Learn 25 words",m=>m.words>=25],["w100","🌳","Big vocabulary","Learn 100 words",m=>m.words>=100],["speak","🎤","Speaker","Say a word well",m=>m.spoke],
   ["abc","🔤","Alphabet pro","Finish the Alphabet",m=>m.abc],["l50","🏅","Hard worker","Finish 50 lessons",m=>m.total>=50],["s30","👑","Unstoppable","30 days in a row",m=>m.streak>=30]];
 function badgeStats(){ const last=UNITS.ABC.at(-1);
-  return {total:ME.total||0, perfect:ME.perfect||0, streak:dayStreak(), words:["A1","A2"].reduce((a,k)=>a+wordStats(k).done,0), units:Object.keys(LVL).reduce((a,k)=>a+curUnit(k),0),
+  return {total:ME.total||0, perfect:ME.perfect||0, streak:dayStreak(), words:["A1","A2","B1"].reduce((a,k)=>a+wordStats(k).done,0), units:Object.keys(LVL).reduce((a,k)=>a+curUnit(k),0),
     abc:unitDone(last,G.levels.ABC.score) && curUnit("ABC")===UNITS.ABC.length-1 || lessonsDone(last,"ABC")>=unitLessons(last).length,
     spoke:Object.values(G.levels).some(l=>Object.values(l.pron||{}).some(s=>s>=75))}; }
 function newBadges(){ const m=badgeStats(), have=new Set(ME.badges||[]), got=BADGES.filter(b=>!have.has(b[0]) && b[4](m));
@@ -2374,7 +2401,7 @@ function Welcome(step=0){
       <button class="lgo" id="ob1">Get started</button><button class="lgo2" id="obPick">I'll choose where to start</button></section>`;
     $("#ob1").onclick=()=>Welcome(1); $("#obPick").onclick=()=>{ ME.welcomed=true; saveMe(); LevelPick(); };
   } else if(step===1){
-    const OPTS=[["ABC","🌱","I'm brand new","Start with the letters and their sounds"],["A1","👋","I know a little","Start with my first words"],["A2","💬","I know the basics","More everyday words"]];
+    const OPTS=[["ABC","🌱","I'm brand new","Start with the letters and their sounds"],["A1","👋","I know a little","Start with my first words"],["A2","💬","I know the basics","More everyday words"],["B1","🗣️","I can get by","Words for work, news and opinions"]];
     el.innerHTML=`<section class="ob">${mascot()}<h2>How much German do you know?</h2>
       <div class="lopts">${OPTS.map(([k,e,t,d])=>`<button class="lopt" data-start="${k}"><span class="emo" aria-hidden="true">${e}</span><span><b>${t}</b><small>${d}</small></span></button>`).join("")}</div></section>`;
     el.querySelectorAll("[data-start]").forEach(b=>b.onclick=()=>{ Welcome.lv=b.dataset.start; Welcome(2); });

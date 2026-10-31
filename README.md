@@ -1,6 +1,6 @@
 # Deutsch Wortspiel
 
-A small game for learning German A1 and A2 vocabulary in bite-sized units, plus a numbers-only track (Zahlen): flashcards, quizzes, listening, matching pairs, a word list, and speaking practice with a pronunciation score.
+A small game for learning German A1, A2 and B1 vocabulary in bite-sized units, plus a numbers-only track (Zahlen): flashcards, quizzes, listening, matching pairs, a word list, and speaking practice with a pronunciation score.
 
 **Play it:** https://ansilins.github.io/deutsch-wortspiel/
 
@@ -24,4 +24,4 @@ Speaking practice uses a speech checker that runs on the phone. The first time y
 python3 src/build.py
 ```
 
-Word lists are based on minddory.com's German A1 and A2 vocabulary lists; English meanings, articles and topics were added for this game.
+Word lists are based on minddory.com's German A1 and A2 vocabulary lists. The B1 words are the headwords of the Goethe-Zertifikat B1 Wortliste (via github.com/ilkermeliksitki/goethe-institute-wordlist), minus words already in A1 or A2. English meanings, articles and topics were added for this game.
